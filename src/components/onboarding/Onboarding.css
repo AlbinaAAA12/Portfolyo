@@ -1,0 +1,89 @@
+.onboarding-root {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #f6f7f8;
+  overscroll-behavior: none;
+}
+
+.onboarding-frame {
+  position: relative;
+  width: min(100vw, 153.84615vh);
+  aspect-ratio: 1280 / 832;
+  overflow: hidden;
+  background: #f6f7f8;
+}
+
+.onboarding-reference {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.onboarding-source-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1280px;
+  height: 832px;
+  overflow: hidden;
+  background: #f6f7f8;
+  transform: scale(var(--design-scale, 1));
+  transform-origin: top left;
+}
+
+.onboarding-letter {
+  position: absolute;
+  top: 401.9px;
+  z-index: 2;
+  color: #202124;
+  font-family: Manrope, Arial, sans-serif;
+  font-size: 86.066px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transform-origin: center;
+}
+
+.onboarding-letter-w { left: 537.05px; }
+.onboarding-letter-r { left: 640.39px; }
+.onboarding-letter-k { left: 704.09px; }
+
+.onboarding-card {
+  position: absolute;
+  top: 401.41px;
+  left: 529.91px;
+  width: 113.042px;
+  height: 63.639px;
+  overflow: hidden;
+  border-radius: 13px;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.onboarding-card-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.onboarding-static-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.04em;
+  color: #202124;
+  font: 600 clamp(56px, 6.72vw, 86.066px) / 1 Manrope, Arial, sans-serif;
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-reference { animation: none; }
+}
