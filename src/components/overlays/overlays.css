@@ -23,18 +23,20 @@
   position: relative;
   margin: 0 auto;
   background: #fff;
-  border: 1px solid rgba(0, 16, 36, .12);
+  border: 0;
+  outline: 1px solid rgba(0, 16, 36, .12);
+  outline-offset: -1px;
   border-radius: 34px 34px 0 0;
   box-shadow: 0 5px 10px rgba(32, 33, 36, .1);
   color: #202124;
   font-family: Manrope, sans-serif;
   letter-spacing: -.02em;
 }
-.overlay-resume { width: min(900px, 100%); min-height: 100%; padding: 48px 40px 0; }
+.overlay-resume { width: min(900px, 100%); padding: 48px 40px 0; box-sizing: border-box; }
 .overlay-resume-header { position: relative; display: flex; align-items: flex-start; gap: 39px; width: 100%; margin-bottom: 64px; }
 .overlay-avatar { flex: 0 0 136px; width: 136px; height: 136px; object-fit: cover; border-radius: 10px; }
 .overlay-profile { flex: 1 1 auto; min-width: 0; padding-top: 8px; }
-.overlay-profile h1 { margin: 0 0 16px; font-size: 36px; font-weight: 600; line-height: normal; letter-spacing: -.02em; }
+.overlay-profile h1 { margin: 0 0 16px; font-size: 36px; font-weight: 600; line-height: normal; letter-spacing: -.02em; text-box-trim: trim-both; text-box-edge: cap alphabetic; }
 .overlay-profile-title { margin: 0 0 24px; font-size: 24px; font-weight: 600; line-height: normal; }
 .overlay-contact { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 16px; font-weight: 600; line-height: normal; letter-spacing: -.02em; }
 .overlay-contact a { color: inherit; text-decoration: none; }
@@ -54,25 +56,26 @@
 .overlay-job-details h2 { margin: 0 0 16px; font-size: 24px; font-weight: 600; line-height: normal; letter-spacing: -.02em; }
 .overlay-job-details > p { margin: 0; font-size: 16px; font-weight: 500; line-height: normal; }
 .overlay-body-copy { font-size: 16px; font-weight: 500; line-height: normal; }
-.overlay-body-copy p { margin: 0 0 16px; }
-.overlay-body-copy ul { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.overlay-body-copy p { margin: 0 0 22px; }
+.overlay-body-copy ul { display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; list-style: none; }
 .overlay-body-copy li::before, .overlay-case-list li::before { content: '— '; font-weight: 800; }
 .overlay-job-meta { font-size: 16px; line-height: normal; }
 .overlay-job-meta > strong, .overlay-fact > strong { font-weight: 600; }
 .overlay-job-meta > span, .overlay-job-meta > p { margin: 0; font-weight: 500; }
 .overlay-tags { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; }
-.overlay-tag { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; padding: 12px 16px; border-radius: 10px; background: rgba(118,118,128,.12); color: #202124; font-size: 16px; font-weight: 500; line-height: normal; letter-spacing: -.02em; white-space: nowrap; }
-.overlay-education { display: flex; flex-direction: column; gap: 36px; padding-bottom: 56px; }
+.overlay-job-meta .overlay-tags { max-width: 442px; }
+.overlay-tag { display: inline-flex; min-height: 0; align-items: center; justify-content: center; padding: 12px 16px; border-radius: 10px; background: rgba(118,118,128,.12); color: #202124; font-size: 16px; font-weight: 500; line-height: 12px; letter-spacing: -.02em; white-space: nowrap; }
+.overlay-education { display: flex; flex-direction: column; gap: 36px; }
 .overlay-education-degree { display: grid; grid-template-columns: 135px minmax(0, 1fr); column-gap: 40px; align-items: start; font-size: 16px; line-height: normal; }
 .overlay-education-degree > strong { font-weight: 600; }
-.overlay-resume-art { position: relative; width: calc(100% + 82px); aspect-ratio: 1; align-self: center; overflow: hidden; border-radius: 34px; background: #e8ebf2; }
+.overlay-resume-art { position: relative; width: calc(100% + 80px); max-width: 900px; aspect-ratio: 1; margin: 8px -40px 0; overflow: hidden; border-radius: 34px; background: #fff; }
 .overlay-art { position: absolute; top: 0; left: 0; width: 900px; height: 900px; transform: scale(var(--art-scale, 1)); transform-origin: top left; overflow: hidden; border-radius: inherit; }
 .overlay-art-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .overlay-art-layer { position: absolute; width: 370px; height: 200px; border-radius: 20px; }
-.overlay-art-layer > img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.overlay-art-layer > img, .overlay-art-layer > video { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .overlay-art-letter { top: 574px; left: 21px; overflow: hidden; }
 .overlay-art-sphere { top: 582px; left: 28px; }
-.overlay-art-sphere > img { height: 132.73%; margin-top: -32.73%; }
+.overlay-art-sphere > img, .overlay-art-sphere > video { height: 132.73%; margin-top: -32.73%; }
 .overlay-art-equalizer { top: 590px; left: 35px; }
 .overlay-art-pixels { top: 598px; left: 42px; }
 .overlay-art-ui { top: 606px; left: 49px; }
@@ -86,7 +89,7 @@
 .overlay-art-phrase-two { left: -894.6px; }
 .overlay-art-slab-inset { position: absolute; top: -21px; left: 50%; width: 236px; height: 313px; margin-left: -118px; }
 
-.overlay-case { width: min(888px, 100%); padding: 39px; }
+.overlay-case { width: min(888px, 100%); padding: 40px; }
 .overlay-case-intro { display: flex; flex-direction: column; gap: 36px; margin-bottom: 48px; padding-right: 32px; }
 .overlay-overline { margin: 0; color: #c5c5c7; font-size: 14px; font-weight: 600; line-height: normal; letter-spacing: -.02em; text-transform: uppercase; }
 .overlay-case-intro h1 { max-width: 760px; margin: 0; font-size: 36px; font-weight: 600; line-height: normal; letter-spacing: -.02em; text-wrap: balance; }
@@ -101,7 +104,9 @@
 .overlay-case-list li { margin: 0; }
 .overlay-gallery { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; margin: 0 0 48px; }
 .overlay-gallery-image { position: relative; width: 100%; overflow: hidden; border: 1px solid rgba(0,16,36,.12); border-radius: 20px; background: #f6f7f8; box-shadow: 0 5px 20px rgba(32,33,36,.1); }
-.overlay-gallery-image > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.overlay-gallery-image > img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.overlay-gallery-image { touch-action: pan-y; }
+.overlay-gallery-image:focus-visible { outline: 2px solid #202124; outline-offset: 3px; }
 .overlay-gallery-arrow { position: absolute; top: 50%; display: grid; width: 40px; height: 40px; place-items: center; transform: translateY(-50%); border: 0; border-radius: 50%; background: rgba(255,255,255,.92); box-shadow: 0 2px 8px rgba(32,33,36,.18); color: #202124; cursor: pointer; }
 .overlay-gallery-arrow::before { width: 9px; height: 9px; border: solid currentColor; border-width: 2px 2px 0 0; content: ''; }
 .overlay-gallery-prev::before { transform: translateX(2px) rotate(-135deg); }
@@ -134,10 +139,10 @@
   .overlay-job-period { margin-bottom: 8px; color: #5d5e62; }
   .overlay-job-details h2, .overlay-case-section h2 { font-size: 20px; }
   .overlay-body-copy, .overlay-job-meta, .overlay-fact, .overlay-case-copy, .overlay-case-list { font-size: 14px; }
-  .overlay-tag { min-height: 36px; padding: 8px 12px; font-size: 13px; }
+  .overlay-tag { min-height: 0; padding: 8px 12px; font-size: 13px; line-height: 12px; }
   .overlay-education { gap: 24px; padding-bottom: 36px; }
   .overlay-education-degree { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
-  .overlay-resume-art { width: 100%; }
+  .overlay-resume-art { width: 100%; margin: 8px 0 0; }
   .overlay-case { padding: 27px 19px; }
   .overlay-case-intro { gap: 24px; margin-bottom: 36px; padding-right: 26px; }
   .overlay-case-intro h1 { font-size: 27px; }

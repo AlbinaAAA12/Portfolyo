@@ -1,17 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
-import type { PointerEvent as ReactPointerEvent } from 'react';
+import type { CSSProperties, FocusEvent, MouseEvent } from 'react';
 import type { CaseId, Locale } from './types';
 import { asset } from './lib/assets';
+import { ProjectMedia } from './components/media/ProjectMedia';
+import { useSwipe } from './lib/useSwipe';
+import { NoOrphans, prepareTypography } from './lib/typography';
 import PortfolioOverlays from './components/overlays/PortfolioOverlays';
 import Onboarding from './components/onboarding/Onboarding';
+import TestimonialSlider from './components/main/TestimonialSlider';
+import CaseRail from './components/main/CaseRail';
 
 type Screen = 'about' | CaseId;
 type OverlayKind = 'resume' | 'case' | null;
 
 const caseOrder: CaseId[] = ['spirit', 'future', 'outsourcing', 'mozglab', 'veritas'];
 
-const copy = {
+const copy = prepareTypography({
   ru: {
     navAbout: 'Инфа', navCases: 'Кейсы', navResume: 'Резюме', aboutAria: 'Обо мне', casesAria: 'Открыть кейсы', resumeAria: 'Открыть резюме',
     greeting: 'Привет! Я продуктовый и веб дизайнер с 2+ годами опыта создания интерфейсов и проведения UX-исследований',
@@ -40,7 +44,7 @@ const copy = {
     veritas: { name: 'Veritas', meta: 'VERITAS • 2026', description: 'Project description: a practicing web designer with experience creating interfaces and conducting UX research.', secondParagraph: 'And the results delivered.', tags: ['UI design', 'UX design', 'Web'] },
     },
   },
-} as const;
+} as const);
 
 function Header({ locale, setLocale, screen, onNavigate, onResume }: {
   locale: Locale; setLocale: (locale: Locale) => void; screen: Screen;
@@ -59,116 +63,68 @@ function Header({ locale, setLocale, screen, onNavigate, onResume }: {
   </header>;
 }
 
-function CaseRail({ locale, active, onSelect }: { locale: Locale; active: CaseId; onSelect: (id: CaseId) => void }) {
-  const railCases: Array<{ id: CaseId; icon: string; label: string }> = [
-    { id: 'spirit', icon: '1f14c.svg', label: locale === 'ru' ? 'Spirit LBaaS' : 'Spirit LBaaS' },
-    { id: 'future', icon: '408ab.svg', label: locale === 'ru' ? 'ИИдеи Будущего' : 'Ideas for the Future' },
-    { id: 'mozglab', icon: '5c3b8.svg', label: locale === 'ru' ? 'Мозг.лаб' : 'Mozg.lab' },
-    { id: 'veritas', icon: '1b4c5.svg', label: locale === 'ru' ? 'Веритас' : 'Veritas' },
-  ];
-  return <aside className="case-rail" aria-label={locale === 'ru' ? 'Навигация по кейсам' : 'Case navigation'}>
-    <img className="rail-collapsed" src={asset(active === 'spirit' ? 'figma/319d8.svg' : active === 'mozglab' || active === 'veritas' ? 'figma/10dff.svg' : 'figma/52987.svg')} alt="" />
-    <div className="rail-track">{railCases.map(({ id, icon, label }) => <button key={id} className={`rail-item ${id === active || (id === 'future' && active === 'outsourcing') ? 'is-active' : ''}`} type="button" title={label} aria-label={label} aria-current={id === active ? 'page' : undefined} onClick={() => onSelect(id)}><img src={asset(`figma/${icon}`)} alt="" /></button>)}</div>
-  </aside>;
-}
-
 function About({ locale, onCase }: { locale: Locale; onCase: (id: CaseId) => void }) {
   const [showProjects, setShowProjects] = useState(false);
-  const suppressClick = useRef(false);
   const t = copy[locale];
-  const beginCardDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    if (event.button !== 0) return;
-    event.currentTarget.setPointerCapture(event.pointerId);
-    event.currentTarget.dataset.dragging = 'true';
-    event.currentTarget.dataset.startX = String(event.clientX);
-    event.currentTarget.dataset.startY = String(event.clientY);
-    event.currentTarget.style.setProperty('--drag-x', '0px');
-    event.currentTarget.style.setProperty('--drag-y', '0px');
-  };
-  const moveCardDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    if (event.currentTarget.dataset.dragging !== 'true') return;
-    const dx = event.clientX - Number(event.currentTarget.dataset.startX);
-    const dy = event.clientY - Number(event.currentTarget.dataset.startY);
-    event.currentTarget.style.setProperty('--drag-x', `${dx}px`);
-    event.currentTarget.style.setProperty('--drag-y', `${dy}px`);
-  };
-  const endCardDrag = (event: ReactPointerEvent<HTMLButtonElement>, id: CaseId) => {
-    const button = event.currentTarget;
-    if (button.dataset.dragging !== 'true') return;
-    const dx = event.clientX - Number(button.dataset.startX);
-    const dy = event.clientY - Number(button.dataset.startY);
-    const didDrag = Math.hypot(dx, dy) >= 50;
-    button.dataset.dragging = 'false';
-    button.style.removeProperty('--drag-x');
-    button.style.removeProperty('--drag-y');
-    if (button.hasPointerCapture(event.pointerId)) button.releasePointerCapture(event.pointerId);
-    if (didDrag) {
-      suppressClick.current = true;
-      window.setTimeout(() => { suppressClick.current = false; }, 0);
-      onCase(id);
-    }
-  };
-  const cancelCardDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    event.currentTarget.dataset.dragging = 'false';
-    event.currentTarget.style.removeProperty('--drag-x');
-    event.currentTarget.style.removeProperty('--drag-y');
-  };
-  const projects: Array<{ id: CaseId; file: string; className: string; label: string }> = [
-    { id: 'future', file: 'card-iidei-landing.png', className: 'poster-future', label: t.cases.future.name },
-    { id: 'spirit', file: '28781.png', className: 'poster-spirit', label: t.cases.spirit.name },
-    { id: 'mozglab', file: 'card-mozglab-landing.png', className: 'poster-mozglab', label: t.cases.mozglab.name },
-    { id: 'veritas', file: 'card-veritas-landing.png', className: 'poster-veritas', label: t.cases.veritas.name },
-    { id: 'future', file: 'card-iidei-promo.png', className: 'poster-iidei-second', label: t.cases.future.name },
-    { id: 'mozglab', file: 'card-mozglab-dashboard.png', className: 'poster-mozglab-second', label: t.cases.mozglab.name },
-    { id: 'veritas', file: 'card-veritas-login.png', className: 'poster-veritas-second', label: t.cases.veritas.name },
-    { id: 'outsourcing', file: 'card-outsourcing.png', className: 'poster-outsourcing', label: t.cases.outsourcing.name },
+  const projects: Array<{ id: CaseId; file: string; media?: 'iidei-landing' | 'mozglab-landing' | 'veritas-landing' | 'outsourcing' }> = [
+    { id: 'future', file: 'card-iidei-landing.png', media: 'iidei-landing' },
+    { id: 'spirit', file: '28781.png' },
+    { id: 'mozglab', file: 'card-mozglab-landing.png', media: 'mozglab-landing' },
+    { id: 'veritas', file: 'card-veritas-landing.png', media: 'veritas-landing' },
+    { id: 'outsourcing', file: 'card-outsourcing.png', media: 'outsourcing' },
   ];
   return <>
     <main className={`about-layout ${showProjects ? 'is-projects' : ''}`}>
       <section className="profile-card surface">
         <div className="profile-top">
-          <div className="profile-heading"><img className="portrait" src={asset('figma/f29c3.png')} alt={t.profileName} /><div className="profile-identity"><h1>{t.profileName}</h1><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div></div></div>
-          <p className="intro">{t.greeting}</p>
+          <div className="profile-heading"><ProjectMedia media="portrait" poster="figma/f29c3.png" className="portrait" alt={t.profileName} /><div className="profile-identity"><h1>{t.profileName}</h1><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div></div></div>
+          <p className="intro"><NoOrphans>{t.greeting}</NoOrphans></p>
         </div>
-        <div className="testimonial-wrap"><article className="testimonial"><p className="testimonial-quote">“Lorem ipsum dolor sit amet consectetur. <strong>Pellentesque pretium ut enim at elementum.</strong> Eget tortor tempor elementum amet nisi amet vel gravida sed. Ipsum maecenas nec nunc duis morbi non. <strong>Lectus sit dolor semper bibendum diam libero.</strong>”</p><div className="testimonial-author"><span className="testimonial-mark"><img src={asset('figma/ada21.svg')} alt="" /></span><div><strong>{t.testimonialName}</strong><span>{t.designer}</span></div></div></article><div className="pagination-dots" aria-label={locale === 'ru' ? 'Отзыв 1 из 5' : 'Testimonial 1 of 5'}><i className="current" /><i /><i /><i /><i /></div></div>
+        <TestimonialSlider locale={locale} name={t.testimonialName} />
       </section>
       <section className="collage-panel" aria-label={locale === 'ru' ? 'Проекты' : 'Selected projects'}>
-        <div className="poster-controls">{projects.map((project) => <button key={project.className} className={`poster-hit ${project.className}`} type="button" onPointerDown={beginCardDrag} onPointerMove={moveCardDrag} onPointerUp={(event) => endCardDrag(event, project.id)} onPointerCancel={cancelCardDrag} onClick={() => { if (suppressClick.current) { suppressClick.current = false; return; } onCase(project.id); }} aria-label={`${locale === 'ru' ? 'Открыть кейс' : 'Open case'}: ${project.label}`}><span>{project.label}<b aria-hidden="true">↗</b></span><img src={asset(`figma/${project.file}`)} alt="" /></button>)}</div>
+        <div className="poster-controls">{Array.from({ length: 15 }, (_, index) => {
+          const projectIndex = ((index % projects.length) + projects.length) % projects.length;
+          const project = projects[projectIndex];
+          const anchorIndex = index;
+          const style = { '--poster-x': `${-180 + 68 * anchorIndex}px`, '--poster-y': `${366 - 22 * anchorIndex}px` } as CSSProperties & Record<`--${string}`, string | number>;
+          const label = t.cases[project.id].name;
+          return <button key={`${index}-${project.id}`} className="poster-hit" style={style} type="button" onClick={() => onCase(project.id)} aria-label={`${locale === 'ru' ? 'Открыть кейс' : 'Open case'}: ${label}`}>
+            {project.media ? <ProjectMedia media={project.media} poster={`figma/${project.file}`} alt="" /> : <img src={asset(`figma/${project.file}`)} alt="" />}
+          </button>;
+        })}</div>
       </section>
       <button className="about-mobile-toggle" type="button" aria-pressed={showProjects} onClick={() => setShowProjects((value) => !value)}>{showProjects ? t.navAbout : locale === 'ru' ? 'Проекты' : 'Projects'}</button>
     </main>
     <footer className="brand-strip" aria-label={locale === 'ru' ? 'Клиенты и проекты' : 'Clients and projects'}>
-      <button type="button" onClick={() => onCase('spirit')} aria-label={locale === 'ru' ? 'Т-Банк' : 'T-Bank'}><img src={asset('figma/0c323.svg')} alt={locale === 'ru' ? 'Т-Банк' : 'T-Bank'} /></button>
-      <button type="button" onClick={() => onCase('spirit')} aria-label="Spirit"><img src={asset('figma/4266e.svg')} alt="Spirit" /></button>
-      <button type="button" onClick={() => onCase('future')} aria-label="Ladder Enjoyers"><img src={asset('figma/35873.svg')} alt="Ladder Enjoyers" /></button>
-      <button type="button" onClick={() => onCase('mozglab')} aria-label={t.cases.mozglab.name}><img src={asset('figma/f3350.svg')} alt={t.cases.mozglab.name} /></button>
-      <button className="veritas-brand" type="button" onClick={() => onCase('veritas')} aria-label={t.cases.veritas.name}><img src={asset('figma/45b85.svg')} alt="" /><span>{locale === 'ru' ? 'ВЕРИТАС' : 'VERITAS'}</span></button>
+      <div><img src={asset('figma/0c323.svg')} alt={locale === 'ru' ? 'Т-Банк' : 'T-Bank'} /></div>
+      <div className="brand-spirit"><img className="brand-spirit-default" src={asset('figma/564e3.svg')} alt="Spirit" /><img className="brand-spirit-hover" src={asset('figma/31715.svg')} alt="" /></div>
+      <div><img src={asset('figma/35873.svg')} alt="Ladder Enjoyers" /></div>
+      <div><img src={asset('figma/f3350.svg')} alt={t.cases.mozglab.name} /></div>
+      <div className="veritas-brand"><img src={asset('figma/45b85.svg')} alt="" /><span>{locale === 'ru' ? 'ВЕРИТАС' : 'VERITAS'}</span></div>
     </footer>
   </>;
 }
 
 function ProjectGallery({ id, locale }: { id: CaseId; locale: Locale }) {
   const t = copy[locale];
-  const posters: Record<CaseId, Array<{ file: string; height: string }>> = {
+  const posters: Record<CaseId, Array<{ file: string; media?: 'mozglab-landing' | 'mozglab-dashboard' | 'iidei-landing' | 'iidei-promo' | 'veritas-landing' | 'veritas-login' | 'outsourcing'; height: string }>> = {
     spirit: [{ file: 'cdbc0.png', height: '100%' }],
-    future: [{ file: 'poster-iidei-landing.png', height: '298px' }, { file: 'poster-iidei-promo.png', height: '298px' }],
-    outsourcing: [{ file: 'poster-outsourcing.png', height: '387.263px' }],
-    mozglab: [{ file: 'poster-mozglab-landing.png', height: '330.791px' }, { file: 'poster-mozglab-dashboard.png', height: '273.209px' }],
-    veritas: [{ file: 'poster-veritas-landing.png', height: '304.679px' }, { file: 'poster-veritas-login.png', height: '283.24px' }],
+    future: [{ file: 'card-iidei-landing.png', media: 'iidei-landing', height: '298px' }, { file: 'card-iidei-promo.png', media: 'iidei-promo', height: '298px' }],
+    outsourcing: [{ file: 'card-outsourcing.png', media: 'outsourcing', height: '387.263px' }],
+    mozglab: [{ file: 'card-mozglab-landing.png', media: 'mozglab-landing', height: '330.791px' }, { file: 'card-mozglab-dashboard.png', media: 'mozglab-dashboard', height: '273.209px' }],
+    veritas: [{ file: 'card-veritas-landing.png', media: 'veritas-landing', height: '304.679px' }, { file: 'card-veritas-login.png', media: 'veritas-login', height: '283.24px' }],
   };
   const files = posters[id];
   if (id === 'spirit') return <section className="gallery-panel gallery-panel--spirit" aria-label={locale === 'ru' ? `Макет: ${t.cases[id].name}` : `Mockup: ${t.cases[id].name}`}>
     <img className="spirit-backdrop" src={asset('figma/cdbc0.png')} alt="" />
-    <div className="spirit-empty-state">
-      <img className="empty-illustration" src={asset('figma/9dc51.svg')} alt="" />
-      <div className="empty-copy"><strong>{locale === 'ru' ? 'Добавьте сущность' : 'Add an entity'}</strong><span>{locale === 'ru' ? 'После создания сущности вы сможете настроить ее параметры' : 'Once an entity is created, you can configure its parameters'}</span></div>
-      <div className="empty-action"><span className="empty-action-icon" aria-hidden="true" />{locale === 'ru' ? 'Сущность' : 'Entity'}</div>
+    <div className="spirit-empty-frame">
+      <img src={asset('figma/spirit-empty-state.png')} alt={locale === 'ru' ? 'Пустое состояние проекта Spirit LBaaS' : 'Spirit LBaaS project empty state'} />
     </div>
-    <img className="spirit-pointer" src={asset('figma/38ba5.svg')} alt="" />
   </section>;
   return <section className={`gallery-panel gallery-panel--${id}`} aria-label={locale === 'ru' ? `Макеты: ${t.cases[id].name}` : `Mockups: ${t.cases[id].name}`}>
     {files.map(({ file, height }, index) => {
-      return <div className={`poster-slot poster-slot--${id}`} key={file} style={{ '--slot-height': height } as CSSProperties & Record<`--${string}`, string | number>}><img src={asset(`figma/${file}`)} alt={`${t.cases[id].name} — ${locale === 'ru' ? 'макет' : 'mockup'} ${index + 1}`} /></div>;
+      return <div className={`poster-slot poster-slot--${id}`} key={file} style={{ '--slot-height': height } as CSSProperties & Record<`--${string}`, string | number>}><ProjectMedia media={posters[id][index].media!} poster={`figma/${file}`} alt={`${t.cases[id].name} — ${locale === 'ru' ? 'макет' : 'mockup'} ${index + 1}`} /></div>;
     })}
   </section>;
 }
@@ -180,15 +136,33 @@ function CasePage({ id, locale, onMore }: { id: CaseId; locale: Locale; onMore: 
   const hasRequestAccess = id === 'spirit';
   const showSoon = id !== 'mozglab' && id !== 'spirit';
   const labelSoon = id === 'future' || id === 'outsourcing';
+  const swipe = useSwipe({
+    onSwipeLeft: id === 'future' ? () => window.dispatchEvent(new CustomEvent('portfolio-case', { detail: 'outsourcing' })) : undefined,
+    onSwipeRight: id === 'outsourcing' ? () => window.dispatchEvent(new CustomEvent('portfolio-case', { detail: 'future' })) : undefined,
+  });
+  const showTooltip = (event: MouseEvent<HTMLButtonElement> | FocusEvent<HTMLButtonElement>) => {
+    event.currentTarget.dataset.hint = 'true';
+    const button = event.currentTarget;
+    const tooltip = button.querySelector<HTMLElement>('.tooltip');
+    if (window.innerWidth > 600 || !tooltip) return;
+    const bounds = button.getBoundingClientRect();
+    const center = bounds.left + bounds.width / 2;
+    const maxWidth = 2 * Math.max(0, Math.min(center - 12, window.innerWidth - 12 - center));
+    tooltip.style.setProperty('--tooltip-max-width', `${maxWidth}px`);
+  };
+  const hideTooltip = (event: MouseEvent<HTMLButtonElement> | FocusEvent<HTMLButtonElement>) => {
+    event.currentTarget.dataset.hint = 'false';
+    event.currentTarget.querySelector<HTMLElement>('.tooltip')?.style.removeProperty('--tooltip-max-width');
+  };
   return <>
-    <main className={`case-layout ${showPreview ? 'is-preview' : ''}`}>
+    <main className={`case-layout ${showPreview ? 'is-preview' : ''}`} {...swipe}>
       <section className="case-info surface">
         <div className="case-copy">
           <div className="case-heading-row"><div><p className="case-meta">{item.meta}</p><h1>{item.name}</h1></div>
-            {hasRequestAccess ? <div className="access-status"><span className="lock-icon"><img src={asset('figma/1f4f8.svg')} alt="" /></span><span>{t.onRequest}</span></div> : <button className="more-button" type="button" onClick={onMore} onMouseEnter={id === 'mozglab' ? onMore : showSoon ? (event) => event.currentTarget.dataset.hint = 'true' : undefined} onMouseLeave={showSoon ? (event) => event.currentTarget.dataset.hint = 'false' : undefined} onFocus={showSoon ? (event) => event.currentTarget.dataset.hint = 'true' : undefined} onBlur={showSoon ? (event) => event.currentTarget.dataset.hint = 'false' : undefined} title={showSoon ? t.soon : t.more}>{labelSoon ? t.moreSoon : t.more}<img src={asset('figma/371d6.svg')} alt="" /><span className="tooltip" role="tooltip">{t.soon}</span></button>}
+            {hasRequestAccess ? <div className="access-status"><span className="lock-icon"><img src={asset('figma/1f4f8.svg')} alt="" /></span><span>{t.onRequest}</span></div> : <button className={`more-button ${id === 'mozglab' ? 'more-button--mozglab' : ''}`} type="button" data-hint="false" onClick={onMore} onMouseEnter={showSoon ? showTooltip : undefined} onMouseLeave={showSoon ? hideTooltip : undefined} onFocus={showSoon ? showTooltip : undefined} onBlur={showSoon ? hideTooltip : undefined} title={showSoon ? t.soon : t.more}>{labelSoon ? t.moreSoon : t.more}<img src={asset('figma/371d6.svg')} alt="" /><span className="tooltip" role="tooltip">{t.soon}</span></button>}
           </div>
           <div className={`case-description case-description--${id}`}>
-            {id === 'spirit' ? <p>{item.description}</p> : id === 'veritas' ? <>{[0, 1].map((index) => <p className="muted-description" key={index}>{locale === 'ru' ? <>Здесь описание проекта: <span>практикующий</span> веб дизайнер <span>с опытом создания</span> интерфейсов <span>и</span> проведения UX-исследований.<br /><span>И принесённые</span> результаты.</> : <>Project description: <span>a practicing</span> web designer <span>with experience creating</span> interfaces <span>and</span> conducting UX research.<br /><span>And the results delivered.</span></>}</p>)}</> : <><p>{item.description}</p>{'secondParagraph' in item && <p>{item.secondParagraph}</p>}</>}
+            {id === 'spirit' ? <p><NoOrphans>{item.description}</NoOrphans></p> : id === 'veritas' ? <>{[0, 1].map((index) => <p className="muted-description" key={index}><NoOrphans>{locale === 'ru' ? <>Здесь описание проекта: <span>практикующий</span> веб дизайнер <span>с опытом создания</span> интерфейсов <span>и</span> проведения UX-исследований.<br /><span>И принесённые</span> результаты.</> : <>Project description: <span>a practicing</span> web designer <span>with experience creating</span> interfaces <span>and</span> conducting UX research.<br /><span>And the results delivered.</span></>}</NoOrphans></p>)}</> : <><p><NoOrphans>{item.description}</NoOrphans></p>{'secondParagraph' in item && <p><NoOrphans>{item.secondParagraph}</NoOrphans></p>}</>}
           </div>
         </div>
         <div className="tag-list">{item.tags.map((tag) => <span className="tag" key={tag}><span>{tag}</span></span>)}</div>
@@ -207,10 +181,9 @@ export default function App() {
   const [locale, setLocale] = useState<Locale>('ru');
   const [screen, setScreen] = useState<Screen>('about');
   const [overlay, setOverlay] = useState<OverlayKind>(null);
-  const [onboarding, setOnboarding] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    try { return !window.localStorage.getItem('portfolio-onboarding-seen'); } catch { return true; }
-  });
+  const [onboarding, setOnboarding] = useState(true);
+  const [sceneScale, setSceneScale] = useState(1);
+  const viewportRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     document.documentElement.lang = locale;
     document.title = locale === 'ru' ? 'Альбина Тимофеева — портфолио' : 'Albina Timofeeva — Portfolio';
@@ -224,17 +197,26 @@ export default function App() {
     window.addEventListener('portfolio-case', changeCase);
     return () => window.removeEventListener('portfolio-case', changeCase);
   }, []);
-  const completeOnboarding = () => {
-    try { window.localStorage.setItem('portfolio-onboarding-seen', 'true'); } catch { /* The current session still completes onboarding. */ }
-    setOnboarding(false);
-  };
-  return <div className="app-shell" lang={locale}>
+  useEffect(() => {
+    const node = viewportRef.current;
+    if (!node) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      const height = entry.contentRect.height;
+      setSceneScale(width <= 600 ? 1 : Math.min(1, width / 1280, height / 832));
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+  return <div className="scene-viewport" ref={viewportRef} style={{ '--scene-scale': sceneScale } as CSSProperties}>
+    <div className="app-shell" lang={locale}>
     <div className="app-content">
       <Header locale={locale} setLocale={setLocale} screen={screen} onNavigate={setScreen} onResume={() => setOverlay('resume')} />
       {screen === 'about' ? <About locale={locale} onCase={setScreen} /> : <CasePage key={screen} id={screen} locale={locale} onMore={() => screen === 'mozglab' ? setOverlay('case') : undefined} />}
     </div>
     {screen !== 'about' && <CaseRail locale={locale} active={screen} onSelect={setScreen} />}
     <PortfolioOverlays kind={overlay} locale={locale} onClose={() => setOverlay(null)} />
-    {onboarding && <Onboarding locale={locale} onComplete={completeOnboarding} />}
+    {onboarding && <Onboarding locale={locale} onComplete={() => setOnboarding(false)} />}
+    </div>
   </div>;
 }

@@ -139,11 +139,21 @@ export function Onboarding({ locale, onComplete }: OnboardingProps) {
   const [showSourceLayers, setShowSourceLayers] = useState(canUseSourceLayers);
   const [videoFailed, setVideoFailed] = useState(false);
   const [referenceStarted, setReferenceStarted] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ));
   const frameRef = useRef<HTMLDivElement>(null);
   const onCompleteRef = useRef(onComplete);
   const completedRef = useRef(false);
 
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
+
+  useEffect(() => {
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setReducedMotion(preference.matches);
+    preference.addEventListener('change', updatePreference);
+    return () => preference.removeEventListener('change', updatePreference);
+  }, []);
 
   const completeOnce = useCallback(() => {
     if (completedRef.current) return;
@@ -162,10 +172,8 @@ export function Onboarding({ locale, onComplete }: OnboardingProps) {
   }, []);
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
     if (reducedMotion) {
-      const timer = window.setTimeout(completeOnce, 0);
+      const timer = window.setTimeout(completeOnce, DURATION_MS);
       return () => window.clearTimeout(timer);
     }
 
@@ -178,7 +186,7 @@ export function Onboarding({ locale, onComplete }: OnboardingProps) {
       const timer = window.setTimeout(() => setVideoFailed(true), REFERENCE_LOAD_TIMEOUT_MS);
       return () => window.clearTimeout(timer);
     }
-  }, [completeOnce, referenceStarted, showSourceLayers, videoFailed]);
+  }, [completeOnce, reducedMotion, referenceStarted, showSourceLayers, videoFailed]);
 
   const failToReference = useCallback(() => {
     setShowSourceLayers(false);
@@ -189,7 +197,9 @@ export function Onboarding({ locale, onComplete }: OnboardingProps) {
   return (
     <main className="onboarding-root" lang={locale} aria-label={locale === 'ru' ? 'Заставка портфолио' : 'Portfolio intro'}>
       <div className="onboarding-frame" ref={frameRef}>
-        {showSourceLayers ? (
+        {reducedMotion ? (
+          <div className="onboarding-static-mark" aria-hidden="true"><span>W</span><span>R</span><span>k</span></div>
+        ) : showSourceLayers ? (
           <SourceLayerAnimation onUnavailable={failToReference} />
         ) : videoFailed ? (
           <div className="onboarding-static-mark" aria-hidden="true"><span>W</span><span>R</span><span>k</span></div>

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import type { Locale } from '../../types';
 import { asset } from '../../lib/assets';
+import { useSwipe } from '../../lib/useSwipe';
+import { NoOrphans, prepareTypography } from '../../lib/typography';
 import { ResumeArtwork } from './ResumeArtwork';
 import './overlays.css';
 
@@ -70,7 +72,7 @@ function Tags({ items }: { items: readonly string[] }) {
 }
 
 function Resume({ locale, close, showStickyClose }: { locale: Locale; close: () => void; showStickyClose: boolean }) {
-  const copy = resumeText[locale];
+  const copy = locale === 'ru' ? prepareTypography(resumeText.ru) : resumeText.en;
   const pdfAvailable = __RESUME_PDF_AVAILABLE__;
   return <article className="overlay-sheet overlay-resume" aria-labelledby="overlay-resume-title">
     {showStickyClose && <button className="overlay-close overlay-close-resume-sticky" type="button" onClick={close} aria-label={locale === 'ru' ? 'Закрыть резюме' : 'Close resume'}>×</button>}
@@ -99,8 +101,14 @@ function Gallery({ set, locale }: { set: SlideSet; locale: Locale }) {
   const [index, setIndex] = useState(0);
   const file = set.files[index];
   const change = (next: number) => setIndex((next + set.files.length) % set.files.length);
+  const swipeHandlers = useSwipe({ onSwipeLeft: () => change(index + 1), onSwipeRight: () => change(index - 1) });
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) return;
+    if (event.key === 'ArrowLeft') { event.preventDefault(); change(index - 1); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); change(index + 1); }
+  };
   return <div className="overlay-gallery" aria-label={`${caseText[locale].gallery}: ${set.label}`}>
-    <div className="overlay-gallery-image" style={{ aspectRatio: set.ratio }}>
+    <div className="overlay-gallery-image" style={{ aspectRatio: set.ratio }} role="region" aria-roledescription={locale === 'ru' ? 'карусель' : 'carousel'} aria-label={`${set.label}: ${index + 1} / ${set.files.length}`} tabIndex={0} onKeyDown={onKeyDown} {...swipeHandlers}>
       <img src={asset(`figma/${file}`)} alt={`${set.label} ${index + 1} / ${set.files.length}`} />
       {set.files.length > 1 && <><button className="overlay-gallery-arrow overlay-gallery-prev" type="button" onClick={() => change(index - 1)} aria-label={locale === 'ru' ? 'Предыдущее изображение' : 'Previous image'} /><button className="overlay-gallery-arrow overlay-gallery-next" type="button" onClick={() => change(index + 1)} aria-label={locale === 'ru' ? 'Следующее изображение' : 'Next image'} /></>}
     </div>
@@ -109,7 +117,7 @@ function Gallery({ set, locale }: { set: SlideSet; locale: Locale }) {
 }
 
 function Case({ locale, close, showStickyClose }: { locale: Locale; close: () => void; showStickyClose: boolean }) {
-  const c = caseText[locale];
+  const c = locale === 'ru' ? prepareTypography(caseText.ru) : caseText.en;
   const galleries: SlideSet[] = [
     { id: 'overview', label: locale === 'ru' ? 'Обзор платформы' : 'Platform overview', files: ['06560.png', '66a7b.png'], ratio: '808 / 337.068' },
     { id: 'student', label: c.students, files: ['c1fb1.png', 'fb3e6.png'], ratio: '808 / 576.179' },
@@ -123,7 +131,7 @@ function Case({ locale, close, showStickyClose }: { locale: Locale; close: () =>
     <button className="overlay-close overlay-close-case" type="button" data-primary-case-close onClick={close} aria-label={c.close}>×</button>
     <div className="overlay-case-intro"><p className="overlay-overline">{c.date}</p><h1 id="overlay-case-title">{c.title}</h1><Tags items={c.tags} /></div>
     <div className="overlay-case-facts"><div className="overlay-fact"><strong>{c.project}</strong><p>{c.projectText}</p></div><div className="overlay-fact"><strong>{c.role}</strong><p>{c.lead}</p></div><div className="overlay-fact"><strong>{c.stack}</strong><Tags items={c.stackTags} /></div></div>
-    {section(c.contextTitle, <div className="overlay-case-copy">{c.contextItems.map((p, i) => <p key={p}>{i > 1 && <b>— </b>}{p}</p>)}</div>)}
+    {section(c.contextTitle, <div className="overlay-case-copy">{c.contextItems.map((p, i) => <p key={p}><NoOrphans>{i > 1 && <b>— </b>}{p}</NoOrphans></p>)}</div>)}
     {section(c.research, <ul className="overlay-case-list">{c.researchItems.map((p) => <li key={p}>{p}</li>)}</ul>)}
     {galleryById('overview')}
     {section(c.insights, <ul className="overlay-case-list">{c.insightItems.map((p) => <li key={p}>{p}</li>)}</ul>)}
