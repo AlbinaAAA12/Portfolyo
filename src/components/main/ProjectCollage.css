@@ -23,53 +23,87 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 400px;
-  height: 250px;
+  width: 440px;
+  height: 264px;
+  z-index: var(--project-collage-depth);
   pointer-events: none;
   transform: translate(var(--project-collage-x), var(--project-collage-y));
-}
-
-.project-collage-lift {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  transform: translateY(0);
-  transition: transform 400ms cubic-bezier(.65,0,.35,1);
-}
-
-.project-collage-position:has(.project-collage-hit:hover) .project-collage-lift,
-.project-collage-position:has(.project-collage-hit:focus-visible) .project-collage-lift {
-  transform: translateY(-16px);
 }
 
 .project-collage-hit {
   position: absolute;
   inset: 0;
   display: block;
-  width: 400px;
-  height: 250px;
+  width: 440px;
+  height: 264px;
   padding: 0;
   border: 0;
-  border-radius: 20px;
-  overflow: hidden;
-  background: #fff;
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
   cursor: pointer;
   transform-origin: 0 0;
-  transform: matrix(.65,.20,-.04,1.10,0,0);
+  transform: matrix(.94,.16,0,.84,0,0);
   touch-action: pan-y;
+  pointer-events: auto;
+  outline: none;
+}
+
+.project-collage-hit::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: -78px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 78px);
+  background: transparent;
+  pointer-events: none;
+}
+
+.project-collage-hit:hover::before,
+.project-collage-hit:focus-visible::before {
   pointer-events: auto;
 }
 
-.project-collage-hit > img,
-.project-collage-hit > video {
+.project-collage-visual {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(32, 33, 36, .18);
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: 0 2px 7px rgba(25, 28, 34, .045);
+  opacity: var(--project-collage-opacity, .72);
+  transform: translate(var(--project-collage-float-x, 0px), var(--project-collage-float-y, 0px));
+  transform-origin: 0 0;
+  transition:
+    transform 650ms cubic-bezier(.22,1,.36,1),
+    opacity 450ms ease;
+  pointer-events: none;
+}
+
+.project-collage-visual > img,
+.project-collage-visual > video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   pointer-events: none;
 }
 
+.project-collage-position.is-active .project-collage-hit::before,
+.project-collage-hit:focus-visible::before {
+  pointer-events: auto;
+}
+
+.project-collage-hit:focus-visible .project-collage-visual {
+  outline: 2px solid rgba(32, 33, 36, .48);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .project-collage-lift { transition-duration: 0ms; }
+  .project-collage-visual { transition-duration: 0ms; }
 }
