@@ -34,13 +34,18 @@ export default function CaseRail({ locale, active, onSelect }: { locale: Locale;
   return <aside
     className={`project-rail${expanded ? ' project-rail--expanded' : ''}`}
     aria-label={locale === 'ru' ? 'Навигация по кейсам' : 'Case navigation'}
-    onPointerEnter={open}
-    onPointerLeave={close}
+    onPointerEnter={(event) => { if (event.pointerType === 'mouse') open(); }}
+    onPointerLeave={(event) => { if (event.pointerType === 'mouse') close(); }}
     onFocusCapture={(event) => { if (!(event.target instanceof HTMLButtonElement && event.target.classList.contains('project-rail__compact'))) open(); }}
-    onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) close(); }}
+    onBlurCapture={(event) => {
+      const rail = event.currentTarget;
+      requestAnimationFrame(() => {
+        if (!rail.contains(document.activeElement)) close();
+      });
+    }}
     onKeyDown={(event) => { if (event.key === 'Escape') { const rail = event.currentTarget; close(); requestAnimationFrame(() => rail.querySelector<HTMLButtonElement>('.project-rail__compact')?.focus()); } }}
   >
-    <button className="project-rail__compact" type="button" aria-label={locale === 'ru' ? 'Открыть навигацию по кейсам' : 'Open case navigation'} aria-expanded={expanded} onClick={(event) => { setExpanded(true); setLatched(false); const rail = event.currentTarget.closest('.project-rail'); if (event.detail === 0) requestAnimationFrame(() => rail?.querySelector<HTMLButtonElement>('.project-rail__item')?.focus()); }}>
+    <button className="project-rail__compact" type="button" aria-label={locale === 'ru' ? 'Открыть навигацию по кейсам' : 'Open case navigation'} aria-expanded={expanded} onClick={(event) => { setExpanded(true); setLatched(false); const rail = event.currentTarget.closest('.project-rail'); requestAnimationFrame(() => rail?.querySelector<HTMLButtonElement>('.project-rail__item')?.focus()); }}>
       <img src={asset(`figma/${activeItem.compact}`)} alt="" />
     </button>
     <div className="project-rail__panel" aria-hidden={!expanded}>

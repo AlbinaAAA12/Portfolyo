@@ -20,11 +20,13 @@ export default function ProjectCollage({
   locale,
   caseName,
   onCase,
+  playbackEnabled,
 }: {
   projects: ProjectCollageItem[];
   locale: Locale;
   caseName: (id: CaseId) => string;
   onCase: (id: CaseId) => void;
+  playbackEnabled: boolean;
 }) {
   const root = useRef<HTMLElement>(null);
   const drag = useRef<{ pointerId: number; x: number; moved: number } | null>(null);
@@ -139,7 +141,7 @@ export default function ProjectCollage({
               }}
             >
               {project.media
-                ? <ProjectMedia media={project.media} poster={`figma/${project.file}`} alt="" />
+                ? <ProjectMedia media={project.media} poster={`figma/${project.file}`} alt="" playbackEnabled={playbackEnabled} />
                 : <img src={asset(`figma/${project.file}`)} alt="" />}
             </button>
           </div>

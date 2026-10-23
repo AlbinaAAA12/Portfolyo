@@ -64,7 +64,7 @@ function Header({ locale, setLocale, screen, onNavigate, onResume }: {
   </header>;
 }
 
-function About({ locale, onCase }: { locale: Locale; onCase: (id: CaseId) => void }) {
+function About({ locale, playbackEnabled, onCase }: { locale: Locale; playbackEnabled: boolean; onCase: (id: CaseId) => void }) {
   const [showProjects, setShowProjects] = useState(false);
   const t = copy[locale];
   const projects: Array<{ id: CaseId; file: string; media?: 'iidei-landing' | 'mozglab-landing' | 'veritas-landing' | 'outsourcing' }> = [
@@ -78,12 +78,12 @@ function About({ locale, onCase }: { locale: Locale; onCase: (id: CaseId) => voi
     <main className={`about-layout ${showProjects ? 'is-projects' : ''}`}>
       <section className="profile-card surface">
         <div className="profile-top">
-          <div className="profile-heading"><ProjectMedia media="portrait" poster="figma/f29c3.png" className="portrait" alt={t.profileName} /><div className="profile-identity"><h1>{t.profileName}</h1><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div></div></div>
+          <div className="profile-heading"><ProjectMedia media="portrait" poster="figma/f29c3.png" className="portrait" alt={t.profileName} playbackEnabled={playbackEnabled} /><div className="profile-identity"><h1>{t.profileName}</h1><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div></div></div>
           <p className="intro"><NoOrphans>{t.greeting}</NoOrphans></p>
         </div>
         <TestimonialSlider locale={locale} name={t.testimonialName} />
       </section>
-      <ProjectCollage projects={projects} locale={locale} caseName={(id) => t.cases[id].name} onCase={onCase} />
+      <ProjectCollage projects={projects} locale={locale} caseName={(id) => t.cases[id].name} onCase={onCase} playbackEnabled={playbackEnabled} />
       <button className="about-mobile-toggle" type="button" aria-pressed={showProjects} onClick={() => setShowProjects((value) => !value)}>{showProjects ? t.navAbout : locale === 'ru' ? 'Проекты' : 'Projects'}</button>
     </main>
     <footer className="brand-strip" aria-label={locale === 'ru' ? 'Клиенты и проекты' : 'Clients and projects'}>
@@ -226,7 +226,7 @@ export default function App() {
     <div className="app-shell" lang={locale}>
     <div className="app-content">
       <Header locale={locale} setLocale={setLocale} screen={screen} onNavigate={setScreen} onResume={() => setOverlay('resume')} />
-      {screen === 'about' ? <About locale={locale} onCase={setScreen} /> : <CasePage key={screen} id={screen} locale={locale} onMore={() => screen === 'mozglab' ? setOverlay('case') : undefined} />}
+      {screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} onCase={setScreen} /> : <CasePage key={screen} id={screen} locale={locale} onMore={() => screen === 'mozglab' ? setOverlay('case') : undefined} />}
     </div>
     {screen !== 'about' && <CaseRail locale={locale} active={screen} onSelect={setScreen} />}
     <PortfolioOverlays kind={overlay} locale={locale} onClose={() => setOverlay(null)} />
