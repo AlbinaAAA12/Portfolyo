@@ -23,19 +23,22 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 440px;
-  height: 264px;
+  width: 480px;
+  height: var(--project-collage-card-height);
   z-index: var(--project-collage-depth);
   pointer-events: none;
-  transform: translate(var(--project-collage-x), var(--project-collage-y));
+  transform: translate(
+    calc(var(--project-collage-base-x) + var(--project-collage-motion-x, 0px)),
+    calc(var(--project-collage-base-y) + var(--project-collage-motion-y, 0px))
+  );
 }
 
 .project-collage-hit {
   position: absolute;
   inset: 0;
   display: block;
-  width: 440px;
-  height: 264px;
+  width: 480px;
+  height: 100%;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -61,8 +64,8 @@
   pointer-events: none;
 }
 
-.project-collage-hit:hover::before,
-.project-collage-hit:focus-visible::before {
+.project-collage-position.is-active .project-collage-hit::before,
+.project-collage:not(.is-interacting) .project-collage-hit:focus-visible::before {
   pointer-events: auto;
 }
 
@@ -71,11 +74,11 @@
   inset: 0;
   display: block;
   overflow: hidden;
-  border: 1px solid rgba(32, 33, 36, .18);
+  border: 1px solid rgba(32, 33, 36, .10);
   border-radius: 2px;
-  background: transparent;
+  background: #fff;
   box-shadow: 0 2px 7px rgba(25, 28, 34, .045);
-  opacity: var(--project-collage-opacity, .72);
+  opacity: var(--project-collage-opacity, .88);
   transform: translate(var(--project-collage-float-x, 0px), var(--project-collage-float-y, 0px));
   transform-origin: 0 0;
   transition:
@@ -90,13 +93,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   pointer-events: none;
-}
-
-.project-collage-position.is-active .project-collage-hit::before,
-.project-collage-hit:focus-visible::before {
-  pointer-events: auto;
 }
 
 .project-collage-hit:focus-visible .project-collage-visual {
@@ -104,6 +102,11 @@
   outline-offset: 2px;
 }
 
+.project-collage.is-interacting .project-collage-visual {
+  transition-duration: 180ms, 160ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .project-collage-visual { transition-duration: 0ms; }
+  .project-collage-visual,
+  .project-collage.is-interacting .project-collage-visual { transition-duration: 0ms; }
 }
