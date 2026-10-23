@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import type { CaseId, Locale } from '../../types';
 import { asset } from '../../lib/assets';
+import './CaseRail.css';
+
+type RailState = 'default' | 'hover' | 'pressed';
 
 const items: Array<{ id: CaseId; label: (locale: Locale) => string; compact: string; normal: string; hover: string; pressed: string }> = [
   { id: 'spirit', label: () => 'Spirit LBaaS', compact: 'aea4f.svg', normal: '1f14c.svg', hover: 'a36fb.svg', pressed: '2e13d.svg' },
@@ -9,9 +12,9 @@ const items: Array<{ id: CaseId; label: (locale: Locale) => string; compact: str
   { id: 'veritas', label: (locale) => locale === 'ru' ? 'Веритас' : 'Veritas', compact: '5d561.svg', normal: '1b4c5.svg', hover: '1b4c5.svg', pressed: '56b99.svg' },
 ];
 
-function RailLogo({ item, state = 'default' }: { item: typeof items[number]; state?: 'default' | 'hover' | 'pressed' }) {
+function RailLogo({ item, state = 'default' }: { item: typeof items[number]; state?: RailState }) {
   const source = state === 'pressed' ? item.pressed : state === 'hover' ? item.hover : item.normal;
-  return <span className={`rail-logo rail-logo--${item.id}`}><img src={asset(`figma/${source}`)} alt="" /></span>;
+  return <span className={`project-rail__logo project-rail__logo--${item.id} project-rail__logo--${state}`}><img src={asset(`figma/${source}`)} alt="" /></span>;
 }
 
 export default function CaseRail({ locale, active, onSelect }: { locale: Locale; active: CaseId; onSelect: (id: CaseId) => void }) {
@@ -19,16 +22,32 @@ export default function CaseRail({ locale, active, onSelect }: { locale: Locale;
   const [latched, setLatched] = useState(false);
   const open = () => { if (!latched) setExpanded(true); };
   const close = () => { setExpanded(false); setLatched(false); };
-  const navigate = (id: CaseId) => { onSelect(id); setExpanded(false); setLatched(true); };
-  const activeItem = items.find((item) => item.id === active) ?? items[0];
+  const navigate = (id: CaseId, button: HTMLButtonElement) => {
+    onSelect(id);
+    setExpanded(false);
+    setLatched(true);
+    requestAnimationFrame(() => button.closest('.project-rail')?.querySelector<HTMLButtonElement>('.project-rail__compact')?.focus());
+  };
+  const isCurrent = (id: CaseId) => id === active || (id === 'future' && active === 'outsourcing');
+  const activeItem = items.find((item) => item.id === (active === 'outsourcing' ? 'future' : active)) ?? items[0];
 
-  return <aside className={`case-rail ${expanded ? 'is-expanded' : ''}`} aria-label={locale === 'ru' ? 'Навигация по кейсам' : 'Case navigation'} onPointerEnter={open} onPointerLeave={close} onFocusCapture={open} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) close(); }}>
-    <button className="rail-collapsed" type="button" aria-label={locale === 'ru' ? 'Открыть навигацию по кейсам' : 'Open case navigation'} aria-expanded={expanded} onClick={() => { if (expanded) { setExpanded(false); setLatched(true); } else { setExpanded(true); setLatched(false); } }}><img src={asset(`figma/${activeItem.compact}`)} alt="" /></button>
-    <div className="rail-track" aria-hidden={!expanded}>
-      {items.map((item) => <button key={item.id} className={`rail-item ${item.id === active || (item.id === 'future' && active === 'outsourcing') ? 'is-active' : ''}`} type="button" title={item.label(locale)} aria-label={item.label(locale)} aria-current={item.id === active || (item.id === 'future' && active === 'outsourcing') ? 'page' : undefined} tabIndex={expanded ? 0 : -1} onClick={() => navigate(item.id)}>
+  return <aside
+    className={`project-rail${expanded ? ' project-rail--expanded' : ''}`}
+    aria-label={locale === 'ru' ? 'Навигация по кейсам' : 'Case navigation'}
+    onPointerEnter={open}
+    onPointerLeave={close}
+    onFocusCapture={(event) => { if (!(event.target instanceof HTMLButtonElement && event.target.classList.contains('project-rail__compact'))) open(); }}
+    onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) close(); }}
+    onKeyDown={(event) => { if (event.key === 'Escape') { const rail = event.currentTarget; close(); requestAnimationFrame(() => rail.querySelector<HTMLButtonElement>('.project-rail__compact')?.focus()); } }}
+  >
+    <button className="project-rail__compact" type="button" aria-label={locale === 'ru' ? 'Открыть навигацию по кейсам' : 'Open case navigation'} aria-expanded={expanded} onClick={(event) => { setExpanded(true); setLatched(false); const rail = event.currentTarget.closest('.project-rail'); if (event.detail === 0) requestAnimationFrame(() => rail?.querySelector<HTMLButtonElement>('.project-rail__item')?.focus()); }}>
+      <img src={asset(`figma/${activeItem.compact}`)} alt="" />
+    </button>
+    <div className="project-rail__panel" aria-hidden={!expanded}>
+      {items.map((item) => <button key={item.id} className={`project-rail__item${isCurrent(item.id) ? ' is-current' : ''}`} type="button" title={item.label(locale)} aria-label={item.label(locale)} aria-current={isCurrent(item.id) ? 'page' : undefined} tabIndex={expanded ? 0 : -1} onClick={(event) => navigate(item.id, event.currentTarget)}>
         <RailLogo item={item} />
-        <span className="rail-logo-state rail-logo-state--hover"><RailLogo item={item} state="hover" /></span>
-        <span className="rail-logo-state rail-logo-state--pressed"><RailLogo item={item} state="pressed" /></span>
+        <RailLogo item={item} state="hover" />
+        <RailLogo item={item} state="pressed" />
       </button>)}
     </div>
   </aside>;

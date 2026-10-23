@@ -61,9 +61,13 @@
   width: 113.042px;
   height: 63.639px;
   overflow: hidden;
-  border-radius: 13px;
   transform-origin: center;
   will-change: transform, opacity;
+}
+
+.onboarding-card-canvas-host {
+  width: 100%;
+  height: 100%;
 }
 
 .onboarding-card-canvas {

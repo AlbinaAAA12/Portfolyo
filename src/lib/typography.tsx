@@ -60,7 +60,7 @@ export function NoOrphans({ children }: { children: ReactNode }) {
       return leaf as unknown as ReactNode;
     }
     if (typeof node === 'number' || node == null || typeof node === 'boolean') return node;
-    if (Array.isArray(node)) return node.map(collect);
+    if (Array.isArray(node)) return Children.toArray(node).map(collect);
     if (!isValidElement(node)) return node;
 
     const isTransparentInline = node.type === Fragment

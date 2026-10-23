@@ -9,6 +9,7 @@ import PortfolioOverlays from './components/overlays/PortfolioOverlays';
 import Onboarding from './components/onboarding/Onboarding';
 import TestimonialSlider from './components/main/TestimonialSlider';
 import CaseRail from './components/main/CaseRail';
+import ProjectCollage from './components/main/ProjectCollage';
 
 type Screen = 'about' | CaseId;
 type OverlayKind = 'resume' | 'case' | null;
@@ -82,18 +83,7 @@ function About({ locale, onCase }: { locale: Locale; onCase: (id: CaseId) => voi
         </div>
         <TestimonialSlider locale={locale} name={t.testimonialName} />
       </section>
-      <section className="collage-panel" aria-label={locale === 'ru' ? 'Проекты' : 'Selected projects'}>
-        <div className="poster-controls">{Array.from({ length: 15 }, (_, index) => {
-          const projectIndex = ((index % projects.length) + projects.length) % projects.length;
-          const project = projects[projectIndex];
-          const anchorIndex = index;
-          const style = { '--poster-x': `${-180 + 68 * anchorIndex}px`, '--poster-y': `${366 - 22 * anchorIndex}px` } as CSSProperties & Record<`--${string}`, string | number>;
-          const label = t.cases[project.id].name;
-          return <button key={`${index}-${project.id}`} className="poster-hit" style={style} type="button" onClick={() => onCase(project.id)} aria-label={`${locale === 'ru' ? 'Открыть кейс' : 'Open case'}: ${label}`}>
-            {project.media ? <ProjectMedia media={project.media} poster={`figma/${project.file}`} alt="" /> : <img src={asset(`figma/${project.file}`)} alt="" />}
-          </button>;
-        })}</div>
-      </section>
+      <ProjectCollage projects={projects} locale={locale} caseName={(id) => t.cases[id].name} onCase={onCase} />
       <button className="about-mobile-toggle" type="button" aria-pressed={showProjects} onClick={() => setShowProjects((value) => !value)}>{showProjects ? t.navAbout : locale === 'ru' ? 'Проекты' : 'Projects'}</button>
     </main>
     <footer className="brand-strip" aria-label={locale === 'ru' ? 'Клиенты и проекты' : 'Clients and projects'}>
@@ -108,12 +98,29 @@ function About({ locale, onCase }: { locale: Locale; onCase: (id: CaseId) => voi
 
 function ProjectGallery({ id, locale }: { id: CaseId; locale: Locale }) {
   const t = copy[locale];
-  const posters: Record<CaseId, Array<{ file: string; media?: 'mozglab-landing' | 'mozglab-dashboard' | 'iidei-landing' | 'iidei-promo' | 'veritas-landing' | 'veritas-login' | 'outsourcing'; height: string }>> = {
-    spirit: [{ file: 'cdbc0.png', height: '100%' }],
-    future: [{ file: 'card-iidei-landing.png', media: 'iidei-landing', height: '298px' }, { file: 'card-iidei-promo.png', media: 'iidei-promo', height: '298px' }],
-    outsourcing: [{ file: 'card-outsourcing.png', media: 'outsourcing', height: '387.263px' }],
-    mozglab: [{ file: 'card-mozglab-landing.png', media: 'mozglab-landing', height: '330.791px' }, { file: 'card-mozglab-dashboard.png', media: 'mozglab-dashboard', height: '273.209px' }],
-    veritas: [{ file: 'card-veritas-landing.png', media: 'veritas-landing', height: '304.679px' }, { file: 'card-veritas-login.png', media: 'veritas-login', height: '283.24px' }],
+  const posters: Record<CaseId, Array<{
+    file: string;
+    media?: 'mozglab-landing' | 'mozglab-dashboard' | 'iidei-landing' | 'iidei-promo' | 'veritas-landing' | 'veritas-login' | 'outsourcing';
+    height: string;
+    fit: 'fill' | 'crop';
+    stroke: 'rgba(32,33,36,.12)' | 'rgba(0,16,36,.12)';
+    background?: string;
+    crop?: { sy: number; ty: number };
+  }>> = {
+    spirit: [{ file: 'cdbc0.png', height: '100%', fit: 'fill', stroke: 'rgba(32,33,36,.12)' }],
+    future: [
+      { file: 'card-iidei-landing.png', media: 'iidei-landing', height: '298px', fit: 'fill', stroke: 'rgba(32,33,36,.12)' },
+      { file: 'card-iidei-promo.png', media: 'iidei-promo', height: '298px', fit: 'crop', stroke: 'rgba(32,33,36,.12)', crop: { sy: 1.0000003576278687, ty: -0.00000020793295618659613 } },
+    ],
+    outsourcing: [{ file: 'card-outsourcing.png', media: 'outsourcing', height: '387.263px', fit: 'crop', stroke: 'rgba(32,33,36,.12)', crop: { sy: 1.0000003576278687, ty: -0.00000020793295618659613 } }],
+    mozglab: [
+      { file: 'card-mozglab-landing.png', media: 'mozglab-landing', height: '330.791px', fit: 'crop', stroke: 'rgba(32,33,36,.12)', crop: { sy: 0.9515335559844971, ty: 0.03059546835720539 } },
+      { file: 'card-mozglab-dashboard.png', media: 'mozglab-dashboard', height: '273.209px', fit: 'fill', stroke: 'rgba(0,16,36,.12)', background: '#0d0d11' },
+    ],
+    veritas: [
+      { file: 'card-veritas-landing.png', media: 'veritas-landing', height: '304.679px', fit: 'crop', stroke: 'rgba(32,33,36,.12)', background: '#f1f1f1', crop: { sy: 1.0694719552993774, ty: -0.034735970199108124 } },
+      { file: 'card-veritas-login.png', media: 'veritas-login', height: '283.24px', fit: 'crop', stroke: 'rgba(0,16,36,.12)', background: '#f1f1f1', crop: { sy: 1.000000238418579, ty: 0 } },
+    ],
   };
   const files = posters[id];
   if (id === 'spirit') return <section className="gallery-panel gallery-panel--spirit" aria-label={locale === 'ru' ? `Макет: ${t.cases[id].name}` : `Mockup: ${t.cases[id].name}`}>
@@ -123,8 +130,15 @@ function ProjectGallery({ id, locale }: { id: CaseId; locale: Locale }) {
     </div>
   </section>;
   return <section className={`gallery-panel gallery-panel--${id}`} aria-label={locale === 'ru' ? `Макеты: ${t.cases[id].name}` : `Mockups: ${t.cases[id].name}`}>
-    {files.map(({ file, height }, index) => {
-      return <div className={`poster-slot poster-slot--${id}`} key={file} style={{ '--slot-height': height } as CSSProperties & Record<`--${string}`, string | number>}><ProjectMedia media={posters[id][index].media!} poster={`figma/${file}`} alt={`${t.cases[id].name} — ${locale === 'ru' ? 'макет' : 'mockup'} ${index + 1}`} /></div>;
+    {files.map(({ file, height, fit, stroke, background, crop }, index) => {
+      const slotStyle = {
+        '--slot-height': height,
+        '--media-stroke': stroke,
+        '--media-background': background ?? '#fff',
+        '--video-height': crop ? `${100 / crop.sy}%` : '100%',
+        '--video-top': crop ? `${-100 * crop.ty / crop.sy}%` : '0%',
+      } as CSSProperties & Record<`--${string}`, string | number>;
+      return <div className={`poster-slot poster-slot--${id}`} data-fit={fit} key={file} style={slotStyle}><ProjectMedia media={posters[id][index].media!} poster={`figma/${file}`} alt={`${t.cases[id].name} — ${locale === 'ru' ? 'макет' : 'mockup'} ${index + 1}`} /></div>;
     })}
   </section>;
 }
