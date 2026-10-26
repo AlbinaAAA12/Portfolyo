@@ -9,15 +9,15 @@ type ProjectCollageItem = { id: CaseId; file: string; media?: VideoKey };
 
 const CARD_WIDTH = 480;
 const CARD_STEP = 112;
-const POSITION_PERIOD = 1680;
+const SLOT_COUNT = 16;
+const POSITION_PERIOD = SLOT_COUNT * CARD_STEP;
 const SLOT_MIN_X = -720;
-const SLOT_INDICES = Array.from({ length: 15 }, (_, index) => index - 4);
+const SLOT_INDICES = Array.from({ length: SLOT_COUNT }, (_, index) => index - 4);
 const CARD_ASPECT_RATIOS: Record<CaseId, number> = {
   future: 209 / 118,
   spirit: 3008 / 2066,
   mozglab: 1255 / 802,
   veritas: 792 / 415,
-  outsourcing: 1128 / 803,
 };
 
 function wrapMotion(value: number) {

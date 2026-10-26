@@ -3,7 +3,6 @@ import type { CSSProperties, FocusEvent, MouseEvent } from 'react';
 import type { CaseId, Locale } from './types';
 import { asset } from './lib/assets';
 import { ProjectMedia } from './components/media/ProjectMedia';
-import { useSwipe } from './lib/useSwipe';
 import { NoOrphans, prepareTypography } from './lib/typography';
 import PortfolioOverlays from './components/overlays/PortfolioOverlays';
 import Onboarding from './components/onboarding/Onboarding';
@@ -14,7 +13,7 @@ import ProjectCollage from './components/main/ProjectCollage';
 type Screen = 'about' | CaseId;
 type OverlayKind = 'resume' | 'case' | null;
 
-const caseOrder: CaseId[] = ['mozglab', 'spirit', 'future', 'outsourcing', 'veritas'];
+const caseOrder: CaseId[] = ['mozglab', 'spirit', 'future', 'veritas'];
 
 const copy = prepareTypography({
   ru: {
@@ -25,10 +24,9 @@ const copy = prepareTypography({
     loading: 'Макеты проекта', togglePreview: 'Макеты', toggleDescription: 'Описание',
     cases: {
     spirit: { name: 'Spirit LBaaS', meta: 'Т-БАНК', description: 'Улучшение DevEx внутренней PaaS-платформы Т-Банка, проект NDA', tags: ['FinTech', 'PaaS', 'DevEx', 'B2B'] },
-    future: { name: 'ИИдеи Будущего', meta: 'LADDER ENJOYERS • 2025', description: 'Лендинг для привлечения школьников к образовательным интенсивам и курсам крупнейшего IT-сообщества СФУ — Ladder Enjoyers', secondParagraph: 'Для участия в программе зарегистрировались 100+ школьников из 5 школ; я отвечала за продуктовую проработку и визуальный дизайн проекта', tags: ['Лендинг', 'EdTech', 'Веб'] },
-    outsourcing: { name: 'Аутсорс компания', meta: 'LADDER ENJOYERS • 2024', description: 'Здесь описание проекта: практикующий веб дизайнер с опытом создания интерфейсов и проведения UX-исследований', secondParagraph: 'И принесённые результаты', tags: ['Web', 'Design System', 'B2C'] },
-      mozglab: { name: 'Мозг.лаб', meta: 'МОЗГ.ЛАБ • 2026', description: 'Онлайн-платформа для обучения и создания ИИ-проектов с возможностью публикации курсов, отслеживания прогресса и аналитики', secondParagraph: 'Я создала понятный путь учебной среды для пользователя с анализом прогресса, а также спроектировала платформу, продвигающую курсы преподавателей', tags: ['B2C', 'EdTech'] },
-    veritas: { name: 'Веритас', meta: 'ВЕРИТАС • 2026', description: 'Здесь описание проекта: практикующий веб дизайнер с опытом создания интерфейсов и проведения UX-исследований', secondParagraph: 'И принесённые результаты', tags: ['UI дизайн', 'UX дизайн', 'Web'] },
+    future: { name: 'ИИдеи Будущего', meta: 'LADDER ENJOYERS • 2025', description: 'Образовательная платформа IT-сообщества. Исследовала пользовательские сценарии конкурентов и спроектировала конструктор контестов для обучения школьников программированию', secondParagraph: 'Подготовила UI-kit для frontend-разработчика и варианты интерфейса для тестирования. Среднее время создания контеста сократилось на 11,2%', tags: ['Product design', 'UX research', 'EdTech', 'B2C'] },
+      mozglab: { name: 'Мозг.лаб', meta: 'МОЗГ.ЛАБ • 2026', description: 'Платформа для обучения школьников работе с ИИ. Спроектировала онбординг, конструктор курсов и кабинеты ученика, учителя и родителя для рабочего MVP', secondParagraph: 'С командой привлекла 1,8\u00a0млн\u00a0₽ на развитие продукта', tags: ['Product design', 'EdTech', 'B2C / B2B', 'Веб-платформа'] },
+    veritas: { name: 'Веритас', meta: 'ВЕРИТАС • 2026', description: 'Сервис предварительной оценки самочувствия. Я спроектировала веб-приложение с анкетой, загрузкой анализов, проверкой распознанных данных и историей результатов', secondParagraph: 'Использовала ИИ для прототипирования, подготовила полный дизайн приложения и лендинга', tags: ['Product design', 'HealthTech', 'AI prototyping'] },
     },
   },
   en: {
@@ -39,10 +37,9 @@ const copy = prepareTypography({
     loading: 'Project mockups', togglePreview: 'Previews', toggleDescription: 'Details',
     cases: {
     spirit: { name: 'Spirit LBaaS', meta: 'T-BANK', description: 'Improving developer experience for T-Bank’s internal PaaS platform. NDA project', tags: ['FinTech', 'PaaS', 'DevEx', 'B2B'] },
-    future: { name: 'Ideas for the Future', meta: 'LADDER ENJOYERS • 2025', description: 'A landing page to attract school students to educational intensives and courses from SFU’s largest IT community, Ladder Enjoyers', secondParagraph: '100+ school students from 5 schools registered for the program; I was responsible for the project’s product design and visual design', tags: ['Landing page', 'EdTech', 'Web'] },
-    outsourcing: { name: 'Outsourcing company', meta: 'LADDER ENJOYERS • 2024', description: 'Project description: a practicing web designer with experience creating interfaces and conducting UX research', secondParagraph: 'And the results delivered', tags: ['Web', 'Design System', 'B2C'] },
-      mozglab: { name: 'Mozg.lab', meta: 'MOZG.LAB • 2026', description: 'An online platform for learning and creating AI projects, with course publishing, progress tracking, and analytics', secondParagraph: 'I created a clear learning journey with progress analysis and designed a platform to promote instructors’ courses', tags: ['B2C', 'EdTech'] },
-    veritas: { name: 'Veritas', meta: 'VERITAS • 2026', description: 'Project description: a practicing web designer with experience creating interfaces and conducting UX research', secondParagraph: 'And the results delivered', tags: ['UI design', 'UX design', 'Web'] },
+    future: { name: 'Ideas for the Future', meta: 'LADDER ENJOYERS • 2025', description: 'An educational platform for an IT community. I researched competitor user flows and designed a contest builder to teach school students programming', secondParagraph: 'I prepared a UI kit for the frontend developer and interface variants for testing. The average time to create a contest decreased by 11.2%', tags: ['Product design', 'UX research', 'EdTech', 'B2C'] },
+      mozglab: { name: 'Mozg.lab', meta: 'MOZG.LAB • 2026', description: 'A platform teaching school students to work with AI. I designed onboarding, a course builder, and student, teacher, and parent dashboards for a working MVP', secondParagraph: 'Together with the team, I raised ₽1.8 million to develop the product', tags: ['Product design', 'EdTech', 'B2C / B2B', 'Web platform'] },
+    veritas: { name: 'Veritas', meta: 'VERITAS • 2026', description: 'A service for a preliminary wellbeing assessment. I designed a web app with a questionnaire, lab result uploads, verification of extracted data, and a history of results', secondParagraph: 'I used AI for prototyping and prepared the complete design for the app and landing page', tags: ['Product design', 'HealthTech', 'AI prototyping'] },
     },
   },
 } as const);
@@ -67,12 +64,11 @@ function Header({ locale, setLocale, screen, onNavigate, onResume }: {
 function About({ locale, playbackEnabled, onCase }: { locale: Locale; playbackEnabled: boolean; onCase: (id: CaseId) => void }) {
   const [showProjects, setShowProjects] = useState(false);
   const t = copy[locale];
-  const projects: Array<{ id: CaseId; file: string; media?: 'iidei-landing' | 'mozglab-landing' | 'veritas-landing' | 'outsourcing' }> = [
+  const projects: Array<{ id: CaseId; file: string; media?: 'iidei-landing' | 'mozglab-landing' | 'veritas-landing' }> = [
     { id: 'future', file: 'card-iidei-landing.png', media: 'iidei-landing' },
     { id: 'spirit', file: '28781.png' },
     { id: 'mozglab', file: 'card-mozglab-landing.png', media: 'mozglab-landing' },
     { id: 'veritas', file: 'card-veritas-landing.png', media: 'veritas-landing' },
-    { id: 'outsourcing', file: 'card-outsourcing.png', media: 'outsourcing' },
   ];
   return <>
     <main className={`about-layout ${showProjects ? 'is-projects' : ''}`}>
@@ -100,7 +96,7 @@ function ProjectGallery({ id, locale }: { id: CaseId; locale: Locale }) {
   const t = copy[locale];
   const posters: Record<CaseId, Array<{
     file: string;
-    media?: 'mozglab-landing' | 'mozglab-dashboard' | 'iidei-landing' | 'iidei-promo' | 'veritas-landing' | 'veritas-login' | 'outsourcing';
+    media?: 'mozglab-landing' | 'mozglab-dashboard' | 'iidei-landing' | 'iidei-promo' | 'veritas-landing' | 'veritas-login';
     height: string;
     fit: 'fill' | 'crop';
     stroke: 'rgba(32,33,36,.12)' | 'rgba(0,16,36,.12)';
@@ -112,7 +108,6 @@ function ProjectGallery({ id, locale }: { id: CaseId; locale: Locale }) {
       { file: 'card-iidei-landing.png', media: 'iidei-landing', height: '298px', fit: 'fill', stroke: 'rgba(32,33,36,.12)' },
       { file: 'card-iidei-promo.png', media: 'iidei-promo', height: '298px', fit: 'crop', stroke: 'rgba(32,33,36,.12)', crop: { sy: 1.0000003576278687, ty: -0.00000020793295618659613 } },
     ],
-    outsourcing: [{ file: 'card-outsourcing.png', media: 'outsourcing', height: '387.263px', fit: 'crop', stroke: 'rgba(32,33,36,.12)', crop: { sy: 1.0000003576278687, ty: -0.00000020793295618659613 } }],
     mozglab: [
       { file: 'card-mozglab-landing.png', media: 'mozglab-landing', height: '330.791px', fit: 'crop', stroke: 'rgba(32,33,36,.12)', crop: { sy: 0.9515335559844971, ty: 0.03059546835720539 } },
       { file: 'card-mozglab-dashboard.png', media: 'mozglab-dashboard', height: '273.209px', fit: 'fill', stroke: 'rgba(0,16,36,.12)', background: '#0d0d11' },
@@ -149,11 +144,7 @@ function CasePage({ id, locale, onMore }: { id: CaseId; locale: Locale; onMore: 
   const [showPreview, setShowPreview] = useState(false);
   const hasRequestAccess = id === 'spirit';
   const showSoon = id !== 'mozglab' && id !== 'spirit';
-  const labelSoon = id === 'future' || id === 'outsourcing';
-  const swipe = useSwipe({
-    onSwipeLeft: id === 'future' ? () => window.dispatchEvent(new CustomEvent('portfolio-case', { detail: 'outsourcing' })) : undefined,
-    onSwipeRight: id === 'outsourcing' ? () => window.dispatchEvent(new CustomEvent('portfolio-case', { detail: 'future' })) : undefined,
-  });
+  const labelSoon = id === 'future';
   const showTooltip = (event: MouseEvent<HTMLButtonElement> | FocusEvent<HTMLButtonElement>) => {
     event.currentTarget.dataset.hint = 'true';
     const button = event.currentTarget;
@@ -169,14 +160,14 @@ function CasePage({ id, locale, onMore }: { id: CaseId; locale: Locale; onMore: 
     event.currentTarget.querySelector<HTMLElement>('.tooltip')?.style.removeProperty('--tooltip-max-width');
   };
   return <>
-    <main className={`case-layout ${showPreview ? 'is-preview' : ''}`} {...swipe}>
+    <main className={`case-layout ${showPreview ? 'is-preview' : ''}`}>
       <section className="case-info surface">
         <div className="case-copy">
           <div className="case-heading-row"><div><p className="case-meta">{item.meta}</p><h1>{item.name}</h1></div>
             {hasRequestAccess ? <div className="access-status"><span className="lock-icon"><img src={asset('figma/1f4f8.svg')} alt="" /></span><span>{t.onRequest}</span></div> : <button className={`more-button ${id === 'mozglab' ? 'more-button--mozglab' : ''}`} type="button" data-hint="false" onClick={onMore} onMouseEnter={showSoon ? showTooltip : undefined} onMouseLeave={showSoon ? hideTooltip : undefined} onFocus={showSoon ? showTooltip : undefined} onBlur={showSoon ? hideTooltip : undefined} title={showSoon ? t.soon : t.more}>{labelSoon ? t.moreSoon : t.more}<img src={asset('figma/371d6.svg')} alt="" /><span className="tooltip" role="tooltip">{t.soon}</span></button>}
           </div>
           <div className={`case-description case-description--${id}`}>
-            {id === 'spirit' ? <p><NoOrphans>{item.description}</NoOrphans></p> : id === 'veritas' ? <>{[0, 1].map((index) => <p className="muted-description" key={index}><NoOrphans>{locale === 'ru' ? <>Здесь описание проекта: <span>практикующий</span> веб дизайнер <span>с опытом создания</span> интерфейсов <span>и</span> проведения UX-исследований<br /><span>И принесённые</span> результаты</> : <>Project description: <span>a practicing</span> web designer <span>with experience creating</span> interfaces <span>and</span> conducting UX research<br /><span>And the results delivered</span></>}</NoOrphans></p>)}</> : <><p><NoOrphans>{item.description}</NoOrphans></p>{'secondParagraph' in item && <p><NoOrphans>{item.secondParagraph}</NoOrphans></p>}</>}
+            <p><NoOrphans>{item.description}</NoOrphans></p>{'secondParagraph' in item && <p><NoOrphans>{item.secondParagraph}</NoOrphans></p>}
           </div>
         </div>
         <div className="tag-list">{item.tags.map((tag) => <span className="tag" key={tag}><span>{tag}</span></span>)}</div>
@@ -187,7 +178,6 @@ function CasePage({ id, locale, onMore }: { id: CaseId; locale: Locale; onMore: 
         <button className={showPreview ? 'selected' : ''} type="button" aria-pressed={showPreview} onClick={() => setShowPreview(true)}>{t.togglePreview}</button>
       </div>
     </main>
-    {(id === 'future' || id === 'outsourcing') && <div className="case-switcher" aria-label={locale === 'ru' ? 'Переключить кейс' : 'Switch case'}><button className={id === 'future' ? 'selected' : ''} type="button" aria-label={locale === 'ru' ? 'ИИдеи Будущего' : 'Ideas for the Future'} onClick={() => window.dispatchEvent(new CustomEvent('portfolio-case', { detail: 'future' }))} /><button className={id === 'outsourcing' ? 'selected' : ''} type="button" aria-label={locale === 'ru' ? 'Аутсорс компания' : 'Outsourcing company'} onClick={() => window.dispatchEvent(new CustomEvent('portfolio-case', { detail: 'outsourcing' }))} /></div>}
   </>;
 }
 
@@ -206,11 +196,6 @@ export default function App() {
       ? 'Портфолио Альбины Тимофеевой — продуктовый и веб-дизайнер.'
       : 'Portfolio of Albina Timofeeva, product and web designer.';
   }, [locale]);
-  useEffect(() => {
-    const changeCase = (event: Event) => setScreen((event as CustomEvent<CaseId>).detail);
-    window.addEventListener('portfolio-case', changeCase);
-    return () => window.removeEventListener('portfolio-case', changeCase);
-  }, []);
   useEffect(() => {
     const node = viewportRef.current;
     if (!node) return;

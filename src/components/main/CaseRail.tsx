@@ -28,8 +28,8 @@ export default function CaseRail({ locale, active, onSelect }: { locale: Locale;
     setLatched(true);
     requestAnimationFrame(() => button.closest('.project-rail')?.querySelector<HTMLButtonElement>('.project-rail__compact')?.focus());
   };
-  const isCurrent = (id: CaseId) => id === active || (id === 'future' && active === 'outsourcing');
-  const activeItem = items.find((item) => item.id === (active === 'outsourcing' ? 'future' : active)) ?? items[0];
+  const isCurrent = (id: CaseId) => id === active;
+  const activeItem = items.find((item) => item.id === active) ?? items[0];
 
   return <aside
     className={`project-rail${expanded ? ' project-rail--expanded' : ''}`}
