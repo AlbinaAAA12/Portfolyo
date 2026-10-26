@@ -6,9 +6,9 @@ import './CaseRail.css';
 type RailState = 'default' | 'hover' | 'pressed';
 
 const items: Array<{ id: CaseId; label: (locale: Locale) => string; compact: string; normal: string; hover: string; pressed: string }> = [
-  { id: 'spirit', label: () => 'Spirit LBaaS', compact: 'aea4f.svg', normal: '1f14c.svg', hover: '2e13d.svg', pressed: '2e13d.svg' },
-  { id: 'future', label: (locale) => locale === 'ru' ? 'ИИдеи Будущего' : 'Ideas for the Future', compact: '0e3ca.svg', normal: '408ab.svg', hover: 'fcb0d.svg', pressed: 'fcb0d.svg' },
-  { id: 'mozglab', label: () => 'Mozg.lab', compact: '417e0.svg', normal: '5c3b8.svg', hover: '97059.svg', pressed: 'af5df.svg' },
+  { id: 'mozglab', label: () => 'Mozg.lab', compact: 'aea4f.svg', normal: '5c3b8.svg', hover: '97059.svg', pressed: 'af5df.svg' },
+  { id: 'spirit', label: () => 'Spirit LBaaS', compact: '0e3ca.svg', normal: '1f14c.svg', hover: '2e13d.svg', pressed: '2e13d.svg' },
+  { id: 'future', label: (locale) => locale === 'ru' ? 'ИИдеи Будущего' : 'Ideas for the Future', compact: '417e0.svg', normal: '408ab.svg', hover: 'fcb0d.svg', pressed: 'fcb0d.svg' },
   { id: 'veritas', label: (locale) => locale === 'ru' ? 'Веритас' : 'Veritas', compact: '5d561.svg', normal: '1b4c5.svg', hover: '56b99.svg', pressed: '56b99.svg' },
 ];
 

@@ -14,18 +14,18 @@ import ProjectCollage from './components/main/ProjectCollage';
 type Screen = 'about' | CaseId;
 type OverlayKind = 'resume' | 'case' | null;
 
-const caseOrder: CaseId[] = ['spirit', 'future', 'outsourcing', 'mozglab', 'veritas'];
+const caseOrder: CaseId[] = ['mozglab', 'spirit', 'future', 'outsourcing', 'veritas'];
 
 const copy = prepareTypography({
   ru: {
     navAbout: 'Инфа', navCases: 'Кейсы', navResume: 'Резюме', aboutAria: 'Обо мне', casesAria: 'Открыть кейсы', resumeAria: 'Открыть резюме',
-    greeting: 'Привет! Я продуктовый и веб дизайнер с 2+ годами опыта создания интерфейсов и проведения UX-исследований',
+    greeting: 'Привет! Я продуктовый и веб дизайнер с 2+ годами опыта проектирования сложных веб-сценариев для EdTech и FinTech',
     quote: '“Lorem ipsum dolor sit amet consectetur. Pellentesque pretium ut enim at elementum. Eget tortor tempor elementum amet nisi amet vel gravida sed. Ipsum maecenas nec nunc duis morbi non. Lectus sit dolor semper bibendum diam libero.”',
     designer: 'Дизайнер', contactTelegram: 'тг', contactEmail: 'почта', profileName: 'Альбина Тимофеева', testimonialName: 'Лилия Абдуллина', soon: 'Совсем скоро, оформляю', more: 'Больше', moreSoon: 'Больше скоро', onRequest: 'По запросу',
     loading: 'Макеты проекта', togglePreview: 'Макеты', toggleDescription: 'Описание',
     cases: {
     spirit: { name: 'Spirit LBaaS', meta: 'Т-БАНК', description: 'Улучшение DevEx внутренней PaaS-платформы Т-Банка, проект NDA', tags: ['FinTech', 'PaaS', 'DevEx', 'B2B'] },
-    future: { name: 'ИИдеи Будущего', meta: 'LADDER ENJOYERS • 2025', description: 'Лендинг для привлечения школьников к образовательным интенсивам и курсам крупнейшего IT-сообщества СФУ — Ladder Enjoyers', secondParagraph: 'Я спроектировала одностраничный сайт для набора участников на образовательный фестиваль, благодаря которому к программе присоединились более 100 школьников из 5 школ Красноярского края', tags: ['Лендинг', 'EdTech', 'Веб'] },
+    future: { name: 'ИИдеи Будущего', meta: 'LADDER ENJOYERS • 2025', description: 'Лендинг для привлечения школьников к образовательным интенсивам и курсам крупнейшего IT-сообщества СФУ — Ladder Enjoyers', secondParagraph: 'Для участия в программе зарегистрировались 100+ школьников из 5 школ; я отвечала за продуктовую проработку и визуальный дизайн проекта', tags: ['Лендинг', 'EdTech', 'Веб'] },
     outsourcing: { name: 'Аутсорс компания', meta: 'LADDER ENJOYERS • 2024', description: 'Здесь описание проекта: практикующий веб дизайнер с опытом создания интерфейсов и проведения UX-исследований', secondParagraph: 'И принесённые результаты', tags: ['Web', 'Design System', 'B2C'] },
       mozglab: { name: 'Мозг.лаб', meta: 'МОЗГ.ЛАБ • 2026', description: 'Онлайн-платформа для обучения и создания ИИ-проектов с возможностью публикации курсов, отслеживания прогресса и аналитики', secondParagraph: 'Я создала понятный путь учебной среды для пользователя с анализом прогресса, а также спроектировала платформу, продвигающую курсы преподавателей', tags: ['B2C', 'EdTech'] },
     veritas: { name: 'Веритас', meta: 'ВЕРИТАС • 2026', description: 'Здесь описание проекта: практикующий веб дизайнер с опытом создания интерфейсов и проведения UX-исследований', secondParagraph: 'И принесённые результаты', tags: ['UI дизайн', 'UX дизайн', 'Web'] },
@@ -33,13 +33,13 @@ const copy = prepareTypography({
   },
   en: {
     navAbout: 'Info', navCases: 'Case', navResume: 'Resume', aboutAria: 'About me', casesAria: 'Open cases', resumeAria: 'Open resume',
-    greeting: 'Hi! I’m a product and web designer with 2+ years of experience creating interfaces and conducting UX research',
+    greeting: 'Hi! I’m a product and web designer with 2+ years of experience designing complex web experiences for EdTech and FinTech',
     quote: '“Lorem ipsum dolor sit amet consectetur. Pellentesque pretium ut enim at elementum. Eget tortor tempor elementum amet nisi amet vel gravida sed. Ipsum maecenas nec nunc duis morbi non. Lectus sit dolor semper bibendum diam libero.”',
     designer: 'Designer', contactTelegram: 'Telegram', contactEmail: 'Email', profileName: 'Albina Timofeeva', testimonialName: 'Lilia Abdullina', soon: 'Coming soon — putting the case study together', more: 'More', moreSoon: 'More soon', onRequest: 'On request',
     loading: 'Project mockups', togglePreview: 'Previews', toggleDescription: 'Details',
     cases: {
     spirit: { name: 'Spirit LBaaS', meta: 'T-BANK', description: 'Improving developer experience for T-Bank’s internal PaaS platform. NDA project', tags: ['FinTech', 'PaaS', 'DevEx', 'B2B'] },
-    future: { name: 'Ideas for the Future', meta: 'LADDER ENJOYERS • 2025', description: 'A landing page to attract school students to educational intensives and courses from SFU’s largest IT community, Ladder Enjoyers', secondParagraph: 'I designed a one-page site to recruit participants for an educational festival; more than 100 students from 5 schools in the Krasnoyarsk region joined the program', tags: ['Landing page', 'EdTech', 'Web'] },
+    future: { name: 'Ideas for the Future', meta: 'LADDER ENJOYERS • 2025', description: 'A landing page to attract school students to educational intensives and courses from SFU’s largest IT community, Ladder Enjoyers', secondParagraph: '100+ school students from 5 schools registered for the program; I was responsible for the project’s product design and visual design', tags: ['Landing page', 'EdTech', 'Web'] },
     outsourcing: { name: 'Outsourcing company', meta: 'LADDER ENJOYERS • 2024', description: 'Project description: a practicing web designer with experience creating interfaces and conducting UX research', secondParagraph: 'And the results delivered', tags: ['Web', 'Design System', 'B2C'] },
       mozglab: { name: 'Mozg.lab', meta: 'MOZG.LAB • 2026', description: 'An online platform for learning and creating AI projects, with course publishing, progress tracking, and analytics', secondParagraph: 'I created a clear learning journey with progress analysis and designed a platform to promote instructors’ courses', tags: ['B2C', 'EdTech'] },
     veritas: { name: 'Veritas', meta: 'VERITAS • 2026', description: 'Project description: a practicing web designer with experience creating interfaces and conducting UX research', secondParagraph: 'And the results delivered', tags: ['UI design', 'UX design', 'Web'] },
@@ -58,7 +58,7 @@ function Header({ locale, setLocale, screen, onNavigate, onResume }: {
     </div>
     <nav className="primary-nav">
       <button className={`nav-pill ${screen === 'about' ? 'is-active' : ''}`} type="button" onClick={() => onNavigate('about')} aria-label={t.aboutAria} aria-current={screen === 'about' ? 'page' : undefined}><span>{t.navAbout}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'about' ? 'figma/b6393.svg' : 'figma/nav-primary-default.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
-      <button className={`nav-pill ${screen !== 'about' ? 'is-active' : ''}`} type="button" onClick={() => onNavigate(screen === 'about' ? 'spirit' : caseOrder[(caseOrder.indexOf(screen) + 1) % caseOrder.length])} aria-label={t.casesAria} aria-current={screen !== 'about' ? 'page' : undefined}><span>{t.navCases}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'about' ? 'figma/nav-primary-default.svg' : 'figma/b6393.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
+      <button className={`nav-pill ${screen !== 'about' ? 'is-active' : ''}`} type="button" onClick={() => onNavigate(screen === 'about' ? caseOrder[0] : caseOrder[(caseOrder.indexOf(screen) + 1) % caseOrder.length])} aria-label={t.casesAria} aria-current={screen !== 'about' ? 'page' : undefined}><span>{t.navCases}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'about' ? 'figma/nav-primary-default.svg' : 'figma/b6393.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
       <button className="nav-pill" type="button" onClick={onResume} aria-label={t.resumeAria}><span>{t.navResume}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset('figma/nav-primary-default.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
     </nav>
   </header>;
