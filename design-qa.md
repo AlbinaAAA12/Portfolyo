@@ -56,4 +56,8 @@ Figma MCP, файл ngodoFRwbYo2LClGrPbitG: UI / Header1:14179, Component241:142
 - [x] Component24 state assets и Component11 current/shadow обновлены.
 - [x] Наведение, выбор, закрытие, keyboard, mobile, production и совместное визуальное сравнение.
 
+## Published verification
+
+Реализация `5184695`; [workflow40313889163](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40313889163) завершился успешно (build/deploy success). GitHub Pages отдаёт bundle `index-CB6d-eZP.js`. При1280×832 выбранные Инфа/Кейсы с реальным:hover=true сохраняют rgb(32,33,36)/white. Панель раскрывается, Spirit сохраняет current/Pressed с исходным2e13d.svg; console errors/warnings отсутствуют. Итоговый снимок live-header-rail.jpg сохранён в evidence-папке и просмотрен.
+
 final result: passed

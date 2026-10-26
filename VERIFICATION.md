@@ -1,5 +1,9 @@
 # Проверка портфолио
 
+## Публикация Header и боковой панели — 26 октября 2026
+
+Реализация `5184695`; [workflow40313889163](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40313889163) завершился успешно (build/deploy success). Публичный сайт отдаёт bundle `index-CB6d-eZP.js`. При1280×832 реальный hover выбранных Инфа/Кейсы сохраняет#202124/white; раскрытая панель показывает Spirit current/Pressed с2e13d.svg. Console errors/warnings отсутствуют. Проверенный снимок: `C:/Users/Albina/Alb_Codex/Portfolyo-research/header-rail-2026-10-26/live-header-rail.jpg`.
+
 ## Синхронизация Header и боковой панели — 26 октября 2026
 
 Через Figma MCP заново проверены UI / Header1:14179, Component241:14284 и Component111:14251. Выбранные Header buttons при hover/focus сохраняют#202124/white и белую стрелку; невыбранные pink. Locale138×52 с правильными RU/EN padding, одинаковый tertiary fill, EN Info/Case/Resume.
