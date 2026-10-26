@@ -25,12 +25,8 @@
   left: 0;
   width: 480px;
   height: var(--project-collage-card-height);
-  z-index: var(--project-collage-depth);
   pointer-events: none;
-  transform: translate(
-    calc(var(--project-collage-base-x) + var(--project-collage-motion-x, 0px)),
-    calc(var(--project-collage-base-y) + var(--project-collage-motion-y, 0px))
-  );
+  transform: translate(var(--project-collage-physical-x), var(--project-collage-physical-y));
 }
 
 .project-collage-hit {

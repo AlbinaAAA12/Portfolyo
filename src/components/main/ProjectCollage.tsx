@@ -9,8 +9,9 @@ type ProjectCollageItem = { id: CaseId; file: string; media?: VideoKey };
 
 const CARD_WIDTH = 480;
 const CARD_STEP = 112;
-const CYCLE_WIDTH = CARD_STEP * 5;
-const SLOT_INDICES = Array.from({ length: 18 }, (_, index) => index - 8);
+const POSITION_PERIOD = 1680;
+const SLOT_MIN_X = -720;
+const SLOT_INDICES = Array.from({ length: 15 }, (_, index) => index - 4);
 const CARD_ASPECT_RATIOS: Record<CaseId, number> = {
   future: 209 / 118,
   spirit: 3008 / 2066,
@@ -20,11 +21,28 @@ const CARD_ASPECT_RATIOS: Record<CaseId, number> = {
 };
 
 function wrapMotion(value: number) {
-  return ((value % CYCLE_WIDTH) + CYCLE_WIDTH) % CYCLE_WIDTH;
+  return ((value % POSITION_PERIOD) + POSITION_PERIOD) % POSITION_PERIOD;
+}
+
+function shortestDelta(value: number) {
+  return ((value + POSITION_PERIOD / 2) % POSITION_PERIOD + POSITION_PERIOD) % POSITION_PERIOD - POSITION_PERIOD / 2;
 }
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
+}
+
+function getPhysicalX(slot: number, motion: number) {
+  const anchorX = -300 + slot * CARD_STEP + motion;
+  return ((anchorX - SLOT_MIN_X) % POSITION_PERIOD + POSITION_PERIOD) % POSITION_PERIOD + SLOT_MIN_X;
+}
+
+function updateSlotPosition(element: HTMLDivElement, slot: number, motion: number) {
+  const physicalX = getPhysicalX(slot, motion);
+  const physicalY = 174 - physicalX * .62;
+  element.style.setProperty('--project-collage-physical-x', `${physicalX}px`);
+  element.style.setProperty('--project-collage-physical-y', `${physicalY}px`);
+  element.style.zIndex = String(-Math.round(physicalX));
 }
 
 const ProjectCollageMedia = memo(function ProjectCollageMedia({
@@ -54,22 +72,35 @@ export default function ProjectCollage({
   playbackEnabled: boolean;
 }) {
   const root = useRef<HTMLElement>(null);
-  const plane = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ pointerId: number; x: number; moved: number } | null>(null);
+  const slotElements = useRef(new Map<number, HTMLDivElement>());
+  const drag = useRef<{ pointerId: number; x: number; moved: number; pendingDelta: number } | null>(null);
   const suppressClick = useRef(false);
-  const motionRef = useRef(0);
-  const pendingDelta = useRef(0);
+  const renderedMotion = useRef(0);
+  const targetMotion = useRef(0);
+  const pendingDirectDelta = useRef(0);
+  const wheelActive = useRef(false);
   const frame = useRef<number | null>(null);
+  const previousFrameTime = useRef<number | null>(null);
   const interactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const interactionRef = useRef(false);
   const [sceneScale, setSceneScale] = useState(1);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
 
+  const applyMotion = (motion: number) => {
+    renderedMotion.current = wrapMotion(motion);
+    slotElements.current.forEach((element, slot) => updateSlotPosition(element, slot, renderedMotion.current));
+  };
+
   const beginInteraction = () => {
     interactionRef.current = true;
     setIsInteracting(true);
     setActiveSlot(null);
+    if (interactionTimer.current) clearTimeout(interactionTimer.current);
+    interactionTimer.current = null;
+  };
+
+  const finishInteractionAfterDelay = () => {
     if (interactionTimer.current) clearTimeout(interactionTimer.current);
     interactionTimer.current = setTimeout(() => {
       interactionRef.current = false;
@@ -78,20 +109,68 @@ export default function ProjectCollage({
     }, 180);
   };
 
-  const moveBy = (amount: number, bounded = false) => {
-    const pending = pendingDelta.current + amount;
-    pendingDelta.current = bounded ? clamp(pending, -CARD_STEP, CARD_STEP) : pending;
+  const scheduleFrame = () => {
     if (frame.current !== null) return;
-    frame.current = requestAnimationFrame(() => {
+    frame.current = requestAnimationFrame((time) => {
       frame.current = null;
-      const delta = pendingDelta.current;
-      pendingDelta.current = 0;
-      if (!delta) return;
-      const next = wrapMotion(motionRef.current + delta);
-      motionRef.current = next;
-      plane.current?.style.setProperty('--project-collage-motion-x', `${next}px`);
-      plane.current?.style.setProperty('--project-collage-motion-y', `${-next * .62}px`);
+      let motion = renderedMotion.current;
+      const directDelta = pendingDirectDelta.current;
+      pendingDirectDelta.current = 0;
+      if (directDelta) {
+        motion = wrapMotion(motion + directDelta);
+        if (wheelActive.current) targetMotion.current = wrapMotion(targetMotion.current + directDelta);
+      }
+
+      if (wheelActive.current) {
+        const error = shortestDelta(targetMotion.current - motion);
+        const elapsed = previousFrameTime.current === null ? 16 : Math.min(64, Math.max(1, time - previousFrameTime.current));
+        previousFrameTime.current = time;
+        if (Math.abs(error) < .25) {
+          motion = targetMotion.current;
+          wheelActive.current = false;
+          previousFrameTime.current = null;
+          finishInteractionAfterDelay();
+        } else {
+          motion = wrapMotion(motion + error * (1 - Math.exp(-elapsed / 32)));
+        }
+      } else {
+        previousFrameTime.current = null;
+      }
+
+      applyMotion(motion);
+      if (wheelActive.current) scheduleFrame();
     });
+  };
+
+  const queueDirectMotion = (amount: number) => {
+    if (wheelActive.current) {
+      wheelActive.current = false;
+      targetMotion.current = renderedMotion.current;
+      previousFrameTime.current = null;
+    }
+    pendingDirectDelta.current += amount;
+    scheduleFrame();
+  };
+
+  const moveWheelTarget = (amount: number) => {
+    const currentError = wheelActive.current ? shortestDelta(targetMotion.current - renderedMotion.current) : 0;
+    const nextError = clamp(currentError + clamp(amount, -CARD_STEP, CARD_STEP), -224, 224);
+    targetMotion.current = wrapMotion(renderedMotion.current + nextError);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      wheelActive.current = false;
+      previousFrameTime.current = null;
+      applyMotion(targetMotion.current);
+      finishInteractionAfterDelay();
+      return;
+    }
+    wheelActive.current = Math.abs(nextError) >= .25;
+    if (wheelActive.current) {
+      previousFrameTime.current = null;
+      scheduleFrame();
+    } else {
+      applyMotion(targetMotion.current);
+      finishInteractionAfterDelay();
+    }
   };
 
   const getEffectiveScale = () => {
@@ -118,12 +197,10 @@ export default function ProjectCollage({
       if (!rawDelta) return;
       const factor = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 592 : 1;
       const logicalDelta = rawDelta * factor / getEffectiveScale();
-      const amount = Math.abs(logicalDelta) >= 80
-        ? -Math.sign(logicalDelta) * CARD_STEP
-        : -logicalDelta * .8;
+      const amount = -logicalDelta * .8;
       if (!amount) return;
       beginInteraction();
-      moveBy(amount, true);
+      moveWheelTarget(amount);
       event.preventDefault();
     };
     element.addEventListener('wheel', handleWheel, { passive: false });
@@ -138,7 +215,7 @@ export default function ProjectCollage({
   const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
     if (event.pointerType === 'touch') setActiveSlot(null);
-    drag.current = { pointerId: event.pointerId, x: event.clientX, moved: 0 };
+    drag.current = { pointerId: event.pointerId, x: event.clientX, moved: 0, pendingDelta: 0 };
     suppressClick.current = false;
     event.currentTarget.setPointerCapture(event.pointerId);
   };
@@ -149,10 +226,14 @@ export default function ProjectCollage({
       const delta = event.clientX - activeDrag.x;
       activeDrag.x = event.clientX;
       activeDrag.moved += Math.abs(delta);
+      activeDrag.pendingDelta += delta;
       if (activeDrag.moved > 6) {
         beginInteraction();
         suppressClick.current = true;
-        if (delta) moveBy(delta / getEffectiveScale());
+        if (activeDrag.pendingDelta) {
+          queueDirectMotion(activeDrag.pendingDelta / getEffectiveScale());
+          activeDrag.pendingDelta = 0;
+        }
       }
       return;
     }
@@ -160,9 +241,11 @@ export default function ProjectCollage({
   };
 
   const endPointer = (event: PointerEvent<HTMLButtonElement>) => {
-    if (drag.current?.pointerId !== event.pointerId) return;
-    if (event.type === 'pointercancel' && drag.current.moved > 6) suppressClick.current = true;
+    const activeDrag = drag.current;
+    if (activeDrag?.pointerId !== event.pointerId) return;
+    if (event.type === 'pointercancel' && activeDrag.moved > 6) suppressClick.current = true;
     drag.current = null;
+    if (activeDrag.moved > 6) finishInteractionAfterDelay();
     const bounds = root.current?.getBoundingClientRect();
     if (bounds && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) {
       setActiveSlot(null);
@@ -173,11 +256,13 @@ export default function ProjectCollage({
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
       beginInteraction();
-      moveBy(CARD_STEP);
+      queueDirectMotion(CARD_STEP);
+      finishInteractionAfterDelay();
     } else if (event.key === 'ArrowRight') {
       event.preventDefault();
       beginInteraction();
-      moveBy(-CARD_STEP);
+      queueDirectMotion(-CARD_STEP);
+      finishInteractionAfterDelay();
     }
   };
 
@@ -202,25 +287,34 @@ export default function ProjectCollage({
       if (event.pointerType !== 'touch' && !drag.current && !interactionRef.current) setActiveSlot(null);
     }}
   >
-    <div className="project-collage-plane" ref={plane}>
+    <div className="project-collage-plane">
       {SLOT_INDICES.map((slot) => {
         const project = projects[((slot % projects.length) + projects.length) % projects.length];
-        const x = -300 + slot * CARD_STEP;
-        const y = 360 - slot * CARD_STEP * .62;
-        const offsetDirection = activeSlot === null ? 0 : Math.sign(slot - activeSlot);
+        const offsetDirection = activeSlot === null
+          ? 0
+          : Math.sign(getPhysicalX(slot, renderedMotion.current) - getPhysicalX(activeSlot, renderedMotion.current));
         const offsetX = offsetDirection * 40 / .94;
         const offsetY = (-offsetDirection * 24 - .16 * offsetX) / .84;
         const isActive = slot === activeSlot;
         const slotStyle = {
-          '--project-collage-base-x': `${x}px`,
-          '--project-collage-base-y': `${y}px`,
           '--project-collage-card-height': `${CARD_WIDTH / CARD_ASPECT_RATIOS[project.id]}px`,
-          '--project-collage-depth': isActive ? 1000 : -slot,
           '--project-collage-float-x': isActive ? '0px' : `${offsetX}px`,
           '--project-collage-float-y': isActive ? `${-64 / .84}px` : `${offsetY}px`,
           '--project-collage-opacity': isActive ? .99 : activeSlot === null ? .88 : .80,
         } as CSSProperties & Record<`--${string}`, string | number>;
-        return <div className={`project-collage-position${isActive ? ' is-active' : ''}`} key={slot} style={slotStyle}>
+        return <div
+          className={`project-collage-position${isActive ? ' is-active' : ''}`}
+          key={slot}
+          style={slotStyle}
+          ref={(element) => {
+            if (element) {
+              slotElements.current.set(slot, element);
+              updateSlotPosition(element, slot, renderedMotion.current);
+            } else {
+              slotElements.current.delete(slot);
+            }
+          }}
+        >
           <button
             className="project-collage-hit"
             type="button"

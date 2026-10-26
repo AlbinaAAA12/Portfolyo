@@ -1,5 +1,11 @@
 # Проверка портфолио
 
+## Навигация, слои галереи и Spirit — 26 октября 2026
+
+Данные Figma получены через MCP: UI / Link / Primary1:14146 и Spirit1:13159. Новый hover/pink/стрелка и focus проверены на RU/EN. Spirit использует SVG1:13161 с outline-текстом; desktop592×668/471×312 и crop совпадают с MCP, mobile сохраняет пропорции. Проверены10 сочетаний описаний без terminal dots.
+
+Галерея:15 стабильных слотов, перенос вне экрана, tau32ms для wheel, hover не меняет z-index.40 стрелок возвращают все позиции; drag240→240logical, mobile120→194.098logical; клик открывает нужный кейс. Production:4173 console errors/warnings отсутствуют; build/diff-check проходят. Совместные сравнения и ограничения в design-qa.md; evidence в Portfolyo-research/navigation-spirit-2026-10-26/.
+
 ## Published verification — 26 октября 2026
 
 Реализация: `60c4fae`. [GitHub Pages workflow39987850711](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/39987850711) завершился успешно (build/deploy success). Публичная версия https://albinaaaa12.github.io/Portfolyo/ отдаёт bundle `index-FLaMGtSk.js`.
