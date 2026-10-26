@@ -58,4 +58,10 @@
 - [x] Повторный QA после исправления накопления ввода.
 - [x] Визуальное сравнение reference/production и мобильная проверка.
 
+## Published verification — 26 октября 2026
+
+Реализация: `60c4fae`. [GitHub Pages workflow39987850711](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/39987850711) завершился успешно (build/deploy success). Публичная версия https://albinaaaa12.github.io/Portfolyo/ отдаёт bundle `index-FLaMGtSk.js`.
+
+Проверка публичного сайта при1280×720 (равномерно уменьшенная сцена):18слотов, native card width480, idle opacity.88, hover.99 с прежней face matrix и localY−76.1905. Wheel под выбранной карточкой сбросил active в0, phase448px оставалась постоянной после ввода; active не возвращался под неподвижной мышью, document scroll0/0. Все4 видео-проекта загружены (readyState4), muted/loop и воспроизводятся в видимой области; время меняется между наблюдениями. Browser console error/warn отсутствуют. Снимок: `C:/Users/Albina/Alb_Codex/Portfolyo-research/gallery-refinement-2026-10-23/live-hover-2026-10-26.png`.
+
 final result: passed
