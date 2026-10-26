@@ -1,5 +1,15 @@
 # Проверка портфолио
 
+## Интерактивный портрет — 26 октября 2026
+
+На главной ProjectMedia portrait заменён на InteractivePortrait; остальные медиа не затронуты. Источник — прежний f29c3.png1024×1016, новые изображения не создавались. Native WebGL2 локально деформирует область единственного видимого глаза, сохраняя остальной кадр. Размеры136×136 desktop /72×72 mobile, radius10px и cover-кроп сохранены; доступное имя RU/EN остаётся единственным role=img.
+
+Проверены реальные pointer movements в CUA: gaze к правому нижнему краю стремится к1/1, влево — к−.32/−.21; движение сглаживается. Моргание210мс, первое через2.5–4с, затем через4–7с. В11-секундной последовательности31скриншота зафиксированы два закрытия глаза; просмотрены отдельные кадры и сравнения. Из-за длительности screenshot-вызова DOM blink до/после снимка может уже быть0. Пиксельное сравнение neutral/left/right/blink подтверждает нулевую разницу вне bounding ROI глаза; все изменения локальны.
+
+Начальное состояние во время онбординга — static; после цикла — webgl. Проверены8повторных переходов кейсы/главная без console warnings/errors, восстановление изображения, EN aria name, mobile390×844 без document overflow. Переключение на Projects скрывает профиль; возврат восстанавливает портрет. При review исправлены немедленное обновление кадра после resume и освобождение контекста только для detached canvas, чтобы смена playback/reduced-motion не оставляла потерянный контекст.
+
+Reduced-motion/static fallback и coarse-pointer idle предусмотрены в коде; фактические аппаратные coarse pointer и переключение системного reduced motion не эмулировались. Production bundle `index-BpRahmtS.js` проверен на4173, console errors/warnings отсутствуют. Build/diff-check проходят. Evidence: `C:/Users/Albina/Alb_Codex/Portfolyo-research/interactive-portrait-2026-10-26/`; сравнение кадров и полный финальный экран просмотрены.
+
 ## Новые описания и удаление Аутсорса — 26 октября 2026
 
 Опубликовано из `88ae60c`: [workflow40333122668](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40333122668), build/deploy success. GitHub Pages отдаёт `index-cihhhjli.js` / `index-Btc3jezn.css`. Через CUA подтверждены16 карточек четырёх кейсов без Аутсорса, новые3описания/теги, весь цикл и отсутствие case-switcher. Console errors/warnings отсутствуют; build/diff-check проходят. Снимок live-mozglab.jpg сохранён в evidence-папке.

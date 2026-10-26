@@ -1,0 +1,33 @@
+.interactive-portrait {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+  user-select: none;
+}
+
+.interactive-portrait > img,
+.interactive-portrait > canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.interactive-portrait > img {
+  object-fit: cover;
+}
+
+.interactive-portrait > canvas {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.interactive-portrait[data-portrait-renderer='webgl'] > img {
+  opacity: 0;
+}
+
+.interactive-portrait[data-portrait-renderer='webgl'] > canvas {
+  opacity: 1;
+}

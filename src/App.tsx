@@ -3,6 +3,7 @@ import type { CSSProperties, FocusEvent, MouseEvent } from 'react';
 import type { CaseId, Locale } from './types';
 import { asset } from './lib/assets';
 import { ProjectMedia } from './components/media/ProjectMedia';
+import InteractivePortrait from './components/main/InteractivePortrait';
 import { NoOrphans, prepareTypography } from './lib/typography';
 import PortfolioOverlays from './components/overlays/PortfolioOverlays';
 import Onboarding from './components/onboarding/Onboarding';
@@ -74,7 +75,7 @@ function About({ locale, playbackEnabled, onCase }: { locale: Locale; playbackEn
     <main className={`about-layout ${showProjects ? 'is-projects' : ''}`}>
       <section className="profile-card surface">
         <div className="profile-top">
-          <div className="profile-heading"><ProjectMedia media="portrait" poster="figma/f29c3.png" className="portrait" alt={t.profileName} playbackEnabled={playbackEnabled} /><div className="profile-identity"><h1>{t.profileName}</h1><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div></div></div>
+          <div className="profile-heading"><InteractivePortrait className="portrait" alt={t.profileName} playbackEnabled={playbackEnabled} /><div className="profile-identity"><h1>{t.profileName}</h1><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div></div></div>
           <p className="intro"><NoOrphans>{t.greeting}</NoOrphans></p>
         </div>
         <TestimonialSlider locale={locale} name={t.testimonialName} />
