@@ -63,4 +63,10 @@
 - [x]10 описаний RU/EN без конечных точек.
 - [x] Повторный production/mobile QA, build/diff-check, совместные сравнения.
 
+## Published verification — 26 октября 2026
+
+Реализация `1312d73`; [workflow40284064717](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40284064717) завершился успешно (build/deploy success). Публичный сайт отдаёт bundle `index-BMNK-NjD.js`.
+
+На GitHub Pages при1280×832 проверены новый pink/ink hover и SVG-стрелка, загрузка векторного Spirit (complete=true,naturalWidth511), отсутствие конечной точки в описании Spirit. Все15 z-index совпадают до/после hover; native wheel показал промежуточную позицию−156.801px и остановку−188px, active0. Видимые ролики readyState4/muted/loop воспроизводятся. Console errors/warnings отсутствуют. Снимки live-spirit.jpg и live-gallery-hover.jpg сохранены в evidence-папке navigation-spirit-2026-10-26. Результаты RU/EN10описаний и mobile ранее подтверждены локальной production-сборкой.
+
 final result: passed
