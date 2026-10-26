@@ -32,7 +32,7 @@ const copy = prepareTypography({
     },
   },
   en: {
-    navAbout: 'About', navCases: 'Cases', navResume: 'Resume', aboutAria: 'About me', casesAria: 'Open cases', resumeAria: 'Open resume',
+    navAbout: 'Info', navCases: 'Case', navResume: 'Resume', aboutAria: 'About me', casesAria: 'Open cases', resumeAria: 'Open resume',
     greeting: 'Hi! I’m a product and web designer with 2+ years of experience creating interfaces and conducting UX research',
     quote: '“Lorem ipsum dolor sit amet consectetur. Pellentesque pretium ut enim at elementum. Eget tortor tempor elementum amet nisi amet vel gravida sed. Ipsum maecenas nec nunc duis morbi non. Lectus sit dolor semper bibendum diam libero.”',
     designer: 'Designer', contactTelegram: 'Telegram', contactEmail: 'Email', profileName: 'Albina Timofeeva', testimonialName: 'Lilia Abdullina', soon: 'Coming soon — putting the case study together', more: 'More', moreSoon: 'More soon', onRequest: 'On request',
@@ -53,13 +53,13 @@ function Header({ locale, setLocale, screen, onNavigate, onResume }: {
 }) {
   const t = copy[locale];
   return <header className="topbar" aria-label={locale === 'ru' ? 'Основная навигация' : 'Main navigation'}>
-    <div className="locale-switch" aria-label={locale === 'ru' ? 'Язык' : 'Language'}>
-      {(['ru', 'en'] as const).map((item) => <button className={locale === item ? 'locale-option is-active' : 'locale-option'} key={item} type="button" aria-pressed={locale === item} aria-label={item === 'ru' ? 'Русский' : 'English'} onClick={() => setLocale(item)}>{item === 'ru' ? 'Рус' : 'Eng'}</button>)}
+    <div className={`locale-switch locale-switch--${locale}`} aria-label={locale === 'ru' ? 'Язык' : 'Language'}>
+      {(['ru', 'en'] as const).map((item) => <button className={locale === item ? 'locale-option is-active' : 'locale-option'} key={item} type="button" aria-pressed={locale === item} aria-label={item === 'ru' ? 'Русский' : 'English'} onClick={() => setLocale(item)}><span className={`locale-label locale-label--${item}`}>{item === 'ru' ? 'Рус' : 'Eng'}</span></button>)}
     </div>
     <nav className="primary-nav">
       <button className={`nav-pill ${screen === 'about' ? 'is-active' : ''}`} type="button" onClick={() => onNavigate('about')} aria-label={t.aboutAria} aria-current={screen === 'about' ? 'page' : undefined}><span>{t.navAbout}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'about' ? 'figma/b6393.svg' : 'figma/nav-primary-default.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
       <button className={`nav-pill ${screen !== 'about' ? 'is-active' : ''}`} type="button" onClick={() => onNavigate(screen === 'about' ? 'spirit' : caseOrder[(caseOrder.indexOf(screen) + 1) % caseOrder.length])} aria-label={t.casesAria} aria-current={screen !== 'about' ? 'page' : undefined}><span>{t.navCases}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'about' ? 'figma/nav-primary-default.svg' : 'figma/b6393.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
-      <button className="nav-pill nav-pill--muted" type="button" onClick={onResume} aria-label={t.resumeAria}><span>{t.navResume}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset('figma/nav-primary-default.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
+      <button className="nav-pill" type="button" onClick={onResume} aria-label={t.resumeAria}><span>{t.navResume}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset('figma/nav-primary-default.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
     </nav>
   </header>;
 }

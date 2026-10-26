@@ -1,72 +1,59 @@
-# Design QA — навигация, галерея и Spirit
+# Design QA — UI / Header, Component 24, Component 11
 
-Дата: 26 октября 2026. Область: hover primary navigation, физика и сглаживание ProjectCollage, превью Spirit, точки в левых описаниях пяти кейсов. Остальные замечания продуктового аудита не входят в эту итерацию.
+Дата: 26 октября 2026. Область — три указанных компонента и запрет hover у выбранной кнопки хедера. Остальной интерфейс сохранён.
 
 ## Source visual truth
 
-- Figma MCP: файл ngodoFRwbYo2LClGrPbitG, UI / Link / Primary1:14146 и Spirit visual panel1:13159. Получены высокоточные get_design_context со скриншотами, параметры слоёв и reactions через use_figma. Сессия59aa838e-ed85-4e2f-8564-b24b22c943f6. Браузер для доступа к Figma не использовался.
-- Hover1:14163: #F538A0, текст#202124, Manrope600/24px/normal/−.48px, h52, padding8/8/8/16, gap8, r100. Прототип задаёт300ms EASE_IN_AND_OUT. get_motion_context не содержит timeline-узлов; это interactive variant transition.
-- Spirit1:13159:592×668/r34. Backdrop wrapper x−.61328125/y307.187805/w592.613281/h360.812195; внутренний crop left−2.49%,width108.18%. Empty state1:13161:471×312 в60.5/178, r20, тень0/5/20 rgba(32,33,36,.1), исходная рамка.
-- Галерея сохраняет ранее утверждённую пользователем композицию по C:/Users/Albina/Desktop/photo_2026-10-23_22-03-25.jpg (735×542). Новое условие: подъём без смены слоя, более плавный scroll. Прямоугольные видео вместо абстрактной графики — намеренная адаптация.
+Figma MCP, файл ngodoFRwbYo2LClGrPbitG: UI / Header1:14179, Component241:14284, Component111:14251. Для всех получены новые get_design_context с изображениями, высокоточными свойствами и SVG; размеры/состояния/reactions сверены через use_figma. Использована текущая сессия59aa838e-ed85-4e2f-8564-b24b22c943f6. Figma в браузере не открывалась.
 
-## Rendered evidence
+## Evidence and normalization
 
-Папка: C:/Users/Albina/Alb_Codex/Portfolyo-research/navigation-spirit-2026-10-26/.
+Папка evidence: C:/Users/Albina/Alb_Codex/Portfolyo-research/header-rail-2026-10-26/.
 
-- figma-nav-hover.png130×52 и figma-spirit.png592×668 — PNG непосредственно из Figma MCP.
-- desktop-nav-hover.png, desktop-spirit.png, production-spirit.png, production-gallery-hover.png — browser-rendered1280×832 CSS/physical pixels, DPR1. CUA screenshot возвращает JPEG-байты, несмотря на используемое расширение.png; это учтено при оценке мелких цветовых артефактов.
-- comparison-nav.png: Figma hover130×52 и точный browser crop130×52, показаны рядом при одинаковом увеличении×3.
-- comparison-spirit-final.png: reference592×668 и production crop(648,124)-(1240,792)592×668 рядом в одном изображении, без масштабирования. Просмотрены совместно.
-- comparison-gallery-final.png: исходный JPEG вписан в592×584 с сохранением пропорций, рядом production crop592×584 из(648,124)-(1240,708). Это сравнение направления композиции, не пиксельная копия и не образец hover из статичного JPEG.
-- mobile-spirit-final.png и mobile-gallery.png:390×844 CSS/physical pixels, DPR1.
-- Focused evidence: Spirit detail crops, comparison-nav×3, full-panel Spirit comparison; рассмотрены края, шрифт в превью, иконка, crop, рамка и тень. Новые SVG сохранены локально; временных MCP URL в runtime нет.
+- figma-header-ru.png и figma-header-en.png:1200×68, состояния Cases selected. Browser desktop-header-ru.jpg/en.jpg:1280×832 CSS/physical pixels,DPR1; crops(40,40)-(1240,108)1200×68.
+- comparison-header-ru.png/en.png: источник и реализация помещены вместе при масштабе1:1 и просмотрены совместно.
+- figma-rail-expanded.png:112×236 с контекстом/полями эффектов; natural layout48×180. Центральный crop(32,20)-(80,200) сопоставлен с browser crop(8,326)-(56,506)48×180 в comparison-rail.png; обе панели показаны при одинаковом увеличении×4 и просмотрены вместе. Разные цвета внешнего фона в скруглённых углах вызваны контекстом Figma canvas и страницы, не токенами панели.
+- desktop-rail-mozglab-hover.jpg, desktop-rail-veritas-hover.jpg, desktop-rail-spirit-hover.jpg: дополнительные состояния. figma-rail-mozglab-hover.png и figma-rail-veritas-hover.png — оригинальные MCP reference-изображения.
+- mobile-header-390-ru.jpg, mobile-header-320-ru.jpg/en.jpg: соответствующие CSS viewport390×844 и320×568,DPR1. production-header-rail.jpg: финальная сборка на:4173.
+- Browser captures — JPEG, reference captures — PNG. Мелкая разница сжатия/сглаживания не интерпретируется как изменение SVG или цвета. Focused rail×4 и полные header crops нужны для оценки стрелок, логотипов, отступов и выбранного состояния.
 
-## Findings and comparison history
+## Findings and iteration history
 
-1. [P2, corrected] Навигация использовала старый серый hover и старую стрелку. Теперь фон/текст и оригинальная новая SVG-иконка соответствуют варианту Figma; hover/focus300ms ease-in-out. Idle-selected остаётся чёрным. Проверены active About, active Cases и keyboard-focus Resume, RU/EN.
-2. [P2, corrected] Wheel мгновенно применял крупный шаг, а общий modulo переносил видимые копии видео. Теперь15 стабильных слотов с периодом1680 и индивидуальным переносом за границей; короткое экспоненциальное сглаживание tau32ms и ограничение отставания224px. wheel-samples.json содержит промежуточные позиции и окончательную остановку. Программной инерции скорости нет.
-3. [P2, corrected] Hover поднимал z-index в1000. В production сравнение всех15 z-index до/после hover подтвердило полное совпадение. Подъём64px, матрица и раздвижение сохранены. Отдельно исправлено направление раздвижения после wrap: рассчитывается по physicalX, не номеру слота.
-4. [P2, corrected] Пустое состояние Spirit было PNG1×. Заменено оригинальным SVG-экспортом node1:13161 с outline-текстом:23path,0image,0text, нет ограничений растрового разрешения и зависимости от отсутствующих T-Sans/Neue Haas webfonts. Фон1672×941 сохранён с точным crop; в mobile preview object-fit:cover исключает растягивание.
-5. [P2, corrected] Концевые точки оставались в левых описаниях. Проверены10 сочетаний (5кейсов×2языка), включая строки Veritas передbr. Концевых точек нет, внутренняя пунктуация и NoOrphans сохранены.
-6. После исправлений повторно просмотрены production Spirit, физический hover и mobile, выполнены совместные сравнения. Открытых P0/P1/P2 в текущей области нет.
+1. [P2, corrected] У выбранной кнопки Header работали pink hover/focus fill и подмена стрелки. Все hover/focus правила теперь ограничены :not(.is-active). Выбранные Info/Cases сохраняют#202124/white и белую b6393.svg, переход в selected мгновенный. Это явное уточнение пользователя. Keyboard outline сохранён отдельно.
+2. [P2, corrected] В Header переключатель языка и Resume использовали page-fill вместо tertiary; padding не менялся с языком; английские подписи отличались от Figma. Теперь locale138×52, RU padding8/16, EN16/8, общий tertiary rgba(118,118,128,.12); EN Info/Case/Resume. Мобильная компоновка сохранена.
+3. [P2, corrected] Component24 содержал старые hover/pressed-иконки. Spirit и Ladder hover используют актуальные малые цветные SVG на background.2; Mozg.lab97059/af5df; Veritas hover/pressed56b99 с розовым знаком. Intrinsic размеры SVG сохранены.
+4. [P2, corrected] Текущий кейс в Component11 помечался aria-current, но не имел постоянного pressed visual. Теперь current использует Pressed-вариант; после выбора он перемещается на новый кейс. Future/outsourcing сохраняют общий пункт LE.
+5. [P2, corrected] Blur боковой панели был перенесён из filter drop-shadow в box-shadow с половинными значениями. Для box-shadow установлены полные радиусы11/20/27/32/35 из Figma; offset/alpha/stroke совпадают с источником.
+6. После исправлений повторно просмотрены чистые изображения Header RU/EN и панели, mobile и production; открытых P0/P1/P2 нет. Один тестовый screenshot с выделением текста при mouse-drag был отброшен и переснят без выделения; он не использован для приёмки.
 
 ## Required fidelity surfaces
 
-- Fonts/typography: Manrope600/24/normal/−.48 навигации сохранён. Ширина браузерного «Инфа» отличается от Figma менее1px из-за font metrics, без изменения переносов/ритма (P3). Тексты Spirit — исходные векторные outlines из Figma. Общая типографика кейсов не менялась.
-- Spacing/layout: primary h52/r100 и36px icon slot; mobile28px через scale без изменения intrinsic SVG. Spirit592×668, карточка471×312 и её положение подтверждены DOM. Галерея480px/native aspect ratios, общий592×584/r34, исходная matrix(.94,.16,0,.84,0,0), lift64 и recoil±40/∓24. Mobile390×844 без переполнения.
-- Colors/tokens: hover rgb245,56,160 и текст32,33,36 подтверждены computed style, hover SVG opacity1/default0. Галерея.88/.99/.80 сохранена; active не меняет глубину. Рамка/тень Spirit экспортированы из Figma, не дублируются CSS.
-- Image quality/assets:3 новых оригинальных SVG (nav default/hover, Spirit empty state), исходный backdrop PNG1672×941,4 реальных видео и Spirit poster. Нет новых нарисованных замен. JPEG-компрессия browser evidence не является компрессией SVG в приложении.
-- Copy/content: изменены только terminal periods описаний, смысл и заглушки сохранены. Тексты внутри статичного Spirit mockup оставлены как в Figma, включая английский интерфейс портфолио; это исходные данные демонстрируемого продукта.
+- Fonts/typography: Manrope600/24/normal/−.48 в primary navigation; locale500/24/normal/−.48. Locale label widths40/42 дают ровно138px. Общая ширина группы навигации отличается от reference на несколько пикселей вследствие font metrics/AA, без изменения ритма или переноса (P3). В логотипах используются исходные SVG.
+- Spacing/layout: Header1200×68,pad8,r100; primary pills h52,gap8,pad8/8/8/16,r100. Compact rail24×180, expanded48×180,pad4,gap4,r14; items40×40,r10. Геометрия сверена DOM. Mobile390/320 без переполнения, все кнопки находятся внутри header.
+- Colors/tokens: selected Header#202124/white без hover; невыбранный hover#F538A0 сохранён. Locale и обычные pills tertiary. Component24 default.12/hover.20/pressed#eeeeef; Veritas hover#FC69A0, Mozg.lab hover#141413. Shadow и insetstroke#ebebec получены из MCP.
+- Image quality/assets: два новых оригинальных SVG97059/af5df, остальные точные существующие Figma assets; root dimensions не изменены, width/height overrides у логотипов сняты. Малые цветные знаки22.9929×23 и16.9442×23 расположены по инспектору;88×88 exports учитывают поля тени. Новых рисованных замен нет.
+- Copy/content: видимые английские подписи Header приведены к Info/Case/Resume. Русские подписи, aria labels, тексты кейсов и модалок не изменены. Скрытый в Figma «Привет!» не добавлялся.
 
 ## Interaction verification
 
-- Hover не выводит карточку вперёд: production z-index всего ряда неизменен. Соседи смещаются по физическому порядку; после циклического переноса направление сохраняется.
-- Реальный native wheel: измерены промежуточные DOM positions, затем постоянная позиция без длительного дрейфа и active0 под неподвижной мышью. При пересечении границы в wheel-wrap-check.json перенесённая карточка была вне экрана с обеих сторон, видимый ряд сохранил движение.
--40 быстрых keys (20Right+20Left): конечные позиции всех15 слотов равны начальным, контрольная точка900/420 покрыта во всех40 выборках.
-- Desktop drag240px дал240logicalpx; mobile drag120px дал194.098logicalpx при scale366/592. Drag не открывает кейс; мобильный клик по Ideas for the Future открыл соответствующий заголовок.
-- Resume focus-visible получает ту же pink/ink пару без открытия модалки. Активные и неактивные навигационные состояния сохраняются.
-- Spirit mobile: frame342×226.547, native пропорции карточки сохранены, SVG371.039×255.586 с исходными теневыми полями; body390×844. Галерея366×698; страница остаётся неподвижной.
-- npm run build и git diff --check проходят. Production document:4173 не содержит console error/warn. Браузер проверен через CUA IAB.
+- RU: About и Cases действительно имели:hover=true при проверке, сохраняя black/white, default icon opacity1/hover0. EN selected Case при focus-visible сохраняет black/white и отдельный outline. Невыбранный Resume при реальном hover остаётся pink.
+- Панель раскрывается наведением и через Enter на compact. Hover всех четырёх пунктов проверен через видимый SVG/background; current остаётся Pressed. Десктопный выбор Mozg.lab и Ideas for the Future закрывает панель; compact меняет соответствующую длинную черту.
+- После перехода на Outsourcing company compact остаётся LE, current — общий LE. Escape закрывает панель и возвращает фокус compact.
+- Mobile390×844: выбор Spirit из панели открывает его и закрывает rail.320×568 RU/EN: document scrollWidth320/scrollHeight568, границы всех header buttons внутри окна; selected Case black.
+- npm run build и git diff --check проходят. Production bundle index-CB6d-eZP.js проверен через CUA IAB: selected hover без смены заливки, expanded/current state, нет console errors/warnings.
 
 ## Limits and follow-up polish
 
-- Системный reduced motion отдельно не эмулировался; код учитывает его и отключает wheel smoothing и hover transitions.
-- Настоящий аппаратный touch/trackpad не тестировался; mobile viewport проверен мышью. Запись motion DOM подтверждает сглаживание, но не является замером FPS на устройстве пользователя.
-- Interactive Smart Animate в навигации передан crossfade двух оригинальных SVG; финальное состояние, цвета и300ms easing совпадают, путь между SVG не морфируется.
-- Известные логотипы внизу mobile и заглушки из прежнего аудита остаются вне этой итерации.
+- Настоящий аппаратный touch не проверялся; mobile viewport проверен мышью/клавиатурой.
+- Несколько пикселей font metrics и артефакты JPEG в увеличенных browser captures — P3/ограничения evidence, а не повод изменять точные токены Figma.
+- Остальные экраны и замечания прежнего аудита вне области этой итерации.
 
 ## Implementation checklist
 
-- [x] Новый Figma hover/иконка и focus primary navigation.
-- [x] Плавный бесконечный scroll, стабильные видимые медиа и физические слои.
-- [x] Оригинальный SVG Spirit и точная desktop-геометрия.
-- [x]10 описаний RU/EN без конечных точек.
-- [x] Повторный production/mobile QA, build/diff-check, совместные сравнения.
-
-## Published verification — 26 октября 2026
-
-Реализация `1312d73`; [workflow40284064717](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40284064717) завершился успешно (build/deploy success). Публичный сайт отдаёт bundle `index-BMNK-NjD.js`.
-
-На GitHub Pages при1280×832 проверены новый pink/ink hover и SVG-стрелка, загрузка векторного Spirit (complete=true,naturalWidth511), отсутствие конечной точки в описании Spirit. Все15 z-index совпадают до/после hover; native wheel показал промежуточную позицию−156.801px и остановку−188px, active0. Видимые ролики readyState4/muted/loop воспроизводятся. Console errors/warnings отсутствуют. Снимки live-spirit.jpg и live-gallery-hover.jpg сохранены в evidence-папке navigation-spirit-2026-10-26. Результаты RU/EN10описаний и mobile ранее подтверждены локальной production-сборкой.
+- [x] Все три компонента заново прочитаны через Figma MCP.
+- [x] Selected Header исключён из hover/focus fill и подмены иконки.
+- [x] Header fills, padding и EN labels синхронизированы.
+- [x] Component24 state assets и Component11 current/shadow обновлены.
+- [x] Наведение, выбор, закрытие, keyboard, mobile, production и совместное визуальное сравнение.
 
 final result: passed

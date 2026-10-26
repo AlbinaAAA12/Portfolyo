@@ -1,5 +1,11 @@
 # Проверка портфолио
 
+## Синхронизация Header и боковой панели — 26 октября 2026
+
+Через Figma MCP заново проверены UI / Header1:14179, Component241:14284 и Component111:14251. Выбранные Header buttons при hover/focus сохраняют#202124/white и белую стрелку; невыбранные pink. Locale138×52 с правильными RU/EN padding, одинаковый tertiary fill, EN Info/Case/Resume.
+
+Component24: новые hover/pressed assets, current постоянно Pressed; Component11: актуальная тень и48×180 геометрия. Проверены выбор с закрытием панели, общий LE для двух проектов, Enter/Escape, RU/EN320×568 и390×844 без overflow. Совместные reference/browser comparisons и подробные ограничения в design-qa.md. Build/diff-check и production console проходят.
+
 ## Published verification — 26 октября 2026
 
 Реализация `1312d73`; [workflow40284064717](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40284064717) завершился успешно (build/deploy success). Публичный сайт отдаёт bundle `index-BMNK-NjD.js`.

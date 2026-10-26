@@ -24,9 +24,14 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 .app-content { width: 1280px; height: 832px; padding: 40px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
 .surface { background: var(--surface); border-radius: 34px; }
 .topbar { height: 68px; flex: 0 0 68px; padding: 8px; border-radius: 100px; background: white; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.locale-switch { height: 52px; padding: 8px 16px 8px 8px; background: var(--page); border-radius: 100px; display: flex; align-items: center; gap: 8px; }
+.locale-switch { height: 52px; padding: 8px; background: var(--tertiary); border-radius: 100px; display: flex; align-items: center; gap: 8px; }
+.locale-switch--ru { padding-left: 8px; padding-right: 16px; }
+.locale-switch--en { padding-left: 16px; padding-right: 8px; }
 .locale-option { border: 0; padding: 4px 12px; height: 36px; border-radius: 100px; background: transparent; color: var(--ink); font-size: 24px; font-weight: 500; letter-spacing: -.48px; cursor: pointer; }
 .locale-option:not(.is-active) { padding-inline: 0; }
+.locale-label { display: inline-block; text-align: center; }
+.locale-label--ru { width: 40px; }
+.locale-label--en { width: 42px; }
 .locale-option.is-active { color: #fff; background: var(--ink); }
 .primary-nav { display: flex; align-items: center; gap: 8px; }
 .nav-pill { height: 52px; border: 0; padding: 8px 8px 8px 16px; border-radius: 100px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--tertiary); color: var(--ink); font-size: 24px; font-weight: 600; letter-spacing: -.48px; white-space: nowrap; cursor: pointer; transition: background 300ms ease-in-out, color 300ms ease-in-out; }
@@ -34,10 +39,10 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 .nav-pill-icon img { position: absolute; inset: 0; display: block; transition: opacity 300ms ease-in-out; }
 .nav-pill-icon-hover { opacity: 0; }
 .nav-pill.is-active { background: var(--ink); color: white; }
-.nav-pill--muted { background: var(--page); }
-.nav-pill:hover, .nav-pill:focus-visible { background: var(--pink); color: var(--ink); }
-.nav-pill:hover .nav-pill-icon-default, .nav-pill:focus-visible .nav-pill-icon-default { opacity: 0; }
-.nav-pill:hover .nav-pill-icon-hover, .nav-pill:focus-visible .nav-pill-icon-hover { opacity: 1; }
+.nav-pill.is-active, .nav-pill.is-active .nav-pill-icon img { transition: none; }
+.nav-pill:not(.is-active):hover, .nav-pill:not(.is-active):focus-visible { background: var(--pink); color: var(--ink); }
+.nav-pill:not(.is-active):hover .nav-pill-icon-default, .nav-pill:not(.is-active):focus-visible .nav-pill-icon-default { opacity: 0; }
+.nav-pill:not(.is-active):hover .nav-pill-icon-hover, .nav-pill:not(.is-active):focus-visible .nav-pill-icon-hover { opacity: 1; }
 
 .about-layout, .case-layout { flex: 1 1 0; min-height: 0; display: grid; grid-template-columns: 592px 592px; gap: 16px; }
 .about-layout { flex: 0 0 584px; height: 584px; grid-template-columns: 592px 592px; }
@@ -142,7 +147,9 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
   .app-content { width: 100%; height: 100%; padding: max(10px, env(safe-area-inset-top)) 12px max(10px, env(safe-area-inset-bottom)); gap: 10px; }
   .topbar { height: 54px; flex-basis: 54px; padding: 5px; gap: 4px; }
   .locale-switch { height: 44px; gap: 1px; padding: 5px; }
+  .locale-switch--ru, .locale-switch--en { padding: 5px; }
   .locale-option { height: 34px; padding: 3px 8px; font-size: 16px; letter-spacing: -.3px; }
+  .locale-label--ru, .locale-label--en { width: auto; }
   .primary-nav { gap: 3px; }
   .nav-pill { height: 42px; gap: 3px; padding: 5px 6px 5px 9px; font-size: clamp(12px, 3.5vw, 15px); letter-spacing: -.2px; }
   .nav-pill-icon { flex-basis: 28px; width: 28px; height: 28px; }
@@ -201,6 +208,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 @media (max-width: 360px) {
   .topbar { gap: 2px; }
   .locale-switch { height: 40px; gap: 1px; padding: 3px 7px 3px 4px; }
+  .locale-switch--ru { padding: 3px 7px 3px 4px; }
+  .locale-switch--en { padding: 3px 4px 3px 7px; }
   .locale-option { height: 32px; padding: 2px 6px; font-size: 13px; letter-spacing: -.15px; }
   .locale-option:not(.is-active) { padding-inline: 0; }
   .primary-nav { gap: 2px; }
