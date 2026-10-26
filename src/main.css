@@ -53,7 +53,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 .profile-identity { align-self: stretch; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 8px; }
 .profile-identity h1 { font-size: 24px; line-height: normal; letter-spacing: -.48px; margin: 0; font-weight: 600; }
 .contact-links { display: flex; gap: 24px; font-size: 16px; font-weight: 500; letter-spacing: -.32px; }
-.contact-links a { color: var(--muted); text-decoration: none; }
+.contact-links a { color: var(--ink); text-decoration: none; }
 .contact-links a:hover, .contact-links a:focus-visible { color: var(--pink); }
 .intro { font-size: 24px; font-weight: 600; line-height: normal; letter-spacing: -.48px; margin: 0; text-wrap: balance; }
 .testimonial-wrap { display: flex; flex-direction: column; gap: 4px; min-width: 0; }

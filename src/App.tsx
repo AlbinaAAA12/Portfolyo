@@ -19,7 +19,7 @@ const caseOrder: CaseId[] = ['mozglab', 'spirit', 'future', 'outsourcing', 'veri
 const copy = prepareTypography({
   ru: {
     navAbout: 'Инфа', navCases: 'Кейсы', navResume: 'Резюме', aboutAria: 'Обо мне', casesAria: 'Открыть кейсы', resumeAria: 'Открыть резюме',
-    greeting: 'Привет! Я продуктовый и веб дизайнер с 2+ годами опыта проектирования сложных веб-сценариев для EdTech и FinTech',
+    greeting: 'Привет! Я продуктовый и веб дизайнер с 2+\u00a0годами опыта проектирования сложных веб-сценариев для EdTech и FinTech',
     quote: '“Lorem ipsum dolor sit amet consectetur. Pellentesque pretium ut enim at elementum. Eget tortor tempor elementum amet nisi amet vel gravida sed. Ipsum maecenas nec nunc duis morbi non. Lectus sit dolor semper bibendum diam libero.”',
     designer: 'Дизайнер', contactTelegram: 'тг', contactEmail: 'почта', profileName: 'Альбина Тимофеева', testimonialName: 'Лилия Абдуллина', soon: 'Совсем скоро, оформляю', more: 'Больше', moreSoon: 'Больше скоро', onRequest: 'По запросу',
     loading: 'Макеты проекта', togglePreview: 'Макеты', toggleDescription: 'Описание',
