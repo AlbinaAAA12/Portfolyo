@@ -43,3 +43,5 @@ CSS/native capture:320×568,390×844,1024×900,1280×832, один capturepixel 
 - [x] Desktop/sourcecopy/assets сохранены
 
 final result: passed
+
+Publication:07e663d via [workflow40515621094](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40515621094), success/build20s/deploy35s. Root/versioned HTTP200 with exact final JS/CSS. Public browser390×844 smoke passed: same bundle, Manrope, menu4cards, gap48, tags2+2, nextSpirit, footer1button/0images, white reviews, dot3→scrollLeft670/6px, scene375/375, console errors[]. Evidence23/24; see VERIFICATION.md.

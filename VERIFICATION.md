@@ -166,3 +166,15 @@ Component24: новые hover/pressed assets, current постоянно Pressed
 Финальная публикация проверена прямым HTTP GET: корень https://albinaaaa12.github.io/Portfolyo/ вернул200 и финальные имена обоих bundles. То же подтверждено с version query. Встроенный браузер показал предыдущую v3-сборку изкэша, затем перестал отвечать при новой навигации; поэтому полного браузерного smoke-test именно последнего публичного bundle не заявляем. Браузерный прогон выполнен локально на этой же финальной сборке; production-доступность подтверждена отдельно. Реальные iOS/Android и screen reader не тестировались.
 
 Evidence: `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v3-2026-10-27/`; итоговый QA — design-qa.md (`final result: passed`).
+
+## Мобильные уточнения v4 — 27 октября 2026
+
+Опубликован код `07e663d` через [workflow40515621094](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40515621094): общий success, build20s/deploy35s. Финальные bundles `index-BDqf0KDf.js` / `index-DPm9Nw22.css`. HTTP GET корня и URL с version query вернул200 и оба новых имени.
+
+Меню содержит только четыре превью без заголовка и сегментов; закрытие снаружи/Escape/выбором сохранено. Удалены нижний возврат «К кейсам» и иконка перехода. Заголовок и действие совпадают по нижнему краю, включая320RUFuture; текст More на узком экране переносится внутри кнопки. Четыре тега собраны парами с gap8px; три тега Веритас доступны в горизонтальной строке14px и с клавиатуры. Отзывы на белой плашке padding16/r24. Dots отзывов и4галерей:6px активные/неактивные, центры24px. Отступ перед работами48px.
+
+Локальный production QA:320RU/EN,390×844,1024×900,1280×832. Build/diffcheck pass, console errors[]. Финальные статичные crops desktop header/intro/brands совпали на100%, MAE0. Base desktopCSS, RU/ENcopy и assets сохранены. Внутренний padding меню не закрывает панель, backdrop/Escape закрывают и возвращают focus; nextnavigation, resume, GalleryImage2 и keyboardscrolltags проверены. Дополнительные итерации исправили пустоты grid-тегов и отдельную нижнюю строку More у320RUFuture.
+
+Public browser smoke именно финального bundle:390×844, Manrope loaded, gap48, меню4карточки без heading/nav, выборМозг.лаб и переходSpirit закрываютmenu/reset scroll0, теги2+2/font14, footer1button/0images, отзывыwhite, dot3→scrollLeft670 и activeDot6px, scene client/scroll375px. Console errors[]. Captures23-public-menu.jpg и24-public-reviews.jpg. Браузерная проверка публичной версии на этой итерации прошла.
+
+Evidence: `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v4-2026-10-27/`; source/before/after together в compare-v4.jpg, QA final result:passed в design-qa.md. Реальные телефоны/Safari/screen reader не тестировались; исходный useSwipe не менялся. PDF и временный текст отзывов вне задачи.
