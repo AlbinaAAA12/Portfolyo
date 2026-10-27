@@ -51,7 +51,13 @@ export default function MobileNavigation({ menuOpen, onMenuOpenChange, screen, l
     <div className="mobile-utility-row">
       {isCase ? <><button className="mobile-back-control" type="button" onClick={() => closeAndSelect(onProjects)}>{locale === 'ru' ? 'Все кейсы' : 'All cases'}</button><span className="mobile-utility-spacer" /><button className="mobile-menu-trigger" type="button" ref={menuTriggerRef} onClick={openMenu}>{locale === 'ru' ? 'Меню' : 'Menu'}</button>{localeButton}</> : <><button className="mobile-menu-trigger" type="button" ref={menuTriggerRef} onClick={openMenu}>{locale === 'ru' ? 'Меню' : 'Menu'}</button><span className="mobile-utility-spacer" />{localeButton}</>}
     </div>
-    <dialog className="mobile-navigation-dialog" ref={dialogRef} aria-labelledby="mobile-navigation-title" onCancel={(event) => { event.preventDefault(); onMenuOpenChange(false); }} onClose={() => { if (menuOpen) onMenuOpenChange(false); }} onClick={(event) => { if (event.target === dialogRef.current) onMenuOpenChange(false); }}>
+    <dialog className="mobile-navigation-dialog" ref={dialogRef} aria-labelledby="mobile-navigation-title" onCancel={(event) => { event.preventDefault(); onMenuOpenChange(false); }} onClose={() => { if (menuOpen) onMenuOpenChange(false); }} onClick={(event) => {
+      if (event.target !== dialogRef.current) return;
+      const rect = dialogRef.current?.getBoundingClientRect();
+      if (rect && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) {
+        onMenuOpenChange(false);
+      }
+    }}>
       <div className="mobile-navigation-content">
         <div className="mobile-navigation-heading"><h2 id="mobile-navigation-title">{locale === 'ru' ? 'Меню' : 'Menu'}</h2></div>
         <nav className="mobile-navigation-secondary" aria-label={locale === 'ru' ? 'Разделы' : 'Sections'}>

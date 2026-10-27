@@ -26,6 +26,8 @@ Focused checks: DOM dimensions confirm caption→media gap12px vs40px between pr
 2. [P2, initial implementation] При320px More уходила под Мозг.лаб из-за фиксированного flex-basis220px, хотя контент помещался. Заменено на intrinsic min-content и выравнивание по нижнему краю названия. Screenshot06→08; future320EN переносит длинное название без overlap и overflow.
 3. [P2, source fidelity] Veritas в новой строке наследовал Manrope600 вместо исходногоArial700. Исправлено; финальный browser computed Arial,sans-serif /700,16px. Обе группы после изменения676.367px, поэтому цикл по-прежнему состыкован.
 
+4. [P2, финальная проверка] Нажатие на внутренний белый padding меню ошибочно считалось нажатием на backdrop. Handler теперь сравнивает координаты с прямоугольником dialog. В финальной сборке click(22,320) внутри оставляет меню открытым (screenshot18), click(8,80) снаружи закрывает и возвращает фокус на Меню.
+
 No actionable P0/P1/P2 findings remain in this scope.
 
 ## Пять поверхностей качества
@@ -43,7 +45,7 @@ No actionable P0/P1/P2 findings remain in this scope.
 - More возле case-title открывает подробный кейс. Галерейные стрелки computednone на320/390, grid на1280. КнопкаImage2 меняет1/2→2/2, горизонтальный drag меняет2/2→1/2. Dots24×44, центры24px.
 - Отзывы: точка2 даётscrollLeft399; native горизонтальный scroll переходит наотзыв4 /1197, gap24. Страница не переполняется по горизонтали.
 - Marquee: две одинаковые группы; widthtrack=2×group, transform меняется при40s linear animation и останавливается приhover/focus. После ухода фокуса продолжает. Все лого наодномy, clipping внутрибелогоframe. Reduced-motion CSS отключает animation, разрешает native horizontal scroll; системная настройка в этой сессии не менялась.
-- Сборка npm run build и git diff --check pass. Base desktop CSS доcompact query unchanged; прежнийoverlayCSS retained verbatim с добавлением толькоcompact rules. Финальные bundles index-DpAnerfb.js / index-Blb38e6G.css. Browser console errors: [].
+- Сборка npm run build и git diff --check pass. Base desktop CSS доcompact query unchanged; прежнийoverlayCSS retained verbatim с добавлением толькоcompact rules. Финальные bundles index-B-Z7WE8U.js / index-Blb38e6G.css. Browser console errors: [].
 
 ## Границы / дальнейшая проверка
 
