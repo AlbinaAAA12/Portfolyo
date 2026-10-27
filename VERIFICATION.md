@@ -1,5 +1,13 @@
 # Проверка портфолио
 
+## Свитч языка и строчные ссылки — 27 октября 2026
+
+Свитч повторно проверен только через Figma MCP: Header RU1:14194 / EN1:14201, экземпляры1:14195 /1:14202, masters1:14038 /1:14042. Сессия a264246f-1dfc-4bfc-b862-e73f622c6c7b. У всех четырёх текстовых слоёв leadingTrim=CAP_HEIGHT, Manrope Medium500/24px/AUTO/−2%; ширины40/42px и высота17px. Контейнер138×52, selected RU64×36 /EN66×36, paddingX12/paddingY8; переключаемые root padding8/16 и16/8 сохранены.
+
+Добавлены flex-центрирование кнопок и native text-box-trim:trim-both /text-box-edge:cap alphabetic на label. В браузере label17.28125px из-за дробных font metrics, обе подписи на одной высоте; без transform/ручных сдвигов. Совместно просмотрены Figma/browser comparisons RU/EN при одинаковом масштабе. Для сравнения использован crop138×52 из Header1200×68 с белым фоном; isolated masters имеют другой контекст фона на холсте. Browser JPEG и Figma PNG немного отличаются сглаживанием, геометрия контейнеров совпадает.
+
+EN contact labels теперь telegram/email, адреса и RU-подписи сохранены. Проверены desktop1280×832, клавиатурный Enter и aria-pressed (один выбранный язык), mobile320×568 и390×844 RU/EN без document overflow или обрезания букв. Мобильные размеры и шрифты сохранены, cap trim наследуется. Production bundle index-DuK1OlQr.js /index-CRrF6xdp.css, build/diff-check проходят, console errors/warnings отсутствуют. Evidence: C:/Users/Albina/Alb_Codex/Portfolyo-research/locale-trim-2026-10-27/. Другие компоненты не менялись.
+
 ## Интерактивный портрет — 26 октября 2026
 
 Опубликовано из `02b4197`: [workflow40338015739](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40338015739), build/deploy success. На GitHub Pages подтверждены `index-BpRahmtS.js`, переход static→webgl после онбординга и реальное слежение за указателем (gaze .62/.62 в промежуточном кадре). Публичный портрет72×72, console errors/warnings отсутствуют. Снимок live-portrait-full.jpg сохранён в evidence-папке.

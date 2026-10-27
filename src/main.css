@@ -27,9 +27,9 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 .locale-switch { height: 52px; padding: 8px; background: var(--tertiary); border-radius: 100px; display: flex; align-items: center; gap: 8px; }
 .locale-switch--ru { padding-left: 8px; padding-right: 16px; }
 .locale-switch--en { padding-left: 16px; padding-right: 8px; }
-.locale-option { border: 0; padding: 4px 12px; height: 36px; border-radius: 100px; background: transparent; color: var(--ink); font-size: 24px; font-weight: 500; letter-spacing: -.48px; cursor: pointer; }
+.locale-option { display: flex; align-items: center; justify-content: center; border: 0; padding: 8px 12px; height: 36px; border-radius: 100px; background: transparent; color: var(--ink); font-size: 24px; font-weight: 500; line-height: normal; letter-spacing: -.48px; cursor: pointer; }
 .locale-option:not(.is-active) { padding-inline: 0; }
-.locale-label { display: inline-block; text-align: center; }
+.locale-label { display: block; text-align: center; text-box-trim: trim-both; text-box-edge: cap alphabetic; }
 .locale-label--ru { width: 40px; }
 .locale-label--en { width: 42px; }
 .locale-option.is-active { color: #fff; background: var(--ink); }
