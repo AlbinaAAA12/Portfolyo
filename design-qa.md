@@ -67,3 +67,8 @@ Evidence: C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-2026-10-27/
 Оставшихся actionable P0/P1/P2 в проверенной области нет. Следующий полезный шаг — естественное чтение и навигация на личном телефоне владельца.
 
 final result: passed
+
+
+## Публикация и public smoke test
+
+[Workflow 40468563148](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40468563148), commit `f53769719885c1354e1f6765f6da6774a85ca76b`: build и deploy success. Публичный сайт отдаёт проверенные `index-BzR3KBH_.js` и `index-pW702Res.css`. В браузере 319px: четыре карточки, нет toggles/editor, Manrope загружен, Мозг.лаб показывает текст и gallery, clientWidth=scrollWidth=304. Резюме открывается без overflow (289=289), Escape и возврат работают. Console errors: `[]`. Evidence: `38-public-case-319.jpg`.

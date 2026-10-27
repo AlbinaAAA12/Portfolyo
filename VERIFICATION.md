@@ -141,3 +141,8 @@ Component24: новые hover/pressed assets, current постоянно Pressed
 Правки сохранены в коммите `65d4b0e`. Запущен [workflow обновления](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/39814269352): сборка прошла успешно. На момент проверки этап deploy в API GitHub ещё имел статус `waiting`; успешное завершение всего workflow не подтверждено.
 
 Публичный сайт уже отдаёт новые `index-Bdq1-yRM.js` и `index-FOthsPjz.css`. На нём проверены 15 превью пяти кейсов, пять отзывов, переход по превью в Мозг.лаб, открытие подробного кейса и резюме (900×3147,92), английская версия и мобильный экран Spirit 390×844. Ошибок JavaScript, console errors и HTTP 4xx/5xx у ресурсов приложения не обнаружено.
+
+
+## Мобильная лента — 27 октября 2026
+
+Код `f537697` опубликован через [workflow 40468563148](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40468563148), build/deploy success. Мобильная и планшетная версия до 1100px теперь использует вертикальную прокрутку профиля, кейсов и медиа; переключатели description/previews и info/projects удалены. Контент, медиа и базовый desktop CSS сохранены. Проверены 320px RU/EN, 390/401/430, landscape 844×390, tablet1024 и desktop1280×832; дополнительные responsive frames проверены в Visual Truth. Редактор подключён только к DEV. Итог `design-qa.md`: passed; исследование — `MOBILE-UX-REVIEW.md`. Public smoke test прошёл: Мозг.лаб, резюме, возврат, отсутствие overflow/editor, загруженный Manrope; console errors нет. Реальные iOS/Android устройства не использовались.

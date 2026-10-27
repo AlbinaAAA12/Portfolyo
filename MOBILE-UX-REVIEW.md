@@ -53,4 +53,13 @@
 
 ## Статус
 
-Пересборка выполнена. Итоговые проверки и свидетельства фиксируются в `design-qa.md`; публикация будет отмечена после успешного завершения GitHub Actions.
+Пересборка выполнена; `design-qa.md` — `final result: passed`. Код опубликован из коммита `f537697` через [GitHub Actions](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40468563148), build и deploy завершились успешно. На [публичном сайте](https://albinaaaa12.github.io/Portfolyo/) проверены мобильная лента, открытие Мозг.лаб и резюме, возврат, Manrope и отсутствие редактора. Console errors: `[]`.
+
+
+## Скриншоты сравнения
+
+![Главная до и после](C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-2026-10-27/compare-mobile-about.jpg)
+
+![Кейс до и после](C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-2026-10-27/compare-mobile-case.jpg)
+
+![Итоговые мобильные экраны](C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-2026-10-27/final-mobile-flow.jpg)
