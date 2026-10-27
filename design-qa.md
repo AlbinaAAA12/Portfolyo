@@ -61,4 +61,6 @@ No actionable P0/P1/P2 findings remain in this scope.
 - [x] Mobile/tablet/desktop QA и исправления P2
 - [x] RU/EN, gallery dots/drag, navigation/focus, build/console
 
+Publication: 34c99ca via workflow40496255203, build/deploy success. HTTP GET root and versioned URL returned200 with final index-DSK2HtJ3.js / index-D1wSFMmR.css. Public browser showed cached prior v3, then CDP/navigation stopped responding; full browser smoke of the final public bundle is not claimed. Final build was browser-tested locally. See VERIFICATION.md.
+
 final result: passed
