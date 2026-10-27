@@ -2,6 +2,8 @@
 
 ## Свитч языка и строчные ссылки — 27 октября 2026
 
+Опубликовано из `dbd1e0e`: [workflow40459812092](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40459812092), build/deploy success. На GitHub Pages подтверждены новый bundle, computed trim-both/cap alphabetic у обеих подписей, EN links telegram/email, выбранный Eng. Console errors/warnings отсутствуют; live-en.jpg сохранён в evidence-папке.
+
 Свитч повторно проверен только через Figma MCP: Header RU1:14194 / EN1:14201, экземпляры1:14195 /1:14202, masters1:14038 /1:14042. Сессия a264246f-1dfc-4bfc-b862-e73f622c6c7b. У всех четырёх текстовых слоёв leadingTrim=CAP_HEIGHT, Manrope Medium500/24px/AUTO/−2%; ширины40/42px и высота17px. Контейнер138×52, selected RU64×36 /EN66×36, paddingX12/paddingY8; переключаемые root padding8/16 и16/8 сохранены.
 
 Добавлены flex-центрирование кнопок и native text-box-trim:trim-both /text-box-edge:cap alphabetic на label. В браузере label17.28125px из-за дробных font metrics, обе подписи на одной высоте; без transform/ручных сдвигов. Совместно просмотрены Figma/browser comparisons RU/EN при одинаковом масштабе. Для сравнения использован crop138×52 из Header1200×68 с белым фоном; isolated masters имеют другой контекст фона на холсте. Browser JPEG и Figma PNG немного отличаются сглаживанием, геометрия контейнеров совпадает.
