@@ -146,3 +146,11 @@ Component24: новые hover/pressed assets, current постоянно Pressed
 ## Мобильная лента — 27 октября 2026
 
 Код `f537697` опубликован через [workflow 40468563148](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40468563148), build/deploy success. Мобильная и планшетная версия до 1100px теперь использует вертикальную прокрутку профиля, кейсов и медиа; переключатели description/previews и info/projects удалены. Контент, медиа и базовый desktop CSS сохранены. Проверены 320px RU/EN, 390/401/430, landscape 844×390, tablet1024 и desktop1280×832; дополнительные responsive frames проверены в Visual Truth. Редактор подключён только к DEV. Итог `design-qa.md`: passed; исследование — `MOBILE-UX-REVIEW.md`. Public smoke test прошёл: Мозг.лаб, резюме, возврат, отсутствие overflow/editor, загруженный Manrope; console errors нет. Реальные iOS/Android устройства не использовались.
+
+## Мобильная версия v2 — тихая навигация, 27 октября 2026
+
+Код `c5b06543129d2f8dfdf25f687c2d6ee9b633d3de` опубликован через [workflow 40476729424](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40476729424), build и deploy success. Public bundles: `index-5S2LFC2E.js`, `index-BM1qhuNh.css`.
+
+Вторая итерация до1100px убирает заметный sticky-header и вторую строку выбора кейсов. На странице остаются тихие «Меню / Язык», прямые контакты и резюме; меню содержит четыре подписанных превью. В кейсах первое превью предшествует описанию и тегам; «Больше» после тегов. Исходные RU/EN copy, assets, исходная desktop-ветка и base CSS сохранены. Сравнение неподвижных областей desktop-header, intro и brand-strip: MAE0, все пиксели совпали; видео/портрет не сравнивались по времени.
+
+На публичном сайте при390×844 подтверждены новая сборка, Manrope, отсутствие Visual Truth, scene width375 / scrollWidth375, закрытие меню после выбора Мозг.лаб, h1 focus, scrollTop0, More внутри case-info, меню→резюме→закрытие с возвратом на Menu, возврат к проектам. Console errors: `[]`. Evidence `22-public-menu.jpg`, `23-public-about.jpg` в `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v2-2026-10-27/`. Дополнительные локальные размеры320RU/EN,390,430EN,1024 и desktop1280×832, подробные критерии и ограничения — design-qa.md. Исследование восьми референсов и официальных гайдов — MOBILE-UX-V2.md. Реальные мобильные устройства и screen reader не тестировались.

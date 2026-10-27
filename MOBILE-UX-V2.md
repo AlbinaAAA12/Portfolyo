@@ -38,3 +38,7 @@
 Это экспертная пересборка с браузерной проверкой, без респондентов, реального iOS/Safari/Android и экранного диктора. Содержание отзывов и доступность PDF не менялись. Остаточные ограничения и evidence — в design-qa.md.
 
 Скриншоты и сравнительные листы: `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v2-2026-10-27/`.
+
+## Публикация
+
+[GitHub Pages](https://albinaaaa12.github.io/Portfolyo/): код `c5b0654`, [build/deploy success](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40476729424). На публичном сайте проверены меню, открытие Мозг.лаб, возврат к работам и резюме, отсутствие console errors и горизонтального переполнения при390×844. Десктопная композиция сохранена. Сравнение и ограничения — design-qa.md; детали релиза — VERIFICATION.md.

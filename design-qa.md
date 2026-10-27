@@ -56,4 +56,6 @@ No real iOS/Safari/Android hardware, screen reader or recruited user study. Nati
 - [x] Fix/recheck P2 issues
 - [x] Mobile/tablet/desktop comparison, build and console checks
 
+Publication: workflow40476729424 build/deploy success for c5b0654; public bundles index-5S2LFC2E.js / index-BM1qhuNh.css verified. Public menu/case/resume/back and zero console errors confirmed at390x844. Evidence22-public-menu.jpg and23-public-about.jpg.
+
 final result: passed
