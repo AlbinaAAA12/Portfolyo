@@ -175,9 +175,9 @@
 }
 @media (max-width: 1100px) {
   .overlay-gallery-arrow { display: none; }
-  .overlay-gallery-dots { gap: 0; padding: 0; }
+  .overlay-gallery-dots { gap: 0; padding: 4px 0; }
   .overlay-gallery-dots button,
   .overlay-gallery-dots button.is-active { position: relative; width: 24px; height: 44px; flex: 0 0 24px; background: transparent; }
-  .overlay-gallery-dots button::after { position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 100px; background: #b3b4b8; content: ''; transform: translate(-50%, -50%); }
-  .overlay-gallery-dots button.is-active::after { width: 16px; height: 16px; background: #202124; }
+  .overlay-gallery-dots button::after { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; border-radius: 100px; background: #b3b4b8; content: ''; transform: translate(-50%, -50%); }
+  .overlay-gallery-dots button.is-active::after { width: 6px; height: 6px; background: #202124; }
 }

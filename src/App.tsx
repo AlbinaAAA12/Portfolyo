@@ -205,14 +205,18 @@ function CasePage({ id, locale, compact, titleRef, onMore }: { id: CaseId; local
     {hasRequestAccess ? accessStatus : moreControl}
   </div>;
   const description = <div className={`case-description case-description--${id}`}><p><NoOrphans>{item.description}</NoOrphans></p>{'secondParagraph' in item && <p><NoOrphans>{item.secondParagraph}</NoOrphans></p>}</div>;
-  const tags = <div className="tag-list">{item.tags.map((tag) => <span className="tag" key={tag}><span>{tag}</span></span>)}</div>;
+  const tagClass = !compact ? 'tag-list' : item.tags.length === 4 ? 'tag-list tag-list--balanced' : 'tag-list tag-list--scroll';
+  const tagItems = item.tags.map((tag) => <span className="tag" key={tag}><span>{tag}</span></span>);
+  const tagContent = compact && item.tags.length === 4
+    ? <><div className="tag-row">{tagItems.slice(0, 2)}</div><div className="tag-row">{tagItems.slice(2, 4)}</div></>
+    : tagItems;
+  const tags = <div className={tagClass} {...(compact && item.tags.length === 3 ? { tabIndex: 0, role: 'region', 'aria-label': locale === 'ru' ? 'Теги проекта' : 'Project tags' } : {})}>{tagContent}</div>;
   return <>
     <main className={`case-layout${compact ? ' is-compact' : ''}`}>
       {compact ? <><div className="case-mobile-heading">{heading}</div><ProjectGallery id={id} locale={locale} range="hero" /><section className="case-info surface"><div className="case-copy">{description}</div>{tags}</section><ProjectGallery id={id} locale={locale} range="remaining" /></> : <><section className="case-info surface"><div className="case-copy">{heading}{description}</div>{tags}</section><ProjectGallery id={id} locale={locale} /></>}
     </main>
     {compact && <footer className="case-mobile-footer">
-      <button className="case-back-link" type="button" onClick={() => onMore('about')}>{locale === 'ru' ? 'К кейсам' : 'All cases'}</button>
-      <button className="case-next-link" type="button" onClick={() => onMore(caseOrder[(caseOrder.indexOf(id) + 1) % caseOrder.length])}><span className="case-next-name">{t.cases[caseOrder[(caseOrder.indexOf(id) + 1) % caseOrder.length]].name}</span><img src={asset('figma/nav-primary-default.svg')} alt="" /></button>
+      <button className="case-next-link" type="button" aria-label={`${locale === 'ru' ? 'Открыть кейс' : 'Open case'}: ${t.cases[caseOrder[(caseOrder.indexOf(id) + 1) % caseOrder.length]].name}`} onClick={() => onMore(caseOrder[(caseOrder.indexOf(id) + 1) % caseOrder.length])}><span className="case-next-name">{t.cases[caseOrder[(caseOrder.indexOf(id) + 1) % caseOrder.length]].name}</span></button>
     </footer>}
   </>;
 }
@@ -299,7 +303,7 @@ export default function App() {
   return <div className={`scene-viewport${overlay || onboarding || menuOpen ? ' is-scroll-locked' : ''}`} ref={viewportRef} style={{ '--scene-scale': sceneScale } as CSSProperties}>
     <div className="app-shell" lang={locale}>
     <div className="app-content">
-      {compact ? <MobileNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} screen={screen} locale={locale} setLocale={setLocale} caseNames={{ mozglab: copy[locale].cases.mozglab.name, spirit: copy[locale].cases.spirit.name, future: copy[locale].cases.future.name, veritas: copy[locale].cases.veritas.name }} onAbout={showAbout} onProjects={showCases} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : <Header locale={locale} setLocale={setLocale} screen={screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />}
+      {compact ? <MobileNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} screen={screen} locale={locale} setLocale={setLocale} caseNames={{ mozglab: copy[locale].cases.mozglab.name, spirit: copy[locale].cases.spirit.name, future: copy[locale].cases.future.name, veritas: copy[locale].cases.veritas.name }} onProjects={showCases} onCase={(id) => navigate(id, 'case')} /> : <Header locale={locale} setLocale={setLocale} screen={screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />}
       {screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : <CasePage key={screen} id={screen} locale={locale} compact={compact} titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
         if (screen === 'mozglab' && target === undefined) {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
