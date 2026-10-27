@@ -1,0 +1,45 @@
+.spirit-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 592 / 668;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.spirit-preview__backdrop {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 54%;
+  overflow: hidden;
+}
+
+.spirit-preview .spirit-preview__backdrop img {
+  position: absolute;
+  top: 0;
+  left: -2.49%;
+  display: block;
+  width: 108.18%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.spirit-preview__frame {
+  position: absolute;
+  top: 26.6467%;
+  left: 10.2196%;
+  width: 79.56%;
+  height: 46.7066%;
+}
+
+.spirit-preview .spirit-preview__frame img {
+  position: absolute;
+  top: -4.808%;
+  left: -4.246%;
+  display: block;
+  width: 108.493%;
+  height: 112.821%;
+  object-fit: fill;
+}

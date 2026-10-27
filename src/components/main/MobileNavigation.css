@@ -57,23 +57,48 @@
 .mobile-navigation-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .mobile-navigation-heading h2 { margin: 0; font-size: 24px; font-weight: 600; line-height: 1.2; }
 .mobile-navigation-dialog button { color: inherit; font-family: inherit; cursor: pointer; }
-.mobile-navigation-close { min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 22px; background: transparent; font-size: 16px; font-weight: 500; }
-.mobile-navigation-close:hover { background: var(--tertiary); }
-.mobile-navigation-secondary { display: flex; flex-wrap: wrap; gap: 8px; }
-.mobile-navigation-secondary button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 22px; background: var(--tertiary); font-size: 15px; font-weight: 500; }
+.mobile-navigation-secondary {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: min(100%, max-content);
+  margin-inline: auto;
+  padding: 4px;
+  gap: 4px;
+  border-radius: 100px;
+  background: var(--tertiary);
+}
+.mobile-navigation-secondary button {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 100px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -.32px;
+  white-space: nowrap;
+}
+.mobile-navigation-secondary button span {
+  display: block;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+}
 .mobile-navigation-secondary button[aria-current="page"] { background: var(--ink); color: var(--surface); }
+.mobile-navigation-secondary button:not([aria-current="page"]):hover { color: var(--pink); }
 .mobile-navigation-projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .mobile-navigation-project { display: grid; min-width: 0; gap: 8px; padding: 0; border: 0; border-radius: 14px; background: transparent; text-align: left; }
 .mobile-navigation-project img { display: block; width: 100%; aspect-ratio: 16 / 10; border-radius: 12px; object-fit: cover; }
 .mobile-navigation-project span { font-size: 14px; font-weight: 500; line-height: 1.3; }
 .mobile-navigation-project[aria-current="page"] { color: var(--pink); }
-.mobile-navigation-locale { display: flex; gap: 8px; }
-.mobile-navigation-locale button { min-width: 44px; min-height: 44px; border: 0; border-radius: 22px; background: var(--tertiary); font-size: 14px; font-weight: 500; }
-.mobile-navigation-locale button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
-.mobile-navigation-contacts { display: flex; gap: 20px; padding-top: 4px; font-size: 16px; font-weight: 500; }
-.mobile-navigation-contacts a { display: inline-flex; min-height: 44px; align-items: center; color: inherit; text-decoration: none; }
-.mobile-navigation-contacts a:hover { color: var(--pink); }
 .mobile-case-more { align-self: flex-start; }
+
+@media (max-width: 360px) {
+  .mobile-navigation-secondary button { padding-inline: 8px; font-size: 14px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .mobile-navigation-dialog { transition: none; }

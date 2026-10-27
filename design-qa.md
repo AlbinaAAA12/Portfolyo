@@ -1,61 +1,60 @@
-# Design QA — mobile v2
+# Design QA — мобильные правки v3
 
-27 октября 2026. Final result относится к этой адаптации, не к историческому аудиту всего портфолио.
+27 октября 2026. Область: компактная компоновка до1100px; десктоп сохранён.
 
-## Source visual truth и нормализация
+## Визуальная цель и evidence
 
-- Восемь предоставленных пользователем JPG: `C:/Users/Albina/Downloads/Telegram Desktop/photo_1_2026-10-27_15-26-03.jpg` … `photo_8_2026-10-27_15-26-03.jpg`, каждый 1080×2340. Это композиционные референсы, не макеты для точного копирования. В сравнительных листах убраны верхние 240px browser chrome и нижняя системная панель, показан crop 1080×1965; изображения уменьшены с сохранением пропорций. Не выносятся pixel-perfect замечания о разных текстах, палитрах и размерах чужих сайтов.
-- Источник собственного стиля и baseline: код `70b7fd3`, screenshots `01-about-before.jpg`, `02-case-before.jpg` (390×844), `03-desktop-before.jpg` (1280×832).
-- Implementation: `http://127.0.0.1:4173/Portfolyo/`, React/Vite production build. Screenshot/evidence root: `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v2-2026-10-27/`.
-- Phone CSS viewport 390×844, capture 390×844, 1 capture pixel per CSS px. Extra 320×568, 430×932 captures same dimensions. Desktop CSS/capture 1280×832. Tablet CSS 1024×1366, native screenshot 1024×1238 (visible host capture clipped at bottom); full-height tablet pixel fidelity is not claimed.
-- State: About, menu open, each case, both locales, resume/detail dialogs. Videos continue playing, so comparison frames differ in time; media timeline differences are not layout defects.
+Source visual truth: восемь аннотированных JPG пользователя `C:/Users/Albina/Downloads/Telegram Desktop/photo_{1,2,3,4,5,7,10,11}_2026-10-27_16-09-32.jpg`, каждый1080×2126. Это пометки о структуре и действиях поверх предыдущей версии, а не новые pixel-perfect макеты. Текстовое уточнение пользователя: удалить кнопку закрытия меню, закрывать нажатием вне панели. Три сегмента расположены в один ряд, как обозначено общей линией на аннотации.
 
-## Full-view и focused evidence
+Implementation: production preview `http://127.0.0.1:4173/Portfolyo/`; baseline71bb90c. Evidence root: `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v3-2026-10-27/`. Предыдущий QA сохранён там в design-qa-v2-archived.md.
 
-- `compare-reference-about.jpg`: two reference introductions and rendered About in one input.
-- `compare-reference-navigation-case.jpg`: labelled reference menu, implementation menu, preview-first reference case, rendered case in one input.
-- `compare-mobile-v2.jpg`, `compare-case-v2.jpg`: current-run before and after. The blank first video frame in the old About capture is a frame of the existing video, not a claimed fixed defect.
-- `compare-style-details.jpg`: own original typography/navigation and mobile text/actions, focused comparison. Keeps Manrope and the black/white/gray/pink language.
-- `compare-menu-final.jpg`: reference, initial v2 menu and final token-correct menu after fixes.
-- `compare-desktop-v2.jpg`: original and current desktop. Header, intro crop and brand-strip raster comparisons each MAE 0, 100% pixels identical; animated portrait/video regions excluded. Layout geometry remains header1200×68 at40,40; panels592×584 at40/648,124; brand1200×68 at40,724.
+Phone CSS/capture390×844 и320×568, по одному capture pixel наCSSpx. Desktop CSS/capture1280×832. Tablet CSS1024×1366, видимый native capture1024×1238: нижняя часть ограничена хостом, полная пиксельная проверка высоты не заявляется. В сравнительных листах полные исходные JPG уменьшены пропорционально доширины300–350px; browser chrome и разные scroll positions не считаются дефектами. Видео показаны в разных моментах времени, их содержимое не редактировалось.
 
-## Findings и история исправлений
+## Совместные сравнения
 
-1. [P2, initial v2] Utility language hit area was35.1×44. Fixed to min44×44; menu contact links also min44 high. Verified computed min-width44 and final menu screenshot19.
-2. [P2, initial v2] More still competed with case title in the top heading instead of the agreed description→tags→action order. Split compact placement from desktop; moved More after tags. Screenshot06 records initial state, screenshot12 records fix. More opens detailed Mozg case, other cases show bounded hint.
-3. [P2, initial v2] New menu used #ec6594 and #f5f5f5 instead of existing project tokens. Replaced with --pink #f538a0 and --tertiary rgba(118,118,128,.12); existing --ink/--surface reused. Verified computed colors and screenshot19; combined input `compare-menu-final.jpg`.
+- compare-home.jpg: аннотация заголовков и стрелок, текущий-run before01 и implementation14.
+- compare-menu.jpg: аннотация удаления/переименования, before02 и implementation15. Проверены общее основание сегментов, центрирование, выбранный чёрный пункт, отсутствие Close/дублей.
+- compare-reviews-gallery.jpg: source photo5/photo10 и implementation13/09. Сравниваются внешний фрейм, ширина отзывов, расстояние точек и отсутствие стрелок.
+- compare-fixes.jpg: initial320heading06 и fixed08; полная композиция Spirit12.
+- compare-desktop.jpg: baseline03 и after17. Неподвижные header/intro/brand crops совпадают на100%, MAE0; animated portrait/video excluded. Два основных блока592×584 at40/648,124, нижние логотипы1200×68 at40,724.
 
-No actionable P0/P1/P2 findings remain in this scope. Intentional differences from references: original portrait, font/palette/content, text menu instead of bespoke icon, centered native dialog rather than full-screen branded menu. These preserve the requested original style.
+Focused checks: DOM dimensions confirm caption→media gap12px vs40px between project rows. Spirit img computed108.18%/108.493%, object-fit fill, aspect592/668; sourceSVG остаётся векторным. Dots centres24px, hitarea24×44. Menu controls44px high, same row, source trim cap/alphabetic. Source copy block RU/EN unchanged.
 
-## Five fidelity surfaces
+## Findings / исправления
 
-- Typography: Manrope loaded; intro600 24/31.2, case500 18/26.1, utility500 16, headings600. No content truncation observed at320RU/EN; long case title wraps. Source NoOrphans unchanged. Antialiasing inspected in screenshots; no claim of cross-platform identical rendering.
-- Spacing/layout: one-column phone; two-column tablet with364px tracks at1024; 16px phone edges/24px tablet; 24px section rhythm. Static utility row, no header mask, no mobile chip strip. Preview first, original media aspect ratios, card captions below previews; menu scrolls on short screen. No page horizontal overflow at320/390/430/1024.
-- Color/tokens: #202124, #f6f7f8, white, existing tertiary and #f538a0. Menu states use project tokens after fix3. Existing desktop CSS before compact media query is byte-identical apart from hiding two new mobile-only classes.
-- Assets: unchanged source photos, videos, original Figma SVGs/icons. No substitute art. Spirit original SVG text stays sharp and relative composition remains inside its panel; video slots retain source ratio/border/shadow. Existing video content itself is not edited.
-- Copy: original `const copy` RU/EN block programmatically unchanged; four cases in original order. New utility/menu words localized; English telegram/email lowercase. No new claims or case metrics.
+1. [P2, initial implementation] Общий `.mobile-project-media img` перебивал crop и размеры вложенных изображений Spirit, задавал cover и100%. Повышена специфичность локальных селекторов. После: backdrop368.891px приparent341, frame294.336px приparent271.297, обаfill; screenshot12.
+2. [P2, initial implementation] При320px More уходила под Мозг.лаб из-за фиксированного flex-basis220px, хотя контент помещался. Заменено на intrinsic min-content и выравнивание по нижнему краю названия. Screenshot06→08; future320EN переносит длинное название без overlap и overflow.
+3. [P2, source fidelity] Veritas в новой строке наследовал Manrope600 вместо исходногоArial700. Исправлено; финальный browser computed Arial,sans-serif /700,16px. Обе группы после изменения676.367px, поэтому цикл по-прежнему состыкован.
 
-## Interaction verification
+No actionable P0/P1/P2 findings remain in this scope.
 
-- Four case choices close menu, focus h1 and reset scene scroll0. Back/All cases focuses project heading at16px. Language changes current view, no case reset.
-- Menu native modal: initial focus Close; Escape, close and backdrop dismiss. Page width remains375 while locked at390 viewport. Background stays modal/inert. Browser chrome can receive native keyboard focus; no custom cyclic focus-trap claim. Resizing to desktop unmounts menu and clears scroll lock.
-- Menu→Resume→close returns focus to live Menu. Direct Resume→close returns to Resume. Detailed case→Escape returns to More and keeps reading position. Existing modal content remains vertically scrollable.
-- Testimonial horizontal scroll moves scrollLeft310; gap24; vertical scene remains native scroll. All four project cards and media stay available in one page.
-- Videos observed playing with increasing time, loop/muted and no media errors. Offscreen pause/fallback implementation unchanged.
-- Browser console errors `[]`; `npm run build` and `git diff --check` pass. Final bundles index-5S2LFC2E.js / index-BM1qhuNh.css. Production files contain no Visual Truth / source bridge references.
+## Пять поверхностей качества
 
-## Remaining test gaps / P3
+- Typography: Manrope загружен; исходная иерархия24px вступления,20px названия карточек,32px case title,18px description,14px отзывов сохранена. Сегменты16px, на<=36014px; Vertical trim применяется к внутреннемуspan. VeritasArial700. Нет обрезанного контента при320RU/EN; NoOrphans/исходные тексты сохранены.
+- Spacing/layout: видимого «Кейсы» на главной нет; caption и стрелка над своим превью. 12px внутри связки,40px между карточками. Отзывы без белой обёртки; viewport0…375 при390viewport/15px scrollbar; каждый slide375px, зазор24. Pagination не растягивается по ширине. One-row logo frame343×68, overflowhidden. Tablet364px tracks; Spirit выше других из-за сохранённых исходных пропорций.
+- Colors/tokens: прежние --ink/#202124, --page/#f6f7f8, --surface/white, --tertiary и --pink/#f538a0. Сегменты на общей tertiary-плашке, selectedblack/white; активный пункт не получает hover-перекраску. Отзывы на исходном сером фоне, лишняя белая поверхность удалена.
+- Image/asset fidelity: Spirit повторяет оригинальную сцену case-page из cdbc0.png + spirit-empty-state.svg. Остальные изображения, видео и иконки исходные. Не добавлялась новая графика. В ленте те же пять логотипов, вторая группа aria-hidden.
+- Copy/content: const copy RU/EN unchanged. Меню переименовано Инфа/Info, дубли языка/контактов удалены только из dialog, utility-language и прямые контакты работают. У next-link оставлены имя проекта и стрелка, текст Next case/Следующий кейс удалён. Десктопная copy/markup ветка сохранена.
 
-No real iOS/Safari/Android hardware, screen reader or recruited user study. Native touch gestures and browser text enlargement were not newly simulated in this iteration. Existing placeholder testimonials and missing PDF behavior remain out of scope. Supplementary menu is not sticky: use the visible in-page actions and footer next/back while reading. Post-deploy evidence is recorded in VERIFICATION.md.
+## Проверенные взаимодействия
 
-## Implementation checklist
+- Выбор кейса закрывает меню, focus h1 /scrollTop0. Возврат фокусирует section#mobile-projects на16px, без удалённогоh2. Menu→Resume→close возвращает фокус на живой Menu trigger.
+- Native menu withoutClose: backdrop иEscape закрывают; initialfocus наИнфа/Info. При320EN три сегмента в одной строке, dialogscrollWidth=clientWidth296.
+- More возле case-title открывает подробный кейс. Галерейные стрелки computednone на320/390, grid на1280. КнопкаImage2 меняет1/2→2/2, горизонтальный drag меняет2/2→1/2. Dots24×44, центры24px.
+- Отзывы: точка2 даётscrollLeft399; native горизонтальный scroll переходит наотзыв4 /1197, gap24. Страница не переполняется по горизонтали.
+- Marquee: две одинаковые группы; widthtrack=2×group, transform меняется при40s linear animation и останавливается приhover/focus. После ухода фокуса продолжает. Все лого наодномy, clipping внутрибелогоframe. Reduced-motion CSS отключает animation, разрешает native horizontal scroll; системная настройка в этой сессии не менялась.
+- Сборка npm run build и git diff --check pass. Base desktop CSS доcompact query unchanged; прежнийoverlayCSS retained verbatim с добавлением толькоcompact rules. Финальные bundles index-DpAnerfb.js / index-Blb38e6G.css. Browser console errors: [].
 
-- [x] Quiet mobile navigation and separate menu
-- [x] Original style/content/media retained
-- [x] Preview-first cases and direct profile actions
-- [x] Fix/recheck P2 issues
-- [x] Mobile/tablet/desktop comparison, build and console checks
+## Границы / дальнейшая проверка
 
-Publication: workflow40476729424 build/deploy success for c5b0654; public bundles index-5S2LFC2E.js / index-BM1qhuNh.css verified. Public menu/case/resume/back and zero console errors confirmed at390x844. Evidence22-public-menu.jpg and23-public-about.jpg.
+Реальные телефоны, iOS/Safari и screen reader не использовались; touchсвайп отдельно наустройстве не тестировался, проверен pointerdrag существующегоuseSwipe. Плавность строки проверена визуально и поtransform, profilingFPS не проводился. Тексты временных отзывов и PDF не менялись. Публикация и publicsmoke записываются в VERIFICATION.md.
+
+## Checklist
+
+- [x] Все запрошенные мобильные перестановки
+- [x] Меню безкнопкиClose, segmentcontrol, workingdismiss/resume
+- [x] Spirit sourcecomposition, fullwidthreviews, compactdots, onelinelogos
+- [x] Mobile/tablet/desktop QA и исправления P2
+- [x] RU/EN, gallery dots/drag, navigation/focus, build/console
 
 final result: passed

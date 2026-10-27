@@ -29,7 +29,6 @@ export default function MobileNavigation({ menuOpen, onMenuOpenChange, screen, l
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const isCase = screen !== 'about';
   const switchLabel = locale === 'ru' ? 'Switch to English' : 'Переключить на русский';
-  const closeText = locale === 'ru' ? 'Закрыть' : 'Close';
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -39,8 +38,10 @@ export default function MobileNavigation({ menuOpen, onMenuOpenChange, screen, l
   }, [menuOpen]);
 
   const closeAndSelect = (callback: () => void, focusMenuTrigger = false) => {
-    onMenuOpenChange(false);
+    // Close synchronously before returning focus or opening the next native dialog.
+    if (dialogRef.current?.open) dialogRef.current.close();
     if (focusMenuTrigger) menuTriggerRef.current?.focus({ preventScroll: true });
+    onMenuOpenChange(false);
     callback();
   };
   const openMenu = () => onMenuOpenChange(true);
@@ -52,22 +53,17 @@ export default function MobileNavigation({ menuOpen, onMenuOpenChange, screen, l
     </div>
     <dialog className="mobile-navigation-dialog" ref={dialogRef} aria-labelledby="mobile-navigation-title" onCancel={(event) => { event.preventDefault(); onMenuOpenChange(false); }} onClose={() => { if (menuOpen) onMenuOpenChange(false); }} onClick={(event) => { if (event.target === dialogRef.current) onMenuOpenChange(false); }}>
       <div className="mobile-navigation-content">
-        <div className="mobile-navigation-heading"><h2 id="mobile-navigation-title">{locale === 'ru' ? 'Меню' : 'Menu'}</h2><button className="mobile-navigation-close" type="button" onClick={() => onMenuOpenChange(false)}>{closeText}</button></div>
+        <div className="mobile-navigation-heading"><h2 id="mobile-navigation-title">{locale === 'ru' ? 'Меню' : 'Menu'}</h2></div>
         <nav className="mobile-navigation-secondary" aria-label={locale === 'ru' ? 'Разделы' : 'Sections'}>
-          <button type="button" aria-current={screen === 'about' ? 'page' : undefined} onClick={() => closeAndSelect(onAbout)}>{locale === 'ru' ? 'Обо мне' : 'About'}</button>
-          <button type="button" aria-current={screen !== 'about' ? 'page' : undefined} onClick={() => closeAndSelect(onProjects)}>{locale === 'ru' ? 'Кейсы' : 'Projects'}</button>
-          <button type="button" onClick={() => closeAndSelect(onResume, true)}>{locale === 'ru' ? 'Резюме' : 'Resume'}</button>
+          <button type="button" aria-current={screen === 'about' ? 'page' : undefined} onClick={() => closeAndSelect(onAbout)}><span>{locale === 'ru' ? 'Инфа' : 'Info'}</span></button>
+          <button type="button" aria-current={screen !== 'about' ? 'page' : undefined} onClick={() => closeAndSelect(onProjects)}><span>{locale === 'ru' ? 'Кейсы' : 'Projects'}</span></button>
+          <button type="button" onClick={() => closeAndSelect(onResume, true)}><span>{locale === 'ru' ? 'Резюме' : 'Resume'}</span></button>
         </nav>
         <div className="mobile-navigation-projects" aria-label={locale === 'ru' ? 'Проекты' : 'Projects'}>
           {projects.map(({ id, image }) => <button className="mobile-navigation-project" type="button" key={id} aria-current={screen === id ? 'page' : undefined} onClick={() => closeAndSelect(() => onCase(id))}>
             <img src={asset(`figma/${image}`)} alt="" /><span>{caseNames[id]}</span>
           </button>)}
         </div>
-        <div className="mobile-navigation-locale" aria-label={locale === 'ru' ? 'Язык' : 'Language'}>
-          <button type="button" aria-pressed={locale === 'ru'} onClick={() => setLocale('ru')}>Рус</button>
-          <button type="button" aria-pressed={locale === 'en'} onClick={() => setLocale('en')}>Eng</button>
-        </div>
-        <div className="mobile-navigation-contacts"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{locale === 'ru' ? 'тг' : 'telegram'}</a><a href="mailto:albinatimofeeva11@gmail.com">{locale === 'ru' ? 'почта' : 'email'}</a></div>
       </div>
     </dialog>
   </>;
