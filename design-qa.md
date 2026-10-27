@@ -1,74 +1,59 @@
-# Design QA — мобильная лента Portfolyo
+# Design QA — mobile v2
 
-Дата: 27 октября 2026. Итоговая проверка пересборки мобильного UX. Предыдущий отчёт сохранён в evidence как previous-design-qa.md.
+27 октября 2026. Final result относится к этой адаптации, не к историческому аудиту всего портфолио.
 
 ## Source visual truth и нормализация
 
-Источник — свежие снимки исходного сайта, его реальные ассеты и токены. Мобильного фрейма Figma нет: новая компоновка является UX-адаптацией по запросу, а не заявлением о pixel-perfect соответствии отсутствующему макету. Десктоп проверяется на сохранность исходного дизайна.
+- Восемь предоставленных пользователем JPG: `C:/Users/Albina/Downloads/Telegram Desktop/photo_1_2026-10-27_15-26-03.jpg` … `photo_8_2026-10-27_15-26-03.jpg`, каждый 1080×2340. Это композиционные референсы, не макеты для точного копирования. В сравнительных листах убраны верхние 240px browser chrome и нижняя системная панель, показан crop 1080×1965; изображения уменьшены с сохранением пропорций. Не выносятся pixel-perfect замечания о разных текстах, палитрах и размерах чужих сайтов.
+- Источник собственного стиля и baseline: код `70b7fd3`, screenshots `01-about-before.jpg`, `02-case-before.jpg` (390×844), `03-desktop-before.jpg` (1280×832).
+- Implementation: `http://127.0.0.1:4173/Portfolyo/`, React/Vite production build. Screenshot/evidence root: `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v2-2026-10-27/`.
+- Phone CSS viewport 390×844, capture 390×844, 1 capture pixel per CSS px. Extra 320×568, 430×932 captures same dimensions. Desktop CSS/capture 1280×832. Tablet CSS 1024×1366, native screenshot 1024×1238 (visible host capture clipped at bottom); full-height tablet pixel fidelity is not claimed.
+- State: About, menu open, each case, both locales, resume/detail dialogs. Videos continue playing, so comparison frames differ in time; media timeline differences are not layout defects.
 
-Evidence: C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-2026-10-27/
+## Full-view и focused evidence
 
-| Область | Source | Implementation | Сравнение |
-| --- | --- | --- | --- |
-| About RU 390×844 | 01-about-390-before.jpg | 36-final-about-390.jpg | compare-mobile-about.jpg |
-| Мозг.лаб RU 390×844 | 03-mozglab-description-390-before.jpg | 37-final-mozglab-390.jpg | compare-mobile-case.jpg |
-| About RU 1280×832 | 09-desktop-about-before.jpg | 33-desktop-about-after.jpg | compare-desktop-full.jpg |
-| Desktop текст и Header | ref-type.png / ref-header.png | impl-type.png / impl-header.png | compare-desktop-type.jpg / compare-desktop-header.jpg |
+- `compare-reference-about.jpg`: two reference introductions and rendered About in one input.
+- `compare-reference-navigation-case.jpg`: labelled reference menu, implementation menu, preview-first reference case, rendered case in one input.
+- `compare-mobile-v2.jpg`, `compare-case-v2.jpg`: current-run before and after. The blank first video frame in the old About capture is a frame of the existing video, not a claimed fixed defect.
+- `compare-style-details.jpg`: own original typography/navigation and mobile text/actions, focused comparison. Keeps Manrope and the black/white/gray/pink language.
+- `compare-menu-final.jpg`: reference, initial v2 menu and final token-correct menu after fixes.
+- `compare-desktop-v2.jpg`: original and current desktop. Header, intro crop and brand-strip raster comparisons each MAE 0, 100% pixels identical; animated portrait/video regions excluded. Layout geometry remains header1200×68 at40,40; panels592×584 at40/648,124; brand1200×68 at40,724.
 
-Сравнения составлены попарно, открыты и проверены. Основные source/implementation имеют одинаковые размеры в CSS и физических px: 390×844 и 1280×832. Масштабирование для составления сравнений не применялось; подпись и разделитель добавлены снаружи исходных кадров. Планшетный native capture 27-ipad-1024-after.jpg имеет 1024×1238 физических px при CSS viewport 1024×1366: нижняя часть отсутствует, поэтому оценивается только видимый участок. Полный layout дополнительно просмотрен в Visual Truth. Разные кадры видео и глаз портрета исключены из оценки статичного совпадения.
+## Findings и история исправлений
 
-## Пять обязательных поверхностей
+1. [P2, initial v2] Utility language hit area was35.1×44. Fixed to min44×44; menu contact links also min44 high. Verified computed min-width44 and final menu screenshot19.
+2. [P2, initial v2] More still competed with case title in the top heading instead of the agreed description→tags→action order. Split compact placement from desktop; moved More after tags. Screenshot06 records initial state, screenshot12 records fix. More opens detailed Mozg case, other cases show bounded hint.
+3. [P2, initial v2] New menu used #ec6594 and #f5f5f5 instead of existing project tokens. Replaced with --pink #f538a0 and --tertiary rgba(118,118,128,.12); existing --ink/--surface reused. Verified computed colors and screenshot19; combined input `compare-menu-final.jpg`.
 
-- Типографика: Manrope и веса сохранены. На compact кейсы 18px/1.45, длинная проза не уменьшается ради высоты экрана. В модалках 16px/1.5. RU/EN не обрезаются; cap trim языка сохранён. Desktop приветствие и Header совпадают в парных crops.
-- Размеры и ритм: лента до 1100px, две колонки проектов от 701px. Высота по содержимому. Медиа используют исходные пропорции слотов. Gap отзывов 24px. Desktop профиль 592×584 в (40,124), footer 1200×68 в (40,724), shell 1280×832.
-- Цвета: прежние #202124, #f6f7f8, белые поверхности, розовые состояния, рамки и тени медиа. Новый вторичный label использует существующий #5d5e62. Выбранная Header-кнопка не получает pink hover.
-- Ассеты: исходные SVG/PNG и предоставленные MP4 без новых изображений и перекодирования. Spirit сохраняет векторное пустое состояние и backdrop внутри пропорционального контейнера. Desktop-коллаж сохранён.
-- Контент: блок copy RU/EN программно сравнен с предыдущим HEAD и идентичен. Добавлены только функциональные подписи мобильной навигации. Временные отзывы и отсутствие PDF сохранены по границам задачи.
+No actionable P0/P1/P2 findings remain in this scope. Intentional differences from references: original portrait, font/palette/content, text menu instead of bespoke icon, centered native dialog rather than full-screen branded menu. These preserve the requested original style.
 
-Все базовые desktop CSS до адаптивного media query также программно сравнивались: идентичны, кроме скрытия новых mobile-only элементов. Средняя абсолютная разница статичных desktop pixels после исключения портрета и коллажа — 0.01175/255; это дополнительный диагностический показатель.
+## Five fidelity surfaces
 
-## История P1/P2 и повторные проверки
+- Typography: Manrope loaded; intro600 24/31.2, case500 18/26.1, utility500 16, headings600. No content truncation observed at320RU/EN; long case title wraps. Source NoOrphans unchanged. Antialiasing inspected in screenshots; no claim of cross-platform identical rendering.
+- Spacing/layout: one-column phone; two-column tablet with364px tracks at1024; 16px phone edges/24px tablet; 24px section rhythm. Static utility row, no header mask, no mobile chip strip. Preview first, original media aspect ratios, card captions below previews; menu scrolls on short screen. No page horizontal overflow at320/390/430/1024.
+- Color/tokens: #202124, #f6f7f8, white, existing tertiary and #f538a0. Menu states use project tokens after fix3. Existing desktop CSS before compact media query is byte-identical apart from hiding two new mobile-only classes.
+- Assets: unchanged source photos, videos, original Figma SVGs/icons. No substitute art. Spirit original SVG text stays sharp and relative composition remains inside its panel; video slots retain source ratio/border/shadow. Existing video content itself is not edited.
+- Copy: original `const copy` RU/EN block programmatically unchanged; four cases in original order. New utility/menu words localized; English telegram/email lowercase. No new claims or case metrics.
 
-| Находка | Исправление | Evidence после |
-| --- | --- | --- |
-| P1: текст и макеты скрывают друг друга, видео вытянуты | Удалены toggles, общая лента и aspect-ratio исходных слотов | 37-final-mozglab-390.jpg; слоты 327×199 и 327×164 |
-| P2: iPad 1024 показывает уменьшенный desktop | Compact расширен до 1100px | 34-final-visual-truth-devices.jpg: 1440×900 / 1024×1366 / 440×956 |
-| P1: слои Spirit выходят на теги | Relative-контейнер для absolute media | 29-final-spirit-390.jpg; frame 279.25×184.98 внутри gallery 351×396.05 |
-| P2: обрезанные строки за sticky Header | Полоса фона под шапкой | 28-final-projects-390.jpg, 37-final-mozglab-390.jpg |
-| P2: маленькие targets, наложение логотипов | Язык 44×44, nav 44+, close/arrows 44×44, сетка логотипов | browser-facts.json, 34-final-visual-truth-devices.jpg |
-| P2: ширина фона меняется при modal lock | Stable scrollbar gutter | Ширина 375→375, scrollTop 0→0 |
-| P2: tooltip даёт overflow 1px скрытый / 3px показанный | Compact hidden tooltip не монтируется; max-width измеряется по clientWidth; scroll/resize закрывают его | 35-final-tooltip-320-en.jpg: clientWidth=scrollWidth=305, right=292.996, gap=8; после scroll узла нет |
+## Interaction verification
 
-## Проверенные шаги
+- Four case choices close menu, focus h1 and reset scene scroll0. Back/All cases focuses project heading at16px. Language changes current view, no case reset.
+- Menu native modal: initial focus Close; Escape, close and backdrop dismiss. Page width remains375 while locked at390 viewport. Background stays modal/inert. Browser chrome can receive native keyboard focus; no custom cyclic focus-trap claim. Resizing to desktop unmounts menu and clears scroll lock.
+- Menu→Resume→close returns focus to live Menu. Direct Resume→close returns to Resume. Detailed case→Escape returns to More and keeps reading position. Existing modal content remains vertically scrollable.
+- Testimonial horizontal scroll moves scrollLeft310; gap24; vertical scene remains native scroll. All four project cards and media stay available in one page.
+- Videos observed playing with increasing time, loop/muted and no media errors. Offscreen pause/fallback implementation unchanged.
+- Browser console errors `[]`; `npm run build` and `git diff --check` pass. Final bundles index-5S2LFC2E.js / index-BM1qhuNh.css. Production files contain no Visual Truth / source bridge references.
 
-1. Старт и главная — исправно. При reload появляется онбординг и затем About. Профиль, четыре карточки, отзывы и логотипы доступны в ленте. Compact не монтирует скрытый desktop-коллаж.
-2. Выбор работы — исправно. Header Cases переводит к списку и фокусирует заголовок. Все четыре работы открываются, новый кейс начинается сверху с фокусом на h1.
-3. Чтение описания — исправно. Текст и теги доступны целиком, включая длинную английскую версию на 320px.
-4. Просмотр макетов — исправно. После описания доступны видео в исходных пропорциях. Загруженные video имеют muted/loop/playsInline и autoplay, currentTime растёт; вне видимой области ставятся на паузу.
-5. Навигация и отзывы — исправно. Active chip видна, next/back работают. Язык не теряет кейс. Точки выбирают отзыв 3; горизонтальная прокрутка меняет его на 4, вертикальная прокручивает страницу с сохранением review index. Desktop Rail сохранён.
-6. Подробный кейс — исправно. More открывает dialog, фон заблокирован. Next image меняет 06560→66a7b, ArrowLeft возвращает первый кадр. Sticky close доступен при длинной прокрутке. Escape возвращает focus на More.
-7. Резюме — исправно. Нет horizontal overflow, проза 16px, sticky close 44px доступна в конце. Закрытие возвращает focus. PDF disabled до получения файла.
+## Remaining test gaps / P3
 
-Размеры: 320×568 RU/EN, 390×844, 401×844, 430×932 EN, 844×390, 1024×1366, 1280×832. Visual Truth дополнительно использован для Desktop 1440×900, iPad 1024×1366, Phone 440×956. Временные визуальные правки не применялись; visualTruthPatches=[].
+No real iOS/Safari/Android hardware, screen reader or recruited user study. Native touch gestures and browser text enlargement were not newly simulated in this iteration. Existing placeholder testimonials and missing PDF behavior remain out of scope. Supplementary menu is not sticky: use the visible in-page actions and footer next/back while reading. Post-deploy evidence is recorded in VERIFICATION.md.
 
-## Техническая проверка
+## Implementation checklist
 
-- npm run build: passed; git diff --check: passed.
-- Чистый npm ci в отдельной папке с package/lock и bundled archive: passed. Работающий локальный esbuild не удалялся.
-- В production JS/CSS нет visual-truth; editor и его CSS загружаются только в lazy DEV-модуле.
-- Последняя проверка production console errors: [].
-- DOM facts: browser-facts.json в evidence, включая размеры, focus, video properties, scroll и отсутствие editor/toggles.
-- Production assets: index-BzR3KBH_.js / index-pW702Res.css.
-
-## Ограничения
-
-Нативные iOS Safari / Android Chrome, физические touch-жесты и экранный диктор не проверялись. В браузере проверены прокрутка, кнопки, клавиатура и touch-action; полного соответствия WCAG не заявляется. Временные отзывы и отсутствие готового PDF — исходные ограничения контента. Видео остаются существующими записями, поэтому разные кадры не означают дрейф дизайна.
-
-Оставшихся actionable P0/P1/P2 в проверенной области нет. Следующий полезный шаг — естественное чтение и навигация на личном телефоне владельца.
+- [x] Quiet mobile navigation and separate menu
+- [x] Original style/content/media retained
+- [x] Preview-first cases and direct profile actions
+- [x] Fix/recheck P2 issues
+- [x] Mobile/tablet/desktop comparison, build and console checks
 
 final result: passed
-
-
-## Публикация и public smoke test
-
-[Workflow 40468563148](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40468563148), commit `f53769719885c1354e1f6765f6da6774a85ca76b`: build и deploy success. Публичный сайт отдаёт проверенные `index-BzR3KBH_.js` и `index-pW702Res.css`. В браузере 319px: четыре карточки, нет toggles/editor, Manrope загружен, Мозг.лаб показывает текст и gallery, clientWidth=scrollWidth=304. Резюме открывается без overflow (289=289), Escape и возврат работают. Console errors: `[]`. Evidence: `38-public-case-319.jpg`.

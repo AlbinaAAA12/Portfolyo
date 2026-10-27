@@ -11,6 +11,7 @@ import TestimonialSlider from './components/main/TestimonialSlider';
 import CaseRail from './components/main/CaseRail';
 import ProjectCollage from './components/main/ProjectCollage';
 import { useCompactLayout } from './lib/useCompactLayout';
+import MobileNavigation from './components/main/MobileNavigation';
 
 type Screen = 'about' | CaseId;
 type OverlayKind = 'resume' | 'case' | null;
@@ -63,7 +64,7 @@ function Header({ locale, setLocale, screen, onAbout, onCases, onResume }: {
   </header>;
 }
 
-function About({ locale, playbackEnabled, compact, titleRef, onCase }: { locale: Locale; playbackEnabled: boolean; compact: boolean; titleRef: (node: HTMLHeadingElement | null) => void; onCase: (id: CaseId) => void }) {
+function About({ locale, playbackEnabled, compact, titleRef, onCase, onResume }: { locale: Locale; playbackEnabled: boolean; compact: boolean; titleRef: (node: HTMLHeadingElement | null) => void; onCase: (id: CaseId) => void; onResume: () => void }) {
   const t = copy[locale];
   const projects: Array<{ id: CaseId; file: string; media?: 'iidei-landing' | 'mozglab-landing' | 'veritas-landing' }> = [
     { id: 'future', file: 'card-iidei-landing.png', media: 'iidei-landing' },
@@ -81,9 +82,10 @@ function About({ locale, playbackEnabled, compact, titleRef, onCase }: { locale:
     <main className={`about-layout${compact ? ' is-compact' : ''}`}>
       <section className="profile-card surface">
         <div className="profile-top">
-          <div className="profile-heading"><InteractivePortrait className="portrait" alt={t.profileName} playbackEnabled={playbackEnabled} /><div className="profile-identity"><h1 ref={titleRef} tabIndex={compact ? -1 : undefined}>{t.profileName}</h1><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div></div></div>
+          <div className="profile-heading"><InteractivePortrait className="portrait" alt={t.profileName} playbackEnabled={playbackEnabled} /><div className="profile-identity"><h1 ref={titleRef} tabIndex={compact ? -1 : undefined}>{t.profileName}</h1>{!compact && <div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div>}</div></div>
           <p className="intro"><NoOrphans>{t.greeting}</NoOrphans></p>
         </div>
+        {compact && <div className="profile-actions"><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div><button className="profile-resume" type="button" onClick={onResume}>{locale === 'ru' ? 'Резюме' : 'Resume'}</button></div>}
         {!compact && <TestimonialSlider locale={locale} name={t.testimonialName} />}
       </section>
       {compact ? <section id="mobile-projects" className="mobile-projects" aria-labelledby="mobile-projects-title">
@@ -107,7 +109,7 @@ function About({ locale, playbackEnabled, compact, titleRef, onCase }: { locale:
   </>;
 }
 
-function ProjectGallery({ id, locale }: { id: CaseId; locale: Locale }) {
+function ProjectGallery({ id, locale, range }: { id: CaseId; locale: Locale; range?: 'hero' | 'remaining' }) {
   const t = copy[locale];
   const posters: Record<CaseId, Array<{
     file: string;
@@ -132,15 +134,16 @@ function ProjectGallery({ id, locale }: { id: CaseId; locale: Locale }) {
       { file: 'card-veritas-login.png', media: 'veritas-login', height: '283.24px', fit: 'crop', stroke: 'rgba(0,16,36,.12)', background: '#f1f1f1', crop: { sy: 1.000000238418579, ty: 0 } },
     ],
   };
-  const files = posters[id];
-  if (id === 'spirit') return <section className="gallery-panel gallery-panel--spirit" aria-label={locale === 'ru' ? `Макет: ${t.cases[id].name}` : `Mockup: ${t.cases[id].name}`}>
+  const files = posters[id].map((item, index) => ({ ...item, index })).filter(({ index }) => range === undefined || (range === 'hero' ? index === 0 : index > 0));
+  if (!files.length) return null;
+  if (id === 'spirit') return <section className={`gallery-panel gallery-panel--spirit${range ? ` gallery-panel--${range}` : ''}`} aria-label={locale === 'ru' ? `Макет: ${t.cases[id].name}` : `Mockup: ${t.cases[id].name}`}>
     <div className="spirit-backdrop-wrap"><img className="spirit-backdrop" src={asset('figma/cdbc0.png')} alt="" /></div>
     <div className="spirit-empty-frame">
       <img src={asset('figma/spirit-empty-state.svg')} alt={locale === 'ru' ? 'Пустое состояние проекта Spirit LBaaS' : 'Spirit LBaaS project empty state'} />
     </div>
   </section>;
-  return <section className={`gallery-panel gallery-panel--${id}`} aria-label={locale === 'ru' ? `Макеты: ${t.cases[id].name}` : `Mockups: ${t.cases[id].name}`}>
-    {files.map(({ file, height, fit, stroke, background, crop }, index) => {
+  return <section className={`gallery-panel gallery-panel--${id}${range ? ` gallery-panel--${range}` : ''}`} aria-label={locale === 'ru' ? `Макеты: ${t.cases[id].name}` : `Mockups: ${t.cases[id].name}`}>
+    {files.map(({ file, height, fit, stroke, background, crop, index }) => {
       const slotStyle = {
         '--slot-height': height,
         '--slot-ratio': `544 / ${Number.parseFloat(height)}`,
@@ -192,23 +195,19 @@ function CasePage({ id, locale, compact, titleRef, onMore }: { id: CaseId; local
       window.removeEventListener('scroll', hideTooltip, true);
     };
   }, [compact, hintVisible]);
+  const accessStatus = <div className="access-status"><span className="lock-icon"><img src={asset('figma/1f4f8.svg')} alt="" /></span><span>{t.onRequest}</span></div>;
+  const moreControl = <button className={`more-button ${id === 'mozglab' ? 'more-button--mozglab' : ''}`} type="button" data-hint={hintVisible ? 'true' : 'false'} aria-label={labelSoon ? t.moreSoon : t.more} aria-describedby={showSoon && hintVisible ? tooltipId : undefined} onClick={(event) => {
+      if (id === 'mozglab') onMore();
+      else if (showSoon && compact) showHint(event.currentTarget);
+    }} onMouseEnter={showSoon ? showTooltip : undefined} onMouseLeave={showSoon ? hideTooltip : undefined} onFocus={showSoon ? showTooltip : undefined} onBlur={showSoon ? hideTooltip : undefined} title={showSoon ? t.soon : t.more}>{labelSoon ? t.moreSoon : t.more}<img src={asset('figma/371d6.svg')} alt="" />{showSoon && (!compact || hintVisible) && <span className="tooltip" id={tooltipId} role="tooltip" style={{ '--tooltip-max-width': tooltipMaxWidth } as CSSProperties}>{t.soon}</span>}</button>;
+  const heading = <div className="case-heading-row"><div><p className="case-meta">{item.meta}</p><h1 ref={titleRef} tabIndex={compact ? -1 : undefined}>{item.name}</h1></div>
+    {hasRequestAccess ? accessStatus : compact ? null : moreControl}
+  </div>;
+  const description = <div className={`case-description case-description--${id}`}><p><NoOrphans>{item.description}</NoOrphans></p>{'secondParagraph' in item && <p><NoOrphans>{item.secondParagraph}</NoOrphans></p>}</div>;
+  const tags = <div className="tag-list">{item.tags.map((tag) => <span className="tag" key={tag}><span>{tag}</span></span>)}</div>;
   return <>
     <main className={`case-layout${compact ? ' is-compact' : ''}`}>
-      <section className="case-info surface">
-        <div className="case-copy">
-          <div className="case-heading-row"><div><p className="case-meta">{item.meta}</p><h1 ref={titleRef} tabIndex={compact ? -1 : undefined}>{item.name}</h1></div>
-            {hasRequestAccess ? <div className="access-status"><span className="lock-icon"><img src={asset('figma/1f4f8.svg')} alt="" /></span><span>{t.onRequest}</span></div> : <button className={`more-button ${id === 'mozglab' ? 'more-button--mozglab' : ''}`} type="button" data-hint={hintVisible ? 'true' : 'false'} aria-label={labelSoon ? t.moreSoon : t.more} aria-describedby={showSoon && hintVisible ? tooltipId : undefined} onClick={(event) => {
-              if (id === 'mozglab') onMore();
-              else if (showSoon && compact) showHint(event.currentTarget);
-            }} onMouseEnter={showSoon ? showTooltip : undefined} onMouseLeave={showSoon ? hideTooltip : undefined} onFocus={showSoon ? showTooltip : undefined} onBlur={showSoon ? hideTooltip : undefined} title={showSoon ? t.soon : t.more}>{labelSoon ? t.moreSoon : t.more}<img src={asset('figma/371d6.svg')} alt="" />{showSoon && (!compact || hintVisible) && <span className="tooltip" id={tooltipId} role="tooltip" style={{ '--tooltip-max-width': tooltipMaxWidth } as CSSProperties}>{t.soon}</span>}</button>}
-          </div>
-          <div className={`case-description case-description--${id}`}>
-            <p><NoOrphans>{item.description}</NoOrphans></p>{'secondParagraph' in item && <p><NoOrphans>{item.secondParagraph}</NoOrphans></p>}
-          </div>
-        </div>
-        <div className="tag-list">{item.tags.map((tag) => <span className="tag" key={tag}><span>{tag}</span></span>)}</div>
-      </section>
-      <ProjectGallery id={id} locale={locale} />
+      {compact ? <><div className="case-mobile-heading">{heading}</div><ProjectGallery id={id} locale={locale} range="hero" /><section className="case-info surface"><div className="case-copy">{description}</div>{tags}{!hasRequestAccess && <div className="mobile-case-more">{moreControl}</div>}</section><ProjectGallery id={id} locale={locale} range="remaining" /></> : <><section className="case-info surface"><div className="case-copy">{heading}{description}</div>{tags}</section><ProjectGallery id={id} locale={locale} /></>}
     </main>
     {compact && <footer className="case-mobile-footer">
       <button className="case-back-link" type="button" onClick={() => onMore('about')}>{locale === 'ru' ? 'К кейсам' : 'All cases'}</button>
@@ -224,14 +223,17 @@ export default function App() {
   const [onboarding, setOnboarding] = useState(true);
   const [sceneScale, setSceneScale] = useState(1);
   const [navigationRevision, setNavigationRevision] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   const compact = useCompactLayout();
   const viewportRef = useRef<HTMLDivElement>(null);
   const caseTitleRef = useRef<HTMLHeadingElement>(null);
   const aboutTitleRef = useRef<HTMLHeadingElement>(null);
-  const activeCaseLinkRef = useRef<HTMLButtonElement>(null);
   const pendingFocus = useRef<'case' | 'about' | 'projects' | null>(null);
   const overlayReturnFocus = useRef<HTMLElement | null>(null);
   const previousScreen = useRef<Screen>(screen);
+  useEffect(() => {
+    if (!compact) setMenuOpen(false);
+  }, [compact]);
   useEffect(() => {
     document.documentElement.lang = locale;
     document.title = locale === 'ru' ? 'Альбина Тимофеева — портфолио' : 'Albina Timofeeva — Portfolio';
@@ -294,17 +296,11 @@ export default function App() {
     });
     return () => cancelAnimationFrame(frame);
   }, [screen, compact, onboarding, overlay, navigationRevision]);
-  useEffect(() => {
-    if (!compact || screen === 'about') return;
-    const frame = requestAnimationFrame(() => activeCaseLinkRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
-    return () => cancelAnimationFrame(frame);
-  }, [screen, locale, compact]);
-  return <div className={`scene-viewport${overlay || onboarding ? ' is-scroll-locked' : ''}`} ref={viewportRef} style={{ '--scene-scale': sceneScale } as CSSProperties}>
+  return <div className={`scene-viewport${overlay || onboarding || menuOpen ? ' is-scroll-locked' : ''}`} ref={viewportRef} style={{ '--scene-scale': sceneScale } as CSSProperties}>
     <div className="app-shell" lang={locale}>
     <div className="app-content">
-      <Header locale={locale} setLocale={setLocale} screen={screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />
-      {screen !== 'about' && compact && <nav className="mobile-case-nav" aria-label={locale === 'ru' ? 'Навигация по кейсам' : 'Case navigation'}>{caseOrder.map((id) => <button key={id} ref={screen === id ? activeCaseLinkRef : undefined} type="button" className={`mobile-case-link${screen === id ? ' is-active' : ''}`} aria-current={screen === id ? 'page' : undefined} onClick={() => navigate(id, 'case')}>{copy[locale].cases[id].name}</button>)}</nav>}
-      {screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} /> : <CasePage key={screen} id={screen} locale={locale} compact={compact} titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
+      {compact ? <MobileNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} screen={screen} locale={locale} setLocale={setLocale} caseNames={{ mozglab: copy[locale].cases.mozglab.name, spirit: copy[locale].cases.spirit.name, future: copy[locale].cases.future.name, veritas: copy[locale].cases.veritas.name }} onAbout={showAbout} onProjects={showCases} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : <Header locale={locale} setLocale={setLocale} screen={screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />}
+      {screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : <CasePage key={screen} id={screen} locale={locale} compact={compact} titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
         if (screen === 'mozglab' && target === undefined) {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           setOverlay('case');
