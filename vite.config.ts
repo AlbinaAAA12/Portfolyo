@@ -1,3 +1,4 @@
+import { visualTruthSourcePlugin } from 'visual-truth/vite'
 import { existsSync, openSync, readSync, closeSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
@@ -33,7 +34,7 @@ if (existsSync(videosDirectory)) {
 }
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [visualTruthSourcePlugin(), react()],
   base: '/Portfolyo/',
   define: {
     __RESUME_PDF_AVAILABLE__: JSON.stringify(hasValidResumePdf),

@@ -1,63 +1,69 @@
-# Design QA — UI / Header, Component 24, Component 11
+# Design QA — мобильная лента Portfolyo
 
-Дата: 26 октября 2026. Область — три указанных компонента и запрет hover у выбранной кнопки хедера. Остальной интерфейс сохранён.
+Дата: 27 октября 2026. Итоговая проверка пересборки мобильного UX. Предыдущий отчёт сохранён в evidence как previous-design-qa.md.
 
-## Source visual truth
+## Source visual truth и нормализация
 
-Figma MCP, файл ngodoFRwbYo2LClGrPbitG: UI / Header1:14179, Component241:14284, Component111:14251. Для всех получены новые get_design_context с изображениями, высокоточными свойствами и SVG; размеры/состояния/reactions сверены через use_figma. Использована текущая сессия59aa838e-ed85-4e2f-8564-b24b22c943f6. Figma в браузере не открывалась.
+Источник — свежие снимки исходного сайта, его реальные ассеты и токены. Мобильного фрейма Figma нет: новая компоновка является UX-адаптацией по запросу, а не заявлением о pixel-perfect соответствии отсутствующему макету. Десктоп проверяется на сохранность исходного дизайна.
 
-## Evidence and normalization
+Evidence: C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-2026-10-27/
 
-Папка evidence: C:/Users/Albina/Alb_Codex/Portfolyo-research/header-rail-2026-10-26/.
+| Область | Source | Implementation | Сравнение |
+| --- | --- | --- | --- |
+| About RU 390×844 | 01-about-390-before.jpg | 36-final-about-390.jpg | compare-mobile-about.jpg |
+| Мозг.лаб RU 390×844 | 03-mozglab-description-390-before.jpg | 37-final-mozglab-390.jpg | compare-mobile-case.jpg |
+| About RU 1280×832 | 09-desktop-about-before.jpg | 33-desktop-about-after.jpg | compare-desktop-full.jpg |
+| Desktop текст и Header | ref-type.png / ref-header.png | impl-type.png / impl-header.png | compare-desktop-type.jpg / compare-desktop-header.jpg |
 
-- figma-header-ru.png и figma-header-en.png:1200×68, состояния Cases selected. Browser desktop-header-ru.jpg/en.jpg:1280×832 CSS/physical pixels,DPR1; crops(40,40)-(1240,108)1200×68.
-- comparison-header-ru.png/en.png: источник и реализация помещены вместе при масштабе1:1 и просмотрены совместно.
-- figma-rail-expanded.png:112×236 с контекстом/полями эффектов; natural layout48×180. Центральный crop(32,20)-(80,200) сопоставлен с browser crop(8,326)-(56,506)48×180 в comparison-rail.png; обе панели показаны при одинаковом увеличении×4 и просмотрены вместе. Разные цвета внешнего фона в скруглённых углах вызваны контекстом Figma canvas и страницы, не токенами панели.
-- desktop-rail-mozglab-hover.jpg, desktop-rail-veritas-hover.jpg, desktop-rail-spirit-hover.jpg: дополнительные состояния. figma-rail-mozglab-hover.png и figma-rail-veritas-hover.png — оригинальные MCP reference-изображения.
-- mobile-header-390-ru.jpg, mobile-header-320-ru.jpg/en.jpg: соответствующие CSS viewport390×844 и320×568,DPR1. production-header-rail.jpg: финальная сборка на:4173.
-- Browser captures — JPEG, reference captures — PNG. Мелкая разница сжатия/сглаживания не интерпретируется как изменение SVG или цвета. Focused rail×4 и полные header crops нужны для оценки стрелок, логотипов, отступов и выбранного состояния.
+Сравнения составлены попарно, открыты и проверены. Основные source/implementation имеют одинаковые размеры в CSS и физических px: 390×844 и 1280×832. Масштабирование для составления сравнений не применялось; подпись и разделитель добавлены снаружи исходных кадров. Планшетный native capture 27-ipad-1024-after.jpg имеет 1024×1238 физических px при CSS viewport 1024×1366: нижняя часть отсутствует, поэтому оценивается только видимый участок. Полный layout дополнительно просмотрен в Visual Truth. Разные кадры видео и глаз портрета исключены из оценки статичного совпадения.
 
-## Findings and iteration history
+## Пять обязательных поверхностей
 
-1. [P2, corrected] У выбранной кнопки Header работали pink hover/focus fill и подмена стрелки. Все hover/focus правила теперь ограничены :not(.is-active). Выбранные Info/Cases сохраняют#202124/white и белую b6393.svg, переход в selected мгновенный. Это явное уточнение пользователя. Keyboard outline сохранён отдельно.
-2. [P2, corrected] В Header переключатель языка и Resume использовали page-fill вместо tertiary; padding не менялся с языком; английские подписи отличались от Figma. Теперь locale138×52, RU padding8/16, EN16/8, общий tertiary rgba(118,118,128,.12); EN Info/Case/Resume. Мобильная компоновка сохранена.
-3. [P2, corrected] Component24 содержал старые hover/pressed-иконки. Spirit и Ladder hover используют актуальные малые цветные SVG на background.2; Mozg.lab97059/af5df; Veritas hover/pressed56b99 с розовым знаком. Intrinsic размеры SVG сохранены.
-4. [P2, corrected] Текущий кейс в Component11 помечался aria-current, но не имел постоянного pressed visual. Теперь current использует Pressed-вариант; после выбора он перемещается на новый кейс. Future/outsourcing сохраняют общий пункт LE.
-5. [P2, corrected] Blur боковой панели был перенесён из filter drop-shadow в box-shadow с половинными значениями. Для box-shadow установлены полные радиусы11/20/27/32/35 из Figma; offset/alpha/stroke совпадают с источником.
-6. После исправлений повторно просмотрены чистые изображения Header RU/EN и панели, mobile и production; открытых P0/P1/P2 нет. Один тестовый screenshot с выделением текста при mouse-drag был отброшен и переснят без выделения; он не использован для приёмки.
+- Типографика: Manrope и веса сохранены. На compact кейсы 18px/1.45, длинная проза не уменьшается ради высоты экрана. В модалках 16px/1.5. RU/EN не обрезаются; cap trim языка сохранён. Desktop приветствие и Header совпадают в парных crops.
+- Размеры и ритм: лента до 1100px, две колонки проектов от 701px. Высота по содержимому. Медиа используют исходные пропорции слотов. Gap отзывов 24px. Desktop профиль 592×584 в (40,124), footer 1200×68 в (40,724), shell 1280×832.
+- Цвета: прежние #202124, #f6f7f8, белые поверхности, розовые состояния, рамки и тени медиа. Новый вторичный label использует существующий #5d5e62. Выбранная Header-кнопка не получает pink hover.
+- Ассеты: исходные SVG/PNG и предоставленные MP4 без новых изображений и перекодирования. Spirit сохраняет векторное пустое состояние и backdrop внутри пропорционального контейнера. Desktop-коллаж сохранён.
+- Контент: блок copy RU/EN программно сравнен с предыдущим HEAD и идентичен. Добавлены только функциональные подписи мобильной навигации. Временные отзывы и отсутствие PDF сохранены по границам задачи.
 
-## Required fidelity surfaces
+Все базовые desktop CSS до адаптивного media query также программно сравнивались: идентичны, кроме скрытия новых mobile-only элементов. Средняя абсолютная разница статичных desktop pixels после исключения портрета и коллажа — 0.01175/255; это дополнительный диагностический показатель.
 
-- Fonts/typography: Manrope600/24/normal/−.48 в primary navigation; locale500/24/normal/−.48. Locale label widths40/42 дают ровно138px. Общая ширина группы навигации отличается от reference на несколько пикселей вследствие font metrics/AA, без изменения ритма или переноса (P3). В логотипах используются исходные SVG.
-- Spacing/layout: Header1200×68,pad8,r100; primary pills h52,gap8,pad8/8/8/16,r100. Compact rail24×180, expanded48×180,pad4,gap4,r14; items40×40,r10. Геометрия сверена DOM. Mobile390/320 без переполнения, все кнопки находятся внутри header.
-- Colors/tokens: selected Header#202124/white без hover; невыбранный hover#F538A0 сохранён. Locale и обычные pills tertiary. Component24 default.12/hover.20/pressed#eeeeef; Veritas hover#FC69A0, Mozg.lab hover#141413. Shadow и insetstroke#ebebec получены из MCP.
-- Image quality/assets: два новых оригинальных SVG97059/af5df, остальные точные существующие Figma assets; root dimensions не изменены, width/height overrides у логотипов сняты. Малые цветные знаки22.9929×23 и16.9442×23 расположены по инспектору;88×88 exports учитывают поля тени. Новых рисованных замен нет.
-- Copy/content: видимые английские подписи Header приведены к Info/Case/Resume. Русские подписи, aria labels, тексты кейсов и модалок не изменены. Скрытый в Figma «Привет!» не добавлялся.
+## История P1/P2 и повторные проверки
 
-## Interaction verification
+| Находка | Исправление | Evidence после |
+| --- | --- | --- |
+| P1: текст и макеты скрывают друг друга, видео вытянуты | Удалены toggles, общая лента и aspect-ratio исходных слотов | 37-final-mozglab-390.jpg; слоты 327×199 и 327×164 |
+| P2: iPad 1024 показывает уменьшенный desktop | Compact расширен до 1100px | 34-final-visual-truth-devices.jpg: 1440×900 / 1024×1366 / 440×956 |
+| P1: слои Spirit выходят на теги | Relative-контейнер для absolute media | 29-final-spirit-390.jpg; frame 279.25×184.98 внутри gallery 351×396.05 |
+| P2: обрезанные строки за sticky Header | Полоса фона под шапкой | 28-final-projects-390.jpg, 37-final-mozglab-390.jpg |
+| P2: маленькие targets, наложение логотипов | Язык 44×44, nav 44+, close/arrows 44×44, сетка логотипов | browser-facts.json, 34-final-visual-truth-devices.jpg |
+| P2: ширина фона меняется при modal lock | Stable scrollbar gutter | Ширина 375→375, scrollTop 0→0 |
+| P2: tooltip даёт overflow 1px скрытый / 3px показанный | Compact hidden tooltip не монтируется; max-width измеряется по clientWidth; scroll/resize закрывают его | 35-final-tooltip-320-en.jpg: clientWidth=scrollWidth=305, right=292.996, gap=8; после scroll узла нет |
 
-- RU: About и Cases действительно имели:hover=true при проверке, сохраняя black/white, default icon opacity1/hover0. EN selected Case при focus-visible сохраняет black/white и отдельный outline. Невыбранный Resume при реальном hover остаётся pink.
-- Панель раскрывается наведением и через Enter на compact. Hover всех четырёх пунктов проверен через видимый SVG/background; current остаётся Pressed. Десктопный выбор Mozg.lab и Ideas for the Future закрывает панель; compact меняет соответствующую длинную черту.
-- После перехода на Outsourcing company compact остаётся LE, current — общий LE. Escape закрывает панель и возвращает фокус compact.
-- Mobile390×844: выбор Spirit из панели открывает его и закрывает rail.320×568 RU/EN: document scrollWidth320/scrollHeight568, границы всех header buttons внутри окна; selected Case black.
-- npm run build и git diff --check проходят. Production bundle index-CB6d-eZP.js проверен через CUA IAB: selected hover без смены заливки, expanded/current state, нет console errors/warnings.
+## Проверенные шаги
 
-## Limits and follow-up polish
+1. Старт и главная — исправно. При reload появляется онбординг и затем About. Профиль, четыре карточки, отзывы и логотипы доступны в ленте. Compact не монтирует скрытый desktop-коллаж.
+2. Выбор работы — исправно. Header Cases переводит к списку и фокусирует заголовок. Все четыре работы открываются, новый кейс начинается сверху с фокусом на h1.
+3. Чтение описания — исправно. Текст и теги доступны целиком, включая длинную английскую версию на 320px.
+4. Просмотр макетов — исправно. После описания доступны видео в исходных пропорциях. Загруженные video имеют muted/loop/playsInline и autoplay, currentTime растёт; вне видимой области ставятся на паузу.
+5. Навигация и отзывы — исправно. Active chip видна, next/back работают. Язык не теряет кейс. Точки выбирают отзыв 3; горизонтальная прокрутка меняет его на 4, вертикальная прокручивает страницу с сохранением review index. Desktop Rail сохранён.
+6. Подробный кейс — исправно. More открывает dialog, фон заблокирован. Next image меняет 06560→66a7b, ArrowLeft возвращает первый кадр. Sticky close доступен при длинной прокрутке. Escape возвращает focus на More.
+7. Резюме — исправно. Нет horizontal overflow, проза 16px, sticky close 44px доступна в конце. Закрытие возвращает focus. PDF disabled до получения файла.
 
-- Настоящий аппаратный touch не проверялся; mobile viewport проверен мышью/клавиатурой.
-- Несколько пикселей font metrics и артефакты JPEG в увеличенных browser captures — P3/ограничения evidence, а не повод изменять точные токены Figma.
-- Остальные экраны и замечания прежнего аудита вне области этой итерации.
+Размеры: 320×568 RU/EN, 390×844, 401×844, 430×932 EN, 844×390, 1024×1366, 1280×832. Visual Truth дополнительно использован для Desktop 1440×900, iPad 1024×1366, Phone 440×956. Временные визуальные правки не применялись; visualTruthPatches=[].
 
-## Implementation checklist
+## Техническая проверка
 
-- [x] Все три компонента заново прочитаны через Figma MCP.
-- [x] Selected Header исключён из hover/focus fill и подмены иконки.
-- [x] Header fills, padding и EN labels синхронизированы.
-- [x] Component24 state assets и Component11 current/shadow обновлены.
-- [x] Наведение, выбор, закрытие, keyboard, mobile, production и совместное визуальное сравнение.
+- npm run build: passed; git diff --check: passed.
+- Чистый npm ci в отдельной папке с package/lock и bundled archive: passed. Работающий локальный esbuild не удалялся.
+- В production JS/CSS нет visual-truth; editor и его CSS загружаются только в lazy DEV-модуле.
+- Последняя проверка production console errors: [].
+- DOM facts: browser-facts.json в evidence, включая размеры, focus, video properties, scroll и отсутствие editor/toggles.
+- Production assets: index-BzR3KBH_.js / index-pW702Res.css.
 
-## Published verification
+## Ограничения
 
-Реализация `5184695`; [workflow40313889163](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/40313889163) завершился успешно (build/deploy success). GitHub Pages отдаёт bundle `index-CB6d-eZP.js`. При1280×832 выбранные Инфа/Кейсы с реальным:hover=true сохраняют rgb(32,33,36)/white. Панель раскрывается, Spirit сохраняет current/Pressed с исходным2e13d.svg; console errors/warnings отсутствуют. Итоговый снимок live-header-rail.jpg сохранён в evidence-папке и просмотрен.
+Нативные iOS Safari / Android Chrome, физические touch-жесты и экранный диктор не проверялись. В браузере проверены прокрутка, кнопки, клавиатура и touch-action; полного соответствия WCAG не заявляется. Временные отзывы и отсутствие готового PDF — исходные ограничения контента. Видео остаются существующими записями, поэтому разные кадры не означают дрейф дизайна.
+
+Оставшихся actionable P0/P1/P2 в проверенной области нет. Следующий полезный шаг — естественное чтение и навигация на личном телефоне владельца.
 
 final result: passed

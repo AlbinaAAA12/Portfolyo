@@ -131,14 +131,14 @@
   .overlay-contact { font-size: 13px; overflow-wrap: anywhere; }
   .overlay-download { grid-column: 2; justify-self: start; min-height: 42px; font-size: 16px; }
   .overlay-close-resume { top: -18px; right: -10px; }
-  .overlay-close-resume-sticky { margin-right: -10px; }
-  .overlay-close-case-sticky { margin-right: -8px; }
+  .overlay-close-resume-sticky { margin-right: -10px; margin-bottom: -44px; }
+  .overlay-close-case-sticky { margin-right: -8px; margin-bottom: -44px; }
   .overlay-resume-body { gap: 44px; }
   .overlay-job { gap: 20px; }
   .overlay-job-main, .overlay-job-meta, .overlay-fact { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
   .overlay-job-period { margin-bottom: 8px; color: #5d5e62; }
   .overlay-job-details h2, .overlay-case-section h2 { font-size: 20px; }
-  .overlay-body-copy, .overlay-job-meta, .overlay-fact, .overlay-case-copy, .overlay-case-list { font-size: 14px; }
+  .overlay-body-copy, .overlay-job-meta, .overlay-fact, .overlay-case-copy, .overlay-case-list { font-size: 16px; line-height: 1.5; }
   .overlay-tag { min-height: 0; padding: 8px 12px; font-size: 13px; line-height: 12px; }
   .overlay-education { gap: 24px; padding-bottom: 36px; }
   .overlay-education-degree { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
@@ -156,4 +156,20 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .overlay-backdrop *, .overlay-backdrop *::before, .overlay-backdrop *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+@media (max-width: 1100px) {
+  .overlay-resume { transform: none; }
+}
+@media (max-width: 700px) {
+  .overlay-close { width: 44px; height: 44px; }
+  .overlay-gallery-image { touch-action: pan-y pinch-zoom; }
+  .overlay-download { min-height: 44px; }
+  .overlay-contact a { display: inline-flex; min-height: 44px; align-items: center; }
+  .overlay-gallery-arrow { width: 44px; height: 44px; }
+  .overlay-gallery-dots { gap: 4px; padding: 0; }
+  .overlay-gallery-dots button,
+  .overlay-gallery-dots button.is-active { position: relative; width: 28px; height: 44px; flex: 0 0 28px; background: transparent; }
+  .overlay-gallery-dots button::after { position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 100px; background: #b3b4b8; content: ''; transform: translate(-50%, -50%); }
+  .overlay-gallery-dots button.is-active::after { width: 16px; height: 16px; background: #202124; }
 }

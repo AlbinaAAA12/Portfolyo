@@ -10,9 +10,10 @@ export default function TestimonialSlider({ locale, name }: { locale: Locale; na
     const node = viewport.current;
     const slides = getSlides();
     const slide = slides[index];
-    if (node && slide) node.scrollTo({ left: slide.offsetLeft - slides[0].offsetLeft, behavior: 'smooth' });
+    if (node && slide) node.scrollTo({ left: slide.offsetLeft - slides[0].offsetLeft, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
   const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
+    if (window.matchMedia('(max-width: 1100px)').matches) return;
     if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
       event.currentTarget.scrollBy({ left: event.deltaY, behavior: 'auto' });
     }
