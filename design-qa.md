@@ -24,9 +24,11 @@ Focused checks: DOM dimensions confirm caption→media gap12px vs40px between pr
 
 1. [P2, initial implementation] Общий `.mobile-project-media img` перебивал crop и размеры вложенных изображений Spirit, задавал cover и100%. Повышена специфичность локальных селекторов. После: backdrop368.891px приparent341, frame294.336px приparent271.297, обаfill; screenshot12.
 2. [P2, initial implementation] При320px More уходила под Мозг.лаб из-за фиксированного flex-basis220px, хотя контент помещался. Заменено на intrinsic min-content и выравнивание по нижнему краю названия. Screenshot06→08; future320EN переносит длинное название без overlap и overflow.
-3. [P2, source fidelity] Veritas в новой строке наследовал Manrope600 вместо исходногоArial700. Исправлено; финальный browser computed Arial,sans-serif /700,16px. Обе группы после изменения676.367px, поэтому цикл по-прежнему состыкован.
+3. [P2, source fidelity] Veritas в новой строке наследовал Manrope600 вместо исходногоArial700. Исправлено; финальный browser computed Arial,sans-serif /700,16px. Все группы после изменения676.367px, поэтому цикл по-прежнему состыкован.
 
 4. [P2, финальная проверка] Нажатие на внутренний белый padding меню ошибочно считалось нажатием на backdrop. Handler теперь сравнивает координаты с прямоугольником dialog. В финальной сборке click(22,320) внутри оставляет меню открытым (screenshot18), click(8,80) снаружи закрывает и возвращает фокус на Меню.
+
+5. [P2, планшет] Две короткие группы логотипов не покрывали всю широкую плашку в конце цикла. Добавлена третья aria-hidden группа, шаг цикла — ровно одна группа /40s. На1024×900 проверены ширинаframe752 и остаточное покрытие1352.734px, screenshot19-tablet-marquee-final.jpg; compare-marquee-tablet.jpg.
 
 No actionable P0/P1/P2 findings remain in this scope.
 
@@ -35,7 +37,7 @@ No actionable P0/P1/P2 findings remain in this scope.
 - Typography: Manrope загружен; исходная иерархия24px вступления,20px названия карточек,32px case title,18px description,14px отзывов сохранена. Сегменты16px, на<=36014px; Vertical trim применяется к внутреннемуspan. VeritasArial700. Нет обрезанного контента при320RU/EN; NoOrphans/исходные тексты сохранены.
 - Spacing/layout: видимого «Кейсы» на главной нет; caption и стрелка над своим превью. 12px внутри связки,40px между карточками. Отзывы без белой обёртки; viewport0…375 при390viewport/15px scrollbar; каждый slide375px, зазор24. Pagination не растягивается по ширине. One-row logo frame343×68, overflowhidden. Tablet364px tracks; Spirit выше других из-за сохранённых исходных пропорций.
 - Colors/tokens: прежние --ink/#202124, --page/#f6f7f8, --surface/white, --tertiary и --pink/#f538a0. Сегменты на общей tertiary-плашке, selectedblack/white; активный пункт не получает hover-перекраску. Отзывы на исходном сером фоне, лишняя белая поверхность удалена.
-- Image/asset fidelity: Spirit повторяет оригинальную сцену case-page из cdbc0.png + spirit-empty-state.svg. Остальные изображения, видео и иконки исходные. Не добавлялась новая графика. В ленте те же пять логотипов, вторая группа aria-hidden.
+- Image/asset fidelity: Spirit повторяет оригинальную сцену case-page из cdbc0.png + spirit-empty-state.svg. Остальные изображения, видео и иконки исходные. Не добавлялась новая графика. В ленте те же пять логотипов, две повторные группы aria-hidden.
 - Copy/content: const copy RU/EN unchanged. Меню переименовано Инфа/Info, дубли языка/контактов удалены только из dialog, utility-language и прямые контакты работают. У next-link оставлены имя проекта и стрелка, текст Next case/Следующий кейс удалён. Десктопная copy/markup ветка сохранена.
 
 ## Проверенные взаимодействия
@@ -44,8 +46,8 @@ No actionable P0/P1/P2 findings remain in this scope.
 - Native menu withoutClose: backdrop иEscape закрывают; initialfocus наИнфа/Info. При320EN три сегмента в одной строке, dialogscrollWidth=clientWidth296.
 - More возле case-title открывает подробный кейс. Галерейные стрелки computednone на320/390, grid на1280. КнопкаImage2 меняет1/2→2/2, горизонтальный drag меняет2/2→1/2. Dots24×44, центры24px.
 - Отзывы: точка2 даётscrollLeft399; native горизонтальный scroll переходит наотзыв4 /1197, gap24. Страница не переполняется по горизонтали.
-- Marquee: две одинаковые группы; widthtrack=2×group, transform меняется при40s linear animation и останавливается приhover/focus. После ухода фокуса продолжает. Все лого наодномy, clipping внутрибелогоframe. Reduced-motion CSS отключает animation, разрешает native horizontal scroll; системная настройка в этой сессии не менялась.
-- Сборка npm run build и git diff --check pass. Base desktop CSS доcompact query unchanged; прежнийoverlayCSS retained verbatim с добавлением толькоcompact rules. Финальные bundles index-B-Z7WE8U.js / index-Blb38e6G.css. Browser console errors: [].
+- Marquee: три одинаковые группы; widthtrack=3×group, цикл сдвигает трек на одну группу. На1024px frame752, group676.367, track2029.102; после полного сдвига остаётся1352.734px покрытия, что больше frame. Transform меняется при40s linear animation и останавливается приhover/focus. После ухода фокуса продолжает. Все лого наодномy, clipping внутрибелогоframe. Reduced-motion CSS отключает animation, разрешает native horizontal scroll; системная настройка в этой сессии не менялась.
+- Сборка npm run build и git diff --check pass. Base desktop CSS доcompact query unchanged; прежнийoverlayCSS retained verbatim с добавлением толькоcompact rules. Финальные bundles index-DSK2HtJ3.js / index-D1wSFMmR.css. Browser console errors: [].
 
 ## Границы / дальнейшая проверка
 

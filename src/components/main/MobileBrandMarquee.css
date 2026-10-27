@@ -55,7 +55,7 @@
 .mobile-brand-marquee:focus-within .mobile-brand-marquee__track { animation-play-state: paused; }
 
 @keyframes mobile-brand-marquee-scroll {
-  to { transform: translateX(-50%); }
+  to { transform: translateX(calc(-100% / 3)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

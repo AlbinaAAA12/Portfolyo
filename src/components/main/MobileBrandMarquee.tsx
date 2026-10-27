@@ -17,6 +17,7 @@ export default function MobileBrandMarquee({ locale }: { locale: Locale }) {
     <div className="mobile-brand-marquee__track">
       <BrandGroup locale={locale} />
       <div className="mobile-brand-marquee__copy" aria-hidden="true"><BrandGroup locale={locale} /></div>
+      <div className="mobile-brand-marquee__copy" aria-hidden="true"><BrandGroup locale={locale} /></div>
     </div>
   </div>;
 }
