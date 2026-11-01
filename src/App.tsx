@@ -25,7 +25,7 @@ const copy = prepareTypography({
     navAbout: 'Инфа', navCases: 'Кейсы', navResume: 'Резюме', aboutAria: 'Обо мне', casesAria: 'Открыть кейсы', resumeAria: 'Открыть резюме',
     greeting: 'Привет! Я продуктовый и веб дизайнер с 2+\u00a0годами опыта проектирования сложных веб-сценариев для EdTech и FinTech',
     quote: '“Lorem ipsum dolor sit amet consectetur. Pellentesque pretium ut enim at elementum. Eget tortor tempor elementum amet nisi amet vel gravida sed. Ipsum maecenas nec nunc duis morbi non. Lectus sit dolor semper bibendum diam libero.”',
-    designer: 'Дизайнер', contactTelegram: 'тг', contactEmail: 'почта', profileName: 'Альбина Тимофеева', testimonialName: 'Лилия Абдуллина', soon: 'Совсем скоро, оформляю', more: 'Больше', moreSoon: 'Больше скоро', onRequest: 'По запросу',
+    designer: 'Дизайнер', contactTelegram: 'тг', contactEmail: 'почта', profileName: 'Альбина Тимофеева', testimonialName: 'Кристина', soon: 'Совсем скоро, оформляю', more: 'Больше', moreSoon: 'Больше скоро', onRequest: 'По запросу',
     loading: 'Макеты проекта', togglePreview: 'Макеты', toggleDescription: 'Описание',
     cases: {
     spirit: { name: 'Spirit LBaaS', meta: 'Т-БАНК', description: 'Улучшение DevEx внутренней PaaS-платформы Т-Банка, проект NDA', tags: ['FinTech', 'PaaS', 'DevEx', 'B2B'] },
@@ -38,7 +38,7 @@ const copy = prepareTypography({
     navAbout: 'Info', navCases: 'Case', navResume: 'Resume', aboutAria: 'About me', casesAria: 'Open cases', resumeAria: 'Open resume',
     greeting: 'Hi! I’m a product and web designer with 2+ years of experience designing complex web experiences for EdTech and FinTech',
     quote: '“Lorem ipsum dolor sit amet consectetur. Pellentesque pretium ut enim at elementum. Eget tortor tempor elementum amet nisi amet vel gravida sed. Ipsum maecenas nec nunc duis morbi non. Lectus sit dolor semper bibendum diam libero.”',
-    designer: 'Designer', contactTelegram: 'telegram', contactEmail: 'email', profileName: 'Albina Timofeeva', testimonialName: 'Lilia Abdullina', soon: 'Coming soon — putting the case study together', more: 'More', moreSoon: 'More soon', onRequest: 'On request',
+    designer: 'Designer', contactTelegram: 'telegram', contactEmail: 'email', profileName: 'Albina Timofeeva', testimonialName: 'Kristina', soon: 'Coming soon — putting the case study together', more: 'More', moreSoon: 'More soon', onRequest: 'On request',
     loading: 'Project mockups', togglePreview: 'Previews', toggleDescription: 'Details',
     cases: {
     spirit: { name: 'Spirit LBaaS', meta: 'T-BANK', description: 'Improving developer experience for T-Bank’s internal PaaS platform. NDA project', tags: ['FinTech', 'PaaS', 'DevEx', 'B2B'] },

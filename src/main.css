@@ -59,6 +59,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 .testimonial-wrap { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .testimonial-viewport { width: 100%; overflow-x: auto; overflow-y: hidden; display: flex; gap: 24px; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x; }
 .testimonial-viewport::-webkit-scrollbar { display: none; }
+.testimonial-viewport--single { overflow: clip; }
 .testimonial { padding: 20px 16px 16px; border-radius: 20px; background: var(--page); display: flex; flex-direction: column; gap: 36px; }
 .testimonial-viewport > .testimonial { flex: 0 0 100%; scroll-snap-align: start; }
 .testimonial-quote { margin: 0; color: var(--muted); font-size: 16px; font-weight: 500; letter-spacing: -.32px; line-height: normal; text-wrap: balance; }
