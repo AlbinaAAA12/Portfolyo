@@ -178,3 +178,13 @@ Evidence: `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v3-2026-10-27/`; 
 Public browser smoke именно финального bundle:390×844, Manrope loaded, gap48, меню4карточки без heading/nav, выборМозг.лаб и переходSpirit закрываютmenu/reset scroll0, теги2+2/font14, footer1button/0images, отзывыwhite, dot3→scrollLeft670 и activeDot6px, scene client/scroll375px. Console errors[]. Captures23-public-menu.jpg и24-public-reviews.jpg. Браузерная проверка публичной версии на этой итерации прошла.
 
 Evidence: `C:/Users/Albina/Alb_Codex/Portfolyo-research/mobile-v4-2026-10-27/`; source/before/after together в compare-v4.jpg, QA final result:passed в design-qa.md. Реальные телефоны/Safari/screen reader не тестировались; исходный useSwipe не менялся. PDF и временный текст отзывов вне задачи.
+
+## Отзыв Веритас — 1 ноября 2026
+
+Код `72d336a` опубликован через [workflow41291479531](https://github.com/AlbinaAAA12/Portfolyo/actions/runs/41291479531): success, build20s/deploy8s. Финальные `index-DKW92dPV.js` / `index-DTasaLLp.css`; GET корня200, имена совпадают.
+
+В desktop/mobile вместо рыбы показан один отзыв Кристины, руководителя ООО «Веритас»; английский перевод сохранён. Четыре остальных отзыва и пагинация отсутствуют вDOM. Иконка использует точныйpathВеритас из45b85.svg, #B3B4B8 и исходные бейдж/тени ada21.svg. Для единственного отзыва overflow:clip исключает нежелательный внутренний scrollTop от внешних прозрачных границ SVG.
+
+Проверены1280×832 RU/EN,390×844 и320×568RU. Полный текст сохранён дословно после нормализацииNBSP; заголовок/отзыв наdesktop не пересекаются (introBottom417.5, reviewTop470), при320 scene client/scroll305, quote не обрезана, viewport.scrollTop0. npm run build и git diff --check pass. Public desktop browser подтвердил финальныйbundle,1article/0dots, точнуюцитату/имя/должность, загруженнуюSVG88px и отсутствиеconsoleerrors.
+
+Evidence: `C:/Users/Albina/Alb_Codex/Portfolyo-research/testimonial-2026-11-01/` (public-desktop.jpg, desktop-ru-final.jpg, mobile-ru-final.jpg, checks.json). Настоящие мобильные устройства не использовались.
