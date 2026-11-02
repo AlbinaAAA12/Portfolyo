@@ -35,7 +35,7 @@ if (existsSync(videosDirectory)) {
 
 export default defineConfig({
   plugins: [visualTruthSourcePlugin(), react()],
-  base: '/Portfolyo/',
+  base: '/',
   define: {
     __RESUME_PDF_AVAILABLE__: JSON.stringify(hasValidResumePdf),
     __VIDEO_FILES__: JSON.stringify(videoFiles),

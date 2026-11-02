@@ -40,9 +40,9 @@ npm run preview
 
 ## GitHub Pages
 
-Workflow `.github/workflows/pages.yml` запускается только вручную через **Actions → Deploy to GitHub Pages → Run workflow**. Он выполняет `npm ci`, `npm run build` и публикует `dist`. Для проекта репозитория `Portfolyo` настроен базовый путь `/Portfolyo/`.
+Workflow `.github/workflows/pages.yml` запускается только вручную через **Actions → Deploy to GitHub Pages → Run workflow**. Он выполняет `npm ci`, `npm run build` и публикует `dist` с базовым путём `/`.
 
-Репозиторий публичный, источник публикации в **Settings → Pages** — **GitHub Actions**. Сайт: https://albinaaaa12.github.io/Portfolyo/. Обычный push не запускает публикацию: после изменений нужно вручную запустить workflow.
+Исходники проекта хранятся в GitHub; источник публикации в **Settings → Pages** — **GitHub Actions**. Сайт: https://atimofeeeva.ru/. Обычный push не запускает публикацию: после изменений нужно вручную запустить workflow. Настройка DNS для домена и HTTPS выполняется отдельно.
 
 ## Примечания
 
