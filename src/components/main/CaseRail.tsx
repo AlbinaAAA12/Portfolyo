@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import type { CaseId, Locale } from '../../types';
 import { asset } from '../../lib/assets';
 import './CaseRail.css';
 
 type RailState = 'default' | 'hover' | 'pressed';
+type CaseRailProps = { locale: Locale; active: CaseId; onSelect: (id: CaseId) => void; progress?: MotionValue<number> };
 
 const items: Array<{ id: CaseId; label: (locale: Locale) => string; compact: string; normal: string; hover: string; pressed: string }> = [
   { id: 'mozglab', label: () => 'Mozg.lab', compact: 'aea4f.svg', normal: '5c3b8.svg', hover: '97059.svg', pressed: 'af5df.svg' },
@@ -17,9 +20,31 @@ function RailLogo({ item, state = 'default' }: { item: typeof items[number]; sta
   return <span className={`project-rail__logo project-rail__logo--${item.id} project-rail__logo--${state}`}><img src={asset(`figma/${source}`)} alt="" /></span>;
 }
 
-export default function CaseRail({ locale, active, onSelect }: { locale: Locale; active: CaseId; onSelect: (id: CaseId) => void }) {
+const markerYs = [77, 85, 93, 101];
+
+function CompactMarker({ progress, index }: { progress: MotionValue<number>; index: number }) {
+  const width = useTransform(progress, (value) => Math.max(0, 1 - Math.abs(value - index)));
+  const x2 = useTransform(width, (value) => 11 + 8 * value);
+  const stroke = useTransform(width, [0, 1], ['#B3B4B8', '#202124']);
+  return <motion.line x1="5" y1={markerYs[index]} x2={x2} y2={markerYs[index]} stroke={stroke} strokeWidth="2" strokeLinecap="round" />;
+}
+
+export default function CaseRail({ locale, active, onSelect, progress }: CaseRailProps) {
   const [expanded, setExpanded] = useState(false);
   const [latched, setLatched] = useState(false);
+  const activeIndex = Math.max(0, items.findIndex((item) => item.id === active));
+  const localProgress = useMotionValue(activeIndex);
+  const prefersReducedMotion = useReducedMotion();
+  const markerProgress = progress ?? localProgress;
+
+  useEffect(() => {
+    if (progress) return;
+    const controls = animate(localProgress, activeIndex, {
+      duration: prefersReducedMotion ? 0 : 0.4,
+      ease: 'easeInOut',
+    });
+    return () => controls.stop();
+  }, [activeIndex, localProgress, prefersReducedMotion, progress]);
   const open = () => { if (!latched) setExpanded(true); };
   const close = () => { setExpanded(false); setLatched(false); };
   const navigate = (id: CaseId, button: HTMLButtonElement) => {
@@ -29,7 +54,6 @@ export default function CaseRail({ locale, active, onSelect }: { locale: Locale;
     requestAnimationFrame(() => button.closest('.project-rail')?.querySelector<HTMLButtonElement>('.project-rail__compact')?.focus());
   };
   const isCurrent = (id: CaseId) => id === active;
-  const activeItem = items.find((item) => item.id === active) ?? items[0];
 
   return <aside
     className={`project-rail${expanded ? ' project-rail--expanded' : ''}`}
@@ -46,7 +70,9 @@ export default function CaseRail({ locale, active, onSelect }: { locale: Locale;
     onKeyDown={(event) => { if (event.key === 'Escape') { const rail = event.currentTarget; close(); requestAnimationFrame(() => rail.querySelector<HTMLButtonElement>('.project-rail__compact')?.focus()); } }}
   >
     <button className="project-rail__compact" type="button" aria-label={locale === 'ru' ? 'Открыть навигацию по кейсам' : 'Open case navigation'} aria-expanded={expanded} onClick={(event) => { setExpanded(true); setLatched(false); const rail = event.currentTarget.closest('.project-rail'); requestAnimationFrame(() => rail?.querySelector<HTMLButtonElement>('.project-rail__item')?.focus()); }}>
-      <img src={asset(`figma/${activeItem.compact}`)} alt="" />
+      <svg width="24" height="180" viewBox="0 0 24 180" aria-hidden="true">
+        {markerYs.map((_, index) => <CompactMarker key={items[index].id} progress={markerProgress} index={index} />)}
+      </svg>
     </button>
     <div className="project-rail__panel" aria-hidden={!expanded}>
       {items.map((item) => <button key={item.id} className={`project-rail__item${isCurrent(item.id) ? ' is-current' : ''}`} type="button" title={item.label(locale)} aria-label={item.label(locale)} aria-current={isCurrent(item.id) ? 'page' : undefined} tabIndex={expanded ? 0 : -1} onClick={(event) => navigate(item.id, event.currentTarget)}>

@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { CSSProperties, FocusEvent, MouseEvent } from 'react';
+import { useMotionValue } from 'motion/react';
 import type { CaseId, Locale } from './types';
 import { asset } from './lib/assets';
 import { ProjectMedia } from './components/media/ProjectMedia';
@@ -14,6 +15,8 @@ import { useCompactLayout } from './lib/useCompactLayout';
 import MobileNavigation from './components/main/MobileNavigation';
 import SpiritPreview from './components/main/SpiritPreview';
 import MobileBrandMarquee from './components/main/MobileBrandMarquee';
+import BrandStrip from './components/main/BrandStrip';
+import DesktopCaseDeck from './components/main/DesktopCaseDeck';
 
 type Screen = 'about' | CaseId;
 type OverlayKind = 'resume' | 'case' | null;
@@ -100,17 +103,11 @@ function About({ locale, playbackEnabled, compact, titleRef, onCase, onResume }:
       </section> : <ProjectCollage projects={projects} locale={locale} caseName={(id) => t.cases[id].name} onCase={onCase} playbackEnabled={playbackEnabled} />}
       {compact && <TestimonialSlider locale={locale} name={t.testimonialName} />}
     </main>
-    {compact ? <MobileBrandMarquee locale={locale} /> : <footer className="brand-strip" aria-label={locale === 'ru' ? 'Клиенты и проекты' : 'Clients and projects'}>
-      <div><img src={asset('figma/0c323.svg')} alt={locale === 'ru' ? 'Т-Банк' : 'T-Bank'} /></div>
-      <div className="brand-spirit"><img className="brand-spirit-default" src={asset('figma/564e3.svg')} alt="Spirit" /><img className="brand-spirit-hover" src={asset('figma/31715.svg')} alt="" /></div>
-      <div><img src={asset('figma/35873.svg')} alt="Ladder Enjoyers" /></div>
-      <div><img src={asset('figma/f3350.svg')} alt={t.cases.mozglab.name} /></div>
-      <div className="veritas-brand"><img src={asset('figma/45b85.svg')} alt="" /><span>{locale === 'ru' ? 'ВЕРИТАС' : 'VERITAS'}</span></div>
-    </footer>}
+    {compact ? <MobileBrandMarquee locale={locale} onCase={onCase} /> : <BrandStrip locale={locale} onCase={onCase} />}
   </>;
 }
 
-function ProjectGallery({ id, locale, range }: { id: CaseId; locale: Locale; range?: 'hero' | 'remaining' }) {
+function ProjectGallery({ id, locale, range, playbackEnabled = true }: { id: CaseId; locale: Locale; range?: 'hero' | 'remaining'; playbackEnabled?: boolean }) {
   const t = copy[locale];
   const posters: Record<CaseId, Array<{
     file: string;
@@ -153,12 +150,12 @@ function ProjectGallery({ id, locale, range }: { id: CaseId; locale: Locale; ran
         '--video-height': crop ? `${100 / crop.sy}%` : '100%',
         '--video-top': crop ? `${-100 * crop.ty / crop.sy}%` : '0%',
       } as CSSProperties & Record<`--${string}`, string | number>;
-      return <div className={`poster-slot poster-slot--${id}`} data-fit={fit} key={file} style={slotStyle}><ProjectMedia media={posters[id][index].media!} poster={`figma/${file}`} alt={`${t.cases[id].name} — ${locale === 'ru' ? 'макет' : 'mockup'} ${index + 1}`} /></div>;
+      return <div className={`poster-slot poster-slot--${id}`} data-fit={fit} key={file} style={slotStyle}><ProjectMedia media={posters[id][index].media!} poster={`figma/${file}`} playbackEnabled={playbackEnabled} alt={`${t.cases[id].name} — ${locale === 'ru' ? 'макет' : 'mockup'} ${index + 1}`} /></div>;
     })}
   </section>;
 }
 
-function CasePage({ id, locale, compact, titleRef, onMore }: { id: CaseId; locale: Locale; compact: boolean; titleRef: (node: HTMLHeadingElement | null) => void; onMore: (next?: Screen) => void }) {
+function CasePage({ id, locale, compact, titleRef, onMore, playbackEnabled = true }: { id: CaseId; locale: Locale; compact: boolean; titleRef: (node: HTMLHeadingElement | null) => void; onMore: (next?: Screen) => void; playbackEnabled?: boolean }) {
   const t = copy[locale];
   const item = t.cases[id];
   const [hintVisible, setHintVisible] = useState(false);
@@ -213,7 +210,7 @@ function CasePage({ id, locale, compact, titleRef, onMore }: { id: CaseId; local
   const tags = <div className={tagClass} {...(compact && item.tags.length === 3 ? { tabIndex: 0, role: 'region', 'aria-label': locale === 'ru' ? 'Теги проекта' : 'Project tags' } : {})}>{tagContent}</div>;
   return <>
     <main className={`case-layout${compact ? ' is-compact' : ''}`}>
-      {compact ? <><div className="case-mobile-heading">{heading}</div><ProjectGallery id={id} locale={locale} range="hero" /><section className="case-info surface"><div className="case-copy">{description}</div>{tags}</section><ProjectGallery id={id} locale={locale} range="remaining" /></> : <><section className="case-info surface"><div className="case-copy">{heading}{description}</div>{tags}</section><ProjectGallery id={id} locale={locale} /></>}
+      {compact ? <><div className="case-mobile-heading">{heading}</div><ProjectGallery id={id} locale={locale} range="hero" playbackEnabled={playbackEnabled} /><section className="case-info surface"><div className="case-copy">{description}</div>{tags}</section><ProjectGallery id={id} locale={locale} range="remaining" playbackEnabled={playbackEnabled} /></> : <><section className="case-info surface"><div className="case-copy">{heading}{description}</div>{tags}</section><ProjectGallery id={id} locale={locale} playbackEnabled={playbackEnabled} /></>}
     </main>
     {compact && <footer className="case-mobile-footer">
       <button className="case-next-link" type="button" aria-label={`${locale === 'ru' ? 'Открыть кейс' : 'Open case'}: ${t.cases[caseOrder[(caseOrder.indexOf(id) + 1) % caseOrder.length]].name}`} onClick={() => onMore(caseOrder[(caseOrder.indexOf(id) + 1) % caseOrder.length])}><span className="case-next-name">{t.cases[caseOrder[(caseOrder.indexOf(id) + 1) % caseOrder.length]].name}</span></button>
@@ -228,6 +225,8 @@ export default function App() {
   const [onboarding, setOnboarding] = useState(true);
   const [sceneScale, setSceneScale] = useState(1);
   const [navigationRevision, setNavigationRevision] = useState(0);
+  const [desktopRequest, setDesktopRequest] = useState<{ id: CaseId; revision: number }>({ id: 'mozglab', revision: 0 });
+  const desktopProgress = useMotionValue(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const compact = useCompactLayout();
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -261,6 +260,7 @@ export default function App() {
   const navigate = (target: Screen, focus: 'case' | 'about' | 'projects' | null = null) => {
     pendingFocus.current = focus;
     setNavigationRevision((revision) => revision + 1);
+    if (!compact && target !== 'about') setDesktopRequest((previous) => ({ id: target, revision: previous.revision + 1 }));
     if (compact && target !== 'about') {
       if (viewportRef.current) viewportRef.current.scrollTop = 0;
     } else if (compact && focus === 'about') {
@@ -304,14 +304,19 @@ export default function App() {
     <div className="app-shell" lang={locale}>
     <div className="app-content">
       {compact ? <MobileNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} screen={screen} locale={locale} setLocale={setLocale} caseNames={{ mozglab: copy[locale].cases.mozglab.name, spirit: copy[locale].cases.spirit.name, future: copy[locale].cases.future.name, veritas: copy[locale].cases.veritas.name }} onProjects={showCases} onCase={(id) => navigate(id, 'case')} /> : <Header locale={locale} setLocale={setLocale} screen={screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />}
-      {screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : <CasePage key={screen} id={screen} locale={locale} compact={compact} titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
+      {screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : compact ? <CasePage key={screen} id={screen} locale={locale} compact titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
         if (screen === 'mozglab' && target === undefined) {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           setOverlay('case');
         } else navigate(target ?? screen, target === 'about' ? 'projects' : 'case');
-      }} />}
+      }} /> : <DesktopCaseDeck locale={locale} initialCase={screen} request={desktopRequest} disabled={Boolean(overlay || onboarding || menuOpen)} progress={desktopProgress} onActiveChange={setScreen} renderCase={(id, playbackEnabled) => <CasePage id={id} locale={locale} compact={false} playbackEnabled={playbackEnabled} titleRef={(node) => { caseTitleRef.current = node; }} onMore={() => {
+        if (id === 'mozglab') {
+          overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          setOverlay('case');
+        }
+      }} />} />}
     </div>
-    {screen !== 'about' && !compact && <CaseRail locale={locale} active={screen} onSelect={(id) => navigate(id)} />}
+    {screen !== 'about' && !compact && <CaseRail locale={locale} active={screen} progress={desktopProgress} onSelect={(id) => navigate(id)} />}
     <PortfolioOverlays kind={overlay} locale={locale} onClose={closeOverlay} />
     {onboarding && <Onboarding locale={locale} onComplete={() => setOnboarding(false)} />}
     </div>

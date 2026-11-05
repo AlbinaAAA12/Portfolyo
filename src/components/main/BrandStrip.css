@@ -1,0 +1,41 @@
+.brand-strip__logo {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+.brand-strip__logo > img, .brand-strip__mark > img { transition: opacity 200ms ease; }
+.brand-strip__logo .brand-strip__hover { opacity: 0; }
+.brand-strip__mark { display: grid; flex: 0 0 auto; place-items: center; }
+.brand-strip__mark > img { grid-area: 1 / 1; }
+.brand-strip__logo:hover, .brand-strip__logo:focus-visible { color: #f538a0; }
+.brand-strip__logo:hover .brand-strip__default, .brand-strip__logo:focus-visible .brand-strip__default { opacity: 0; }
+.brand-strip__logo:hover .brand-strip__hover, .brand-strip__logo:focus-visible .brand-strip__hover { opacity: 1; }
+.brand-strip__logo.brand-spirit .brand-strip__default { width: 103.275px; height: 30px; max-width: none; max-height: none; }
+.brand-strip__logo.brand-spirit .brand-strip__hover { width: 103.275px; height: 30px; max-width: none; max-height: none; }
+.brand-strip__logo.veritas-brand { gap: 6px; font-family: Arial, sans-serif; font-size: 20px; font-weight: 700; }
+.brand-strip__logo.veritas-brand .brand-strip__mark img { width: 39px; }
+.brand-strip__logo.veritas-brand > span { transition: color 200ms ease; }
+.brand-strip__logo.veritas-brand:hover > span, .brand-strip__logo.veritas-brand:focus-visible > span { color: #f538a0; }
+
+@media (max-width: 700px) {
+  .brand-strip { height: auto; flex: 0 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 32px; gap: 16px 20px; padding: 20px; border-radius: 24px; }
+  .brand-strip__logo { min-width: 0; height: 32px; }
+  .brand-strip img { max-width: min(100%, 100px); max-height: 32px; }
+  .brand-strip__logo.brand-spirit img { width: 103.275px; height: 30px; max-width: 100%; max-height: 30px; object-fit: contain; }
+  .brand-strip__logo.veritas-brand { grid-column: span 2; gap: 6px; font-size: 16px; white-space: nowrap; }
+  .brand-strip__logo.veritas-brand img { width: 30px; }
+}
+@media (max-width: 360px) {
+  .brand-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .brand-strip__logo.brand-spirit img { width: min(103.275px, 100%); }
+}
+@media (prefers-reduced-motion: reduce) { .brand-strip__logo, .brand-strip__logo > img, .brand-strip__logo.veritas-brand > span { transition: none; } }

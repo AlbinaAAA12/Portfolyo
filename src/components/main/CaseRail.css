@@ -20,7 +20,7 @@
   cursor: pointer;
 }
 
-.project-rail__compact img {
+.project-rail__compact svg {
   display: block;
   width: 24px;
   height: 180px;

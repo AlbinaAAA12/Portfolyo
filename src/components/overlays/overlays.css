@@ -41,8 +41,11 @@
 .overlay-contact { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 16px; font-weight: 600; line-height: normal; letter-spacing: -.02em; }
 .overlay-contact a { color: inherit; text-decoration: none; }
 .overlay-contact a[href^="mailto"] { text-decoration: underline; text-underline-offset: 2px; }
-.overlay-download { flex: 0 0 auto; display: inline-flex; min-height: 52px; align-items: center; justify-content: center; margin-top: 0; padding: 8px 16px; border: 1px solid rgba(118,118,128,.12); border-radius: 100px; background: #202124; box-shadow: 0 4px 4px -1px rgba(12,12,13,.1), 0 4px 4px -1px rgba(12,12,13,.05); color: #fff; font: 500 24px/normal Manrope, sans-serif; letter-spacing: -.02em; text-decoration: none; white-space: nowrap; }
-.overlay-download:disabled { cursor: not-allowed; opacity: 1; }
+.overlay-download { flex: 0 0 auto; display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 8px; margin-top: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; color: #202124; font: 500 18px/normal Manrope, sans-serif; letter-spacing: -.02em; text-decoration: underline; text-underline-offset: 4px; white-space: nowrap; }
+.overlay-download[href] { cursor: pointer; }
+.overlay-download[href]:hover, .overlay-download[href]:focus-visible { color: #f538a0; }
+.overlay-download[aria-disabled="true"] { cursor: default; }
+.overlay-download-icon { display: block; flex: 0 0 20px; width: 20px; height: 20px; }
 .overlay-close { position: absolute; z-index: 2; display: grid; width: 36px; height: 36px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,.12); color: #202124; font: 400 26px/1 Manrope, sans-serif; cursor: pointer; }
 .overlay-close-resume { top: -33px; right: -33px; }
 .overlay-close-resume-sticky { position: sticky; z-index: 3; top: 8px; margin: 0 -33px -36px auto; }
@@ -129,7 +132,7 @@
   .overlay-profile h1 { margin-bottom: 8px; padding-right: 44px; font-size: 24px; }
   .overlay-profile-title { margin-bottom: 14px; font-size: 18px; }
   .overlay-contact { font-size: 13px; overflow-wrap: anywhere; }
-  .overlay-download { grid-column: 2; justify-self: start; min-height: 42px; font-size: 16px; }
+  .overlay-download { grid-column: 2; justify-self: start; min-height: 44px; font-size: 16px; }
   .overlay-close-resume { top: -18px; right: -10px; }
   .overlay-close-resume-sticky { margin-right: -10px; margin-bottom: -44px; }
   .overlay-close-case-sticky { margin-right: -8px; margin-bottom: -44px; }
@@ -164,7 +167,6 @@
 @media (max-width: 700px) {
   .overlay-close { width: 44px; height: 44px; }
   .overlay-gallery-image { touch-action: pan-y pinch-zoom; }
-  .overlay-download { min-height: 44px; }
   .overlay-contact a { display: inline-flex; min-height: 44px; align-items: center; }
   .overlay-gallery-arrow { width: 44px; height: 44px; }
   .overlay-gallery-dots { gap: 4px; padding: 0; }
