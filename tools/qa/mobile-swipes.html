@@ -1,0 +1,49 @@
+<!doctype html><html><head><title>Mobile section swipe checks</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<div id="root"></div><button id="run" style="position:fixed;bottom:0;right:0;z-index:9000">Run swipe checks</button><pre id="results" style="position:fixed;bottom:28px;right:0;z-index:9000;background:white;max-height:30vh;overflow:auto;font-size:10px"></pre>
+<script type="module">
+// Local Vite-only integration fixture. Synthetic touches test routing and motion;
+// native touch scrolling/browser edge gestures still need a physical phone.
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from '/src/App.tsx';
+import '/src/main.css';
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+const wait = ms => new Promise(resolve=>setTimeout(resolve,ms));
+const rows=[];
+const check=(label,condition,data)=>{rows.push({label,pass:!!condition,data});document.querySelector('#results').textContent=JSON.stringify(rows,null,2);if(!condition)throw Error(label);};
+const page=()=>document.querySelector('.mobile-section-page:not([aria-hidden])');
+function gesture(dx,dy=0,type='touch',cancel=false){
+ const el=page(); const x=innerWidth/2,y=300;
+ for(const [kind,px,py] of [['pointerdown',x,y],['pointermove',x+dx,y+dy],[cancel?'pointercancel':'pointerup',x+dx,y+dy]])el.dispatchEvent(new PointerEvent(kind,{bubbles:true,pointerId:42,isPrimary:true,pointerType:type,clientX:px,clientY:py}));
+}
+document.querySelector('#run').onclick=async()=>{
+ document.querySelector('#run').disabled=true;
+ try{
+ for(let i=0;i<60&&document.querySelector('.onboarding-root');i++)await wait(200);
+ const header=()=>document.querySelector('.mobile-utility-row').getBoundingClientRect();
+ let rect=document.querySelector('.mobile-section-viewport').getBoundingClientRect();
+ check('Stage covers browser edges',Math.abs(rect.left)<1&&Math.abs(rect.right-innerWidth)<1,rect.toJSON());
+ const top=header().top;
+ gesture(0,140);await wait(80);check('Vertical drag keeps Info',!!page().querySelector('.about-layout'));
+ gesture(-20);await wait(80);check('Short drag keeps Info',!!page().querySelector('.about-layout'));
+ gesture(-170,0,'mouse');await wait(80);check('Mouse drag keeps Info',!!page().querySelector('.about-layout'));
+ gesture(-170,0,'touch',true);await wait(80);check('Canceled touch keeps Info',!!page().querySelector('.about-layout'));
+ gesture(-170);await wait(110);
+ const pages=[...document.querySelectorAll('.mobile-section-page')].map(el=>({hidden:el.getAttribute('aria-hidden'),x:el.getBoundingClientRect().x,width:el.getBoundingClientRect().width}));
+ check('Both pages slide across full viewport',pages.length===2&&pages.some(p=>p.hidden==='true'&&p.x<0)&&pages.some(p=>!p.hidden&&p.x>0)&&pages.every(p=>p.width===innerWidth),pages);
+ check('Header does not move',header().top===top,header().toJSON());
+ await wait(450);check('Info to Cases',!!page().querySelector('.case-layout')&&document.querySelectorAll('.mobile-section-page').length===1);
+ gesture(-170);await wait(450);check('Cases to Resume',!!page().querySelector('.overlay-resume'));
+ gesture(-170);await wait(450);check('End of sections stays Resume',!!page().querySelector('.overlay-resume'));
+ gesture(170);await wait(450);check('Resume to Cases',!!page().querySelector('.case-layout'));
+ gesture(170);await wait(450);check('Cases to Info',!!page().querySelector('.about-layout'));
+ gesture(170);await wait(450);check('Start of sections stays Info',!!page().querySelector('.about-layout'));
+ page().querySelector('.profile-resume').click();await wait(80);check('Resume button keeps modal behavior',!!document.querySelector('dialog.overlay-backdrop[open]'));
+ check('Button does not slide page',page().getBoundingClientRect().x===0);
+ document.querySelector('[data-primary-resume-close]').click();await wait(100);
+ check('Modal closes',!document.querySelector('dialog.overlay-backdrop[open]'));
+ check('No horizontal page overflow',document.documentElement.scrollWidth===innerWidth);
+ document.querySelector('#run').textContent='PASS: '+rows.length+' checks';
+ }catch(error){document.querySelector('#run').textContent='FAIL: '+error.message;}
+};
+</script></body></html>

@@ -71,7 +71,7 @@ function Tags({ items }: { items: readonly string[] }) {
   return <div className="overlay-tags">{items.map((item, i) => <span className="overlay-tag" key={`${item}-${i}`}>{item}</span>)}</div>;
 }
 
-function Resume({ locale, close, showStickyClose }: { locale: Locale; close: () => void; showStickyClose: boolean }) {
+export function Resume({ locale, close, showStickyClose }: { locale: Locale; close: () => void; showStickyClose: boolean }) {
   const copy = locale === 'ru' ? prepareTypography(resumeText.ru) : resumeText.en;
   const pdfAvailable = __RESUME_PDF_AVAILABLE__;
   return <article className="overlay-sheet overlay-resume" aria-labelledby="overlay-resume-title">

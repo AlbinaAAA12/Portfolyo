@@ -6,7 +6,7 @@ import { asset } from './lib/assets';
 import { ProjectMedia } from './components/media/ProjectMedia';
 import InteractivePortrait from './components/main/InteractivePortrait';
 import { NoOrphans, prepareTypography } from './lib/typography';
-import PortfolioOverlays from './components/overlays/PortfolioOverlays';
+import PortfolioOverlays, { Resume } from './components/overlays/PortfolioOverlays';
 import Onboarding from './components/onboarding/Onboarding';
 import TestimonialSlider from './components/main/TestimonialSlider';
 import CaseRail from './components/main/CaseRail';
@@ -17,6 +17,7 @@ import SpiritPreview from './components/main/SpiritPreview';
 import MobileBrandMarquee from './components/main/MobileBrandMarquee';
 import BrandStrip from './components/main/BrandStrip';
 import DesktopCaseDeck from './components/main/DesktopCaseDeck';
+import MobileSectionPager from './components/main/MobileSectionPager';
 
 type Screen = 'about' | CaseId;
 type OverlayKind = 'resume' | 'case' | null;
@@ -228,8 +229,11 @@ export default function App() {
   const [desktopRequest, setDesktopRequest] = useState<{ id: CaseId; revision: number }>({ id: 'mozglab', revision: 0 });
   const desktopProgress = useMotionValue(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [swipeResume, setSwipeResume] = useState(false);
+  const [swipeDirection, setSwipeDirection] = useState(0);
   const compact = useCompactLayout();
   const viewportRef = useRef<HTMLDivElement>(null);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
   const caseTitleRef = useRef<HTMLHeadingElement>(null);
   const aboutTitleRef = useRef<HTMLHeadingElement>(null);
   const pendingFocus = useRef<'case' | 'about' | 'projects' | null>(null);
@@ -237,6 +241,7 @@ export default function App() {
   const previousScreen = useRef<Screen>(screen);
   useEffect(() => {
     if (!compact) setMenuOpen(false);
+    if (!compact) setSwipeResume(false);
   }, [compact]);
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -258,13 +263,15 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
   const navigate = (target: Screen, focus: 'case' | 'about' | 'projects' | null = null) => {
+    setSwipeDirection(0);
+    setSwipeResume(false);
     pendingFocus.current = focus;
     setNavigationRevision((revision) => revision + 1);
     if (!compact && target !== 'about') setDesktopRequest((previous) => ({ id: target, revision: previous.revision + 1 }));
     if (compact && target !== 'about') {
-      if (viewportRef.current) viewportRef.current.scrollTop = 0;
+      if (mobileScrollRef.current) mobileScrollRef.current.scrollTop = 0;
     } else if (compact && focus === 'about') {
-      if (viewportRef.current) viewportRef.current.scrollTop = 0;
+      if (mobileScrollRef.current) mobileScrollRef.current.scrollTop = 0;
     }
     setScreen(target);
   };
@@ -274,12 +281,26 @@ export default function App() {
     else navigate(screen === 'about' ? caseOrder[0] : caseOrder[(caseOrder.indexOf(screen) + 1) % caseOrder.length], null);
   };
   const openResume = () => {
+    setSwipeDirection(0);
     overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setOverlay('resume');
   };
   const closeOverlay = () => {
     setOverlay(null);
     requestAnimationFrame(() => overlayReturnFocus.current?.focus({ preventScroll: true }));
+  };
+  const swipeSection = (direction: -1 | 1) => {
+    if (!compact || overlay || onboarding || menuOpen) return;
+    const current = swipeResume ? 2 : screen === 'about' ? 0 : 1;
+    const next = current + direction;
+    if (next < 0 || next > 2) return;
+    setSwipeDirection(direction);
+    pendingFocus.current = null;
+    if (next === 2) setSwipeResume(true);
+    else {
+      setSwipeResume(false);
+      setScreen(next === 0 ? 'about' : screen === 'about' ? caseOrder[0] : screen);
+    }
   };
   useEffect(() => {
     if (previousScreen.current === screen && pendingFocus.current === null) return;
@@ -294,7 +315,7 @@ export default function App() {
         section?.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
         section?.focus({ preventScroll: true });
       } else if (action === 'about') {
-        if (viewportRef.current) viewportRef.current.scrollTop = 0;
+        if (mobileScrollRef.current) mobileScrollRef.current.scrollTop = 0;
         aboutTitleRef.current?.focus({ preventScroll: true });
       }
     });
@@ -304,12 +325,14 @@ export default function App() {
     <div className={`app-shell${!compact && screen !== 'about' ? ' app-shell--cases' : ''}`} lang={locale}>
     <div className="app-content">
       {compact ? <MobileNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} screen={screen} locale={locale} setLocale={setLocale} caseNames={{ mozglab: copy[locale].cases.mozglab.name, spirit: copy[locale].cases.spirit.name, future: copy[locale].cases.future.name, veritas: copy[locale].cases.veritas.name }} onProjects={showCases} onCase={(id) => navigate(id, 'case')} /> : <Header locale={locale} setLocale={setLocale} screen={screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />}
-      {screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : compact ? <CasePage key={screen} id={screen} locale={locale} compact titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
+      {compact ? <MobileSectionPager page={swipeResume ? 'resume' : screen} direction={swipeDirection} disabled={Boolean(overlay || onboarding || menuOpen)} scrollRef={mobileScrollRef} onSwipe={swipeSection}>
+        {swipeResume ? <Resume locale={locale} close={() => { setSwipeDirection(0); setSwipeResume(false); }} showStickyClose={false} /> : screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : <CasePage key={screen} id={screen} locale={locale} compact titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
         if (screen === 'mozglab' && target === undefined) {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           setOverlay('case');
         } else navigate(target ?? screen, target === 'about' ? 'projects' : 'case');
-      }} /> : <DesktopCaseDeck locale={locale} initialCase={screen} request={desktopRequest} disabled={Boolean(overlay || onboarding || menuOpen)} progress={desktopProgress} sceneScale={sceneScale} onActiveChange={setScreen} renderCase={(id, playbackEnabled) => <CasePage id={id} locale={locale} compact={false} playbackEnabled={playbackEnabled} titleRef={(node) => { caseTitleRef.current = node; }} onMore={() => {
+      }} />}
+      </MobileSectionPager> : screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={false} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : <DesktopCaseDeck locale={locale} initialCase={screen} request={desktopRequest} disabled={Boolean(overlay || onboarding || menuOpen)} progress={desktopProgress} sceneScale={sceneScale} onActiveChange={setScreen} renderCase={(id, playbackEnabled) => <CasePage id={id} locale={locale} compact={false} playbackEnabled={playbackEnabled} titleRef={(node) => { caseTitleRef.current = node; }} onMore={() => {
         if (id === 'mozglab') {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           setOverlay('case');

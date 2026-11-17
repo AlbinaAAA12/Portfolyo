@@ -1,3 +1,18 @@
+# Mobile section swipe QA — 2026-11-17
+
+Scope: touch swipes between Info, Cases, and Resume on compact layouts. Header stays outside the moving layers; button routes retain instant transitions and existing resume modal behavior. Desktop case scrolling is unchanged.
+
+- `npm run build`: passed (TypeScript and production Vite build).
+- Local integration fixture: `/tools/qa/mobile-swipes.html`, 17/17 checks passed at 390×844 and 320×568. Uses synthetic touch pointer events, not a physical touch device.
+- Transition sample at 390 px: outgoing x = −329.32, incoming x = 60.68, both widths = 390; stage left = 0, right = 390; header top stays 16 px.
+- Normal browser scrolling: body scrollTop = 958.5 with header top = 16; outer viewport scrollTop = 0. Menu → Spirit opens at scrollTop = 0; All cases returns to the projects anchor.
+- Desktop 1280×832: Cases opens the existing deck; Resume opens the existing dialog; no mobile pager mounted.
+- No application console errors during checks. Reduced-motion preference disables paging animations in code; OS preference not toggled during QA.
+- Evidence: `../Portfolyo-research/mobile-swipes-2026-11-17/` (checks-390.json, checks-320.json, mobile-header.jpg).
+- Remaining verification: physical-phone touch arbitration, pinch zoom and native browser edge-back gestures. Live publication is pending because the agent's GitHub CLI credential is invalid; user-terminal authentication worked for the preceding release.
+
+---
+
 # Design QA — мобильные правки v4
 
 27 октября 2026. Область: compact до1100px. Desktop сохранён. Baseline662da83; production preview http://127.0.0.1:4173/Portfolyo/.
