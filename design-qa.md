@@ -1,3 +1,19 @@
+# Desktop section swipe QA — 2026-11-17
+
+Scope: extend section swipes to desktop with horizontal trackpad wheel input, mouse drags, and touch. Header buttons retain instant section transitions and the existing Resume dialog. The header stays outside the moving layers; Resume reached by gesture appears below it with the active Resume tab.
+
+- Production build: `npm run build` passed (TypeScript + Vite). Existing chunk-size warning remains.
+- Desktop integration fixture `/tools/qa/desktop-swipes.html`: 22/22 checks passed at 1280×832, 1920×1080 and 1280×720.
+- Tests cover full-window travel, fixed header, horizontal wheel inertia advancing only one section, vertical/diagonal wheel and pinch-zoom passthrough, nested project-collage gestures, mouse drags, instant buttons, and modal input locking.
+- At 1280×832, transition layers span 1280 px, sampled x = −1052.48 / 227.52; header remains y = 40. Case content remains 1200×668 at (40,124), with scroll clipping extending to y = 832.
+- Mobile regression fixture: 17/17 checks passed at 390×844 after sharing the pager.
+- Native browser mouse drag verified Cases → Resume → Cases. Native vertical scrolling reached Future, settled at scrollTop = 1336; previous Spirit visibility = hidden; viewport-bottom clipping = 832. Returning from Resume preserved Future.
+- No application console errors. Trackpad wheel tests use synthetic WheelEvents; a physical trackpad was not available. Reduced-motion handling is preserved; OS preference was not changed during this pass.
+- Evidence: `../Portfolyo-research/desktop-swipes-2026-11-17/` contains the three desktop reports, mobile regression report, native geometry report, and desktop-resume.jpg.
+- Publication: local change prepared against published main 0b886c3; requires push and workflow dispatch from the user's authenticated terminal.
+
+---
+
 # Mobile section swipe QA — 2026-11-17
 
 Scope: touch swipes between Info, Cases, and Resume on compact layouts. Header stays outside the moving layers; button routes retain instant transitions and existing resume modal behavior. Desktop case scrolling is unchanged.

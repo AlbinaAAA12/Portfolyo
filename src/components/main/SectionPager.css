@@ -1,3 +1,36 @@
+.section-pages { position: absolute; inset: 0; overflow: hidden; }
+
+@media (min-width: 1101px) {
+  .app-shell:has(.desktop-section-viewport) { overflow: visible; }
+  .desktop-section-viewport {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    width: calc(100vw / var(--scene-scale, 1));
+    margin-left: calc((1200px - 100vw / var(--scene-scale, 1)) / 2);
+    touch-action: pan-y pinch-zoom;
+  }
+  .desktop-section-page {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--page);
+    touch-action: pan-y pinch-zoom;
+  }
+  .desktop-section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 1200px;
+    height: 668px;
+    margin: 0 auto;
+  }
+  .desktop-section-page.is-resume { overflow-y: auto; overscroll-behavior: contain; }
+  .desktop-section-page.is-resume .desktop-section-content { height: auto; min-height: 668px; padding: 16px 0 40px; }
+  .desktop-section-content > .overlay-resume { flex: 0 0 auto; }
+  .desktop-section-viewport.is-disabled .desktop-section-page { overflow: hidden; }
+}
+
 @media (max-width: 1100px) {
   .scene-viewport:has(.mobile-section-viewport) { overflow: hidden; scrollbar-gutter: auto; }
   .app-content:has(> .mobile-section-viewport) {

@@ -1,0 +1,60 @@
+<!doctype html><html><head><title>Desktop section swipe checks</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<div id="root"></div><button id="run" style="position:fixed;bottom:0;right:0;z-index:9000">Run desktop checks</button><pre id="results" style="position:fixed;bottom:28px;right:0;z-index:9000;background:white;max-height:25vh;overflow:auto;font-size:10px"></pre>
+<script type="module">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from '/src/App.tsx';
+import '/src/main.css';
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const rows=[];
+const check=(label,condition,data)=>{rows.push({label,pass:!!condition,data});document.querySelector('#results').textContent=JSON.stringify(rows,null,2);if(!condition)throw Error(label);};
+const page=()=>document.querySelector('.desktop-section-page:not([aria-hidden])');
+const frame=()=>document.querySelector('.desktop-section-viewport');
+const about=()=>!!page().querySelector('.about-layout');
+const cases=()=>!!page().querySelector('.case-deck');
+const resume=()=>!!page().querySelector('.overlay-resume');
+const header=()=>document.querySelector('.topbar').getBoundingClientRect();
+function wheel(dx,dy=0,target=page(),ctrl=false){const event=new WheelEvent('wheel',{bubbles:true,cancelable:true,deltaX:dx,deltaY:dy,ctrlKey:ctrl});target.dispatchEvent(event);return event.defaultPrevented;}
+function drag(dx,dy=0,target=page()){
+ for(const [kind,x,y] of [['pointerdown',400,450],['pointermove',400+dx,450+dy],['pointerup',400+dx,450+dy]])target.dispatchEvent(new PointerEvent(kind,{bubbles:true,cancelable:true,pointerId:77,isPrimary:true,pointerType:'mouse',button:0,clientX:x,clientY:y}));
+}
+document.querySelector('#run').onclick=async()=>{
+ document.querySelector('#run').disabled=true;
+ try{
+ for(let i=0;i<60&&document.querySelector('.onboarding-root');i++)await wait(200);
+ const rect=frame().getBoundingClientRect(),top=header().top;
+ check('Stage reaches browser edges',Math.abs(rect.left)<1&&Math.abs(rect.right-innerWidth)<1,rect.toJSON());
+ check('Vertical wheel remains native',!wheel(2,120)&&about());
+ check('Diagonal wheel stays Info',!wheel(80,70)&&about());
+ check('Pinch zoom stays native',!wheel(150,0,page(),true)&&about());
+ wheel(150,0,page().querySelector('.collage-panel'));check('Nested collage owns horizontal wheel',about());
+ drag(-260,0,page().querySelector('.collage-panel'));await wait(80);check('Nested collage owns mouse drag',about());
+ wheel(120);await wait(110);
+ const pages=[...document.querySelectorAll('.desktop-section-page')].map(el=>({hidden:el.getAttribute('aria-hidden'),x:el.getBoundingClientRect().x,width:el.getBoundingClientRect().width}));
+ check('Full browser width horizontal animation',pages.length===2&&pages.some(p=>p.hidden==='true'&&p.x<0)&&pages.some(p=>!p.hidden&&p.x>0)&&pages.every(p=>Math.abs(p.width-innerWidth)<1),pages);
+ check('Header stays static during animation',header().top===top,header().toJSON());
+ for(let i=0;i<12;i++){wheel(120);await wait(50);}
+ check('Wheel inertia advances only one section',cases());
+ const scale=document.querySelector('.app-shell').getBoundingClientRect().width/1280;
+ const card=page().querySelector('.case-deck').getBoundingClientRect();
+ const port=page().querySelector('.case-deck__scrollport').getBoundingClientRect();
+ check('Case geometry preserved',Math.abs(card.height-668*scale)<1,card.toJSON());
+ check('Case clipping reaches viewport bottom',Math.abs(port.bottom-innerHeight)<2,port.toJSON());
+ check('Vertical case wheel remains native',!wheel(1,120));
+ await wait(450);wheel(120);await wait(450);check('Cases to Resume',resume());
+ check('Resume header tab is active',document.querySelector('.primary-nav button[aria-current="page"]')?.getAttribute('aria-label')?.includes('резюме'));
+ wheel(-120);await wait(450);check('Resume to Cases',cases());
+ drag(260);await wait(450);check('Mouse drag Cases to Info',about());
+ drag(-20);await wait(80);check('Short mouse drag stays Info',about());
+ drag(-260,220);await wait(80);check('Vertical diagonal drag stays Info',about());
+ await wait(450);
+ document.querySelector('.primary-nav button:nth-child(2)').click();await wait(80);
+ check('Header button stays instantaneous',cases()&&Math.abs(page().getBoundingClientRect().x)<1&&document.querySelectorAll('.desktop-section-page').length===1);
+ document.querySelector('.primary-nav button:nth-child(3)').click();await wait(80);check('Resume button keeps dialog',!!document.querySelector('dialog.overlay-backdrop[open]'));
+ wheel(-150);await wait(450);document.querySelector('[data-primary-resume-close]').click();await wait(80);check('Modal blocks section gestures',cases());
+ check('No horizontal overflow',document.documentElement.scrollWidth===innerWidth);
+ document.querySelector('#run').textContent='PASS: '+rows.length+' checks';
+ }catch(error){document.querySelector('#run').textContent='FAIL: '+error.message;}
+};
+</script></body></html>
