@@ -21,6 +21,7 @@ button { color: inherit; }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
 .scene-viewport { position: fixed; inset: 0; overflow: hidden; display: grid; place-items: center; }
 .app-shell { width: 1280px; height: 832px; flex: none; overflow: hidden; position: absolute; left: 50%; top: 50%; margin: -416px 0 0 -640px; transform: scale(var(--scene-scale, 1)); transform-origin: center; background: var(--page); }
+.app-shell--cases { overflow: visible; }
 .app-content { width: 1280px; height: 832px; padding: 40px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
 .surface { background: var(--surface); border-radius: 34px; }
 .topbar { height: 68px; flex: 0 0 68px; padding: 8px; border-radius: 100px; background: white; display: flex; align-items: center; justify-content: space-between; gap: 12px; }

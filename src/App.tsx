@@ -301,7 +301,7 @@ export default function App() {
     return () => cancelAnimationFrame(frame);
   }, [screen, compact, onboarding, overlay, navigationRevision]);
   return <div className={`scene-viewport${overlay || onboarding || menuOpen ? ' is-scroll-locked' : ''}`} ref={viewportRef} style={{ '--scene-scale': sceneScale } as CSSProperties}>
-    <div className="app-shell" lang={locale}>
+    <div className={`app-shell${!compact && screen !== 'about' ? ' app-shell--cases' : ''}`} lang={locale}>
     <div className="app-content">
       {compact ? <MobileNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} screen={screen} locale={locale} setLocale={setLocale} caseNames={{ mozglab: copy[locale].cases.mozglab.name, spirit: copy[locale].cases.spirit.name, future: copy[locale].cases.future.name, veritas: copy[locale].cases.veritas.name }} onProjects={showCases} onCase={(id) => navigate(id, 'case')} /> : <Header locale={locale} setLocale={setLocale} screen={screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />}
       {screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : compact ? <CasePage key={screen} id={screen} locale={locale} compact titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
@@ -309,7 +309,7 @@ export default function App() {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           setOverlay('case');
         } else navigate(target ?? screen, target === 'about' ? 'projects' : 'case');
-      }} /> : <DesktopCaseDeck locale={locale} initialCase={screen} request={desktopRequest} disabled={Boolean(overlay || onboarding || menuOpen)} progress={desktopProgress} onActiveChange={setScreen} renderCase={(id, playbackEnabled) => <CasePage id={id} locale={locale} compact={false} playbackEnabled={playbackEnabled} titleRef={(node) => { caseTitleRef.current = node; }} onMore={() => {
+      }} /> : <DesktopCaseDeck locale={locale} initialCase={screen} request={desktopRequest} disabled={Boolean(overlay || onboarding || menuOpen)} progress={desktopProgress} sceneScale={sceneScale} onActiveChange={setScreen} renderCase={(id, playbackEnabled) => <CasePage id={id} locale={locale} compact={false} playbackEnabled={playbackEnabled} titleRef={(node) => { caseTitleRef.current = node; }} onMore={() => {
         if (id === 'mozglab') {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           setOverlay('case');
