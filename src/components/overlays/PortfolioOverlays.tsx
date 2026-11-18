@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode } from 'react';
 import type { Locale } from '../../types';
 import { asset } from '../../lib/assets';
@@ -76,7 +76,18 @@ function Tags({ items }: { items: readonly string[] }) {
 export function Resume({ locale, close, showStickyClose, animateDismiss = false }: { locale: Locale; close: () => void; showStickyClose: boolean; animateDismiss?: boolean }) {
   const compact = useCompactLayout();
   const copy = locale === 'ru' ? prepareTypography(resumeText.ru) : resumeText.en;
-  const pdfAvailable = __RESUME_PDF_AVAILABLE__;
+  const [downloadHint, setDownloadHint] = useState(false);
+  const downloadTooltipId = useId();
+  useEffect(() => {
+    if (!downloadHint) return;
+    const hide = () => setDownloadHint(false);
+    window.addEventListener('resize', hide);
+    window.addEventListener('scroll', hide, true);
+    return () => {
+      window.removeEventListener('resize', hide);
+      window.removeEventListener('scroll', hide, true);
+    };
+  }, [downloadHint]);
   const [dismissing, setDismissing] = useState(false);
   const dismiss = () => {
     if (dismissing) return;
@@ -94,7 +105,13 @@ export function Resume({ locale, close, showStickyClose, animateDismiss = false 
         <h1 id="overlay-resume-title">{copy.name}</h1><p className="overlay-profile-title">{copy.title}</p>
         <div className="overlay-contact" aria-label={locale === 'ru' ? 'Контакты' : 'Contacts'}><a href="tel:+79509844129">+7 (950) 984 41-29</a><a href="mailto:albinatimofeeva11@gmail.com">albinatimofeeva11@gmail.com</a><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">telegram: @Timofeeva_Albina</a></div>
       </div>
-      {pdfAvailable ? <a className="overlay-download" href={asset('resume.pdf')} download><span>{copy.download}</span></a> : <a className="overlay-download" role="link" aria-disabled="true" title={copy.pdfTooltip}><span>{copy.download}</span></a>}
+      <button className="overlay-download" type="button" aria-label={copy.download} aria-disabled="true" data-hint={downloadHint ? 'true' : 'false'} aria-describedby={downloadHint ? downloadTooltipId : undefined}
+        onMouseEnter={() => setDownloadHint(true)} onMouseLeave={() => setDownloadHint(false)} onFocus={() => setDownloadHint(true)} onBlur={() => setDownloadHint(false)}
+        onClick={() => { if (compact) setDownloadHint(true); }} onKeyDown={(event) => {
+          if (event.key === 'Escape' && downloadHint) { event.preventDefault(); event.stopPropagation(); setDownloadHint(false); }
+        }}>
+        <span>{copy.download}</span>{(!compact || downloadHint) && <span className="tooltip" id={downloadTooltipId} role="tooltip">{copy.pdfTooltip}</span>}
+      </button>
       <button className="overlay-close overlay-close-resume" type="button" data-primary-resume-close onClick={dismiss} aria-label={locale === 'ru' ? 'Закрыть резюме' : 'Close resume'}>×</button>
     </header>
     <section className="overlay-resume-body" aria-label={copy.experience}>

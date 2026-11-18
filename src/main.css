@@ -100,7 +100,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 .more-button--mozglab:hover, .more-button--mozglab:focus-visible { background: var(--pink); }
 .more-button { transition: background .15s ease, transform .15s ease; }
 .tooltip { position: absolute; left: 50%; top: calc(100% + 8px); z-index: 4; width: max-content; max-width: min(360px, calc(100vw - 32px)); pointer-events: none; opacity: 0; transform: translate(-50%, -4px); padding: 8px 12px; border-radius: 100px; background: var(--pink); color: white; font-size: 12px; line-height: 1.35; white-space: normal; text-align: center; transition: opacity .15s, transform .15s; }
-.more-button[data-hint="true"] .tooltip { opacity: 1; transform: translate(-50%, 0); }
+.more-button[data-hint="true"] .tooltip, .overlay-download[data-hint="true"] .tooltip { opacity: 1; transform: translate(-50%, 0); }
 .case-description { font-size: 24px; line-height: normal; font-weight: 600; letter-spacing: -.48px; text-wrap: balance; }
 .case-description p { margin: 0; }
 .case-description--future { font-size: 20px; line-height: normal; letter-spacing: -.4px; }
