@@ -1,3 +1,20 @@
+# Mobile resume, Spirit and onboarding refinements - 2026-11-18
+
+Scope: mobile resume curtain and compact header spacing; mobile Spirit tags and access badges. Shared changes are limited to the download icon, T-Bank dates, testimonial text color, resume dividers, and onboarding alignment.
+
+- TypeScript and Vite production build passed. The existing bundle-size warning remains.
+- Resume fixture `/tools/qa/resume-refinements.html`: 9/9 checks passed at 390 x 844 and 1280 x 900. Covers modal opening, desktop instant behavior, corrected dates, icon removal, horizontal fit, dismissal after scrolling, reopening, and Escape.
+- Mobile swipe fixture: 20/20 checks passed at 390 x 844, including the new curtain dismissal of inline Resume, reopening, and unchanged full-width horizontal transitions.
+- Desktop swipe fixture: 22/22 checks passed at 1280 x 900.
+- Onboarding fixture: 5/5 checks passed at both sizes. Gallery and letters share their cap-height top and bottom; initial/final positions match and no adjacent letters overlap. Desktop bottom-edge difference after cap sizing: under 0.01 px.
+- Spirit: native browser inspection at 390 and 320 px. Tags stay on one line where they fit and wrap without clipping at narrow widths. Access badges have equal widths (73.25 px at 390 px), equal 36 px heights, and share the heading bottom edge.
+- Resume dividers were visually inspected between jobs. Quote and author text computed to rgb(32, 33, 36). No application console errors in the final onboarding check.
+- OS reduced-motion preference was not toggled. Code skips curtain dismissal for that preference and reduces the opening duration.
+- Evidence: `tools/qa/screenshots/mobile-refinements-resume.png` and `tools/qa/screenshots/mobile-refinements-spirit.png`.
+- Prepared against published main c1b1ffe. Backup: `backup/before-mobile-refinements-2026-11-18`. Publication requires the user's authenticated PowerShell because this session has read-only GitHub access.
+
+---
+
 # Desktop section swipe QA — 2026-11-17
 
 Scope: extend section swipes to desktop with horizontal trackpad wheel input, mouse drags, and touch. Header buttons retain instant section transitions and the existing Resume dialog. The header stays outside the moving layers; Resume reached by gesture appears below it with the active Resume tab.

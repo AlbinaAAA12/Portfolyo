@@ -46,6 +46,8 @@
   font-size: 86.066px;
   font-weight: 600;
   line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   white-space: nowrap;
   transform-origin: center;
 }
@@ -56,10 +58,12 @@
 
 .onboarding-card {
   position: absolute;
-  top: 401.41px;
+  top: 401.9px;
   left: 529.91px;
   width: 113.042px;
   height: 63.639px;
+  height: 1cap;
+  font: 600 86.066px / 1 Manrope, Arial, sans-serif;
   overflow: hidden;
   transform-origin: center;
   will-change: transform, opacity;

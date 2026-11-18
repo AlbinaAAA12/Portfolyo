@@ -45,7 +45,6 @@
 .overlay-download[href] { cursor: pointer; }
 .overlay-download[href]:hover, .overlay-download[href]:focus-visible { color: #f538a0; }
 .overlay-download[aria-disabled="true"] { cursor: default; }
-.overlay-download-icon { display: block; flex: 0 0 20px; width: 20px; height: 20px; }
 .overlay-close { position: absolute; z-index: 2; display: grid; width: 36px; height: 36px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,.12); color: #202124; font: 400 26px/1 Manrope, sans-serif; cursor: pointer; }
 .overlay-close-resume { top: -33px; right: -33px; }
 .overlay-close-resume-sticky { position: sticky; z-index: 3; top: 8px; margin: 0 -33px -36px auto; }
@@ -71,7 +70,19 @@
 .overlay-education { display: flex; flex-direction: column; gap: 36px; }
 .overlay-education-degree { display: grid; grid-template-columns: 135px minmax(0, 1fr); column-gap: 40px; align-items: start; font-size: 16px; line-height: normal; }
 .overlay-education-degree > strong { font-weight: 600; }
-.overlay-resume-art { position: relative; width: calc(100% + 80px); max-width: 900px; aspect-ratio: 1; margin: 8px -40px 0; overflow: hidden; border-radius: 34px; background: #fff; }
+.overlay-job + .overlay-job, .overlay-education, .overlay-education > .overlay-job-meta { position: relative; }
+.overlay-job + .overlay-job::before, .overlay-education::before, .overlay-education > .overlay-job-meta::before, .overlay-resume-art::before {
+  position: absolute;
+  top: var(--resume-divider-offset, -32px);
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: repeating-linear-gradient(to right, rgba(32, 33, 36, .25) 0 2px, transparent 2px 12px);
+  content: '';
+}
+.overlay-education > .overlay-job-meta { --resume-divider-offset: -18px; }
+.overlay-resume-art { position: relative; width: calc(100% + 80px); max-width: 900px; aspect-ratio: 1; margin: 48px -40px 0; overflow: visible; border-radius: 34px; background: #fff; }
+.overlay-resume-art::before { left: 40px; right: 40px; --resume-divider-offset: -24px; }
 .overlay-art { position: absolute; top: 0; left: 0; width: 900px; height: 900px; transform: scale(var(--art-scale, 1)); transform-origin: top left; overflow: hidden; border-radius: inherit; }
 .overlay-art-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .overlay-art-layer { position: absolute; width: 370px; height: 200px; border-radius: 20px; }
@@ -130,13 +141,15 @@
   .overlay-avatar { grid-row: span 2; width: 76px; height: 76px; }
   .overlay-profile { padding-top: 0; }
   .overlay-profile h1 { margin-bottom: 8px; padding-right: 44px; font-size: 24px; }
-  .overlay-profile-title { margin-bottom: 14px; font-size: 18px; }
-  .overlay-contact { font-size: 13px; overflow-wrap: anywhere; }
+  .overlay-profile-title { margin-bottom: 14px; font-size: 16px; }
+  .overlay-contact { gap: 0; font-size: 13px; overflow-wrap: anywhere; }
   .overlay-download { grid-column: 2; justify-self: start; min-height: 44px; font-size: 16px; }
   .overlay-close-resume { top: -18px; right: -10px; }
   .overlay-close-resume-sticky { margin-right: -10px; margin-bottom: -44px; }
   .overlay-close-case-sticky { margin-right: -8px; margin-bottom: -44px; }
   .overlay-resume-body { gap: 44px; }
+  .overlay-job + .overlay-job, .overlay-education { --resume-divider-offset: -22px; }
+  .overlay-education > .overlay-job-meta { --resume-divider-offset: -12px; }
   .overlay-job { gap: 20px; }
   .overlay-job-main, .overlay-job-meta, .overlay-fact { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
   .overlay-job-period { margin-bottom: 8px; color: #5d5e62; }
@@ -145,7 +158,8 @@
   .overlay-tag { min-height: 0; padding: 8px 12px; font-size: 13px; line-height: 12px; }
   .overlay-education { gap: 24px; padding-bottom: 36px; }
   .overlay-education-degree { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
-  .overlay-resume-art { width: 100%; margin: 8px 0 0; }
+  .overlay-resume-art { width: 100%; margin: 12px 0 0; }
+  .overlay-resume-art::before { left: 0; right: 0; }
   .overlay-case { padding: 27px 19px; }
   .overlay-case-intro { gap: 24px; margin-bottom: 36px; padding-right: 26px; }
   .overlay-case-intro h1 { font-size: 27px; }
@@ -163,11 +177,23 @@
 
 @media (max-width: 1100px) {
   .overlay-resume { transform: none; }
+  .overlay-backdrop--resume[open] { animation: resume-curtain-open .44s cubic-bezier(.22, 1, .36, 1) both; }
+  .overlay-backdrop--resume[open]::backdrop { animation: resume-backdrop-open .44s ease both; }
+}
+.overlay-backdrop--resume.is-closing[open] { animation: resume-curtain-close .32s cubic-bezier(.4, 0, .7, .2) both; pointer-events: none; }
+.overlay-backdrop--resume.is-closing[open]::backdrop { animation: resume-backdrop-close .32s ease both; }
+.overlay-resume--dismissing { animation: resume-curtain-close .32s cubic-bezier(.4, 0, .7, .2) both; pointer-events: none; }
+@keyframes resume-curtain-open { from { transform: translateY(100dvh); } to { transform: translateY(0); } }
+@keyframes resume-curtain-close { from { transform: translateY(0); } to { transform: translateY(100dvh); } }
+@keyframes resume-backdrop-open { from { opacity: 0; } to { opacity: 1; } }
+@keyframes resume-backdrop-close { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .overlay-backdrop--resume[open], .overlay-backdrop--resume[open]::backdrop { animation-duration: .01ms; }
 }
 @media (max-width: 700px) {
   .overlay-close { width: 44px; height: 44px; }
   .overlay-gallery-image { touch-action: pan-y pinch-zoom; }
-  .overlay-contact a { display: inline-flex; min-height: 44px; align-items: center; }
+  .overlay-contact a { display: inline-flex; min-height: 36px; align-items: center; }
   .overlay-gallery-arrow { width: 44px; height: 44px; }
   .overlay-gallery-dots { gap: 4px; padding: 0; }
   .overlay-gallery-dots button,

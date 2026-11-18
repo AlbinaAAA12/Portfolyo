@@ -63,14 +63,14 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 .testimonial-viewport--single { overflow: clip; }
 .testimonial { padding: 20px 16px 16px; border-radius: 20px; background: var(--page); display: flex; flex-direction: column; gap: 36px; }
 .testimonial-viewport > .testimonial { flex: 0 0 100%; scroll-snap-align: start; }
-.testimonial-quote { margin: 0; color: var(--muted); font-size: 16px; font-weight: 500; letter-spacing: -.32px; line-height: normal; text-wrap: balance; }
+.testimonial-quote { margin: 0; color: var(--ink); font-size: 16px; font-weight: 500; letter-spacing: -.32px; line-height: normal; text-wrap: balance; }
 .testimonial-quote strong { color: var(--ink); font-weight: 500; }
 .testimonial-author { display: flex; align-items: center; gap: 8px; }
 .testimonial-mark { position: relative; display: block; flex: 0 0 40px; width: 40px; height: 40px; }
 .testimonial-mark img { position: absolute; inset: -70% -60% -50% -60%; width: 220%; height: 220%; max-width: none; object-fit: fill; }
 .testimonial-author div { display: flex; flex-direction: column; font-size: 12px; line-height: 1.4; letter-spacing: -.24px; }
 .testimonial-author strong { font-weight: 600; text-transform: capitalize; }
-.testimonial-author span { color: rgba(60, 60, 67, .3); }
+.testimonial-author span { color: var(--ink); }
 .pagination-dots { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 4px 0; }
 .pagination-dots button { width: 4px; height: 4px; padding: 0; border: 0; border-radius: 50%; background: var(--muted); cursor: pointer; }
 .pagination-dots button.current { width: 8px; height: 8px; background: var(--ink); }
@@ -205,6 +205,10 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
   .access-status { min-height: 44px; height: auto; flex: 0 0 auto; font-size: 12px; }
   .access-status span { min-height: 36px; height: auto; padding: 0 12px; }
   .access-status .lock-icon { width: 40px; min-height: 40px; flex-basis: 40px; }
+  .case-mobile-heading .case-heading-row--spirit { gap: 8px; }
+  .case-heading-row--spirit .access-status { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; height: 36px; min-height: 36px; align-items: stretch; }
+  .case-heading-row--spirit .access-status span { height: 36px; min-height: 36px; padding: 0 4px; }
+  .case-heading-row--spirit .access-status .lock-icon { width: 100%; padding: 6px; }
   .more-button { min-height: 44px; padding: 6px 8px 6px 12px; font-size: 14px; }
   .more-button > img { width: 28px; height: 28px; }
   .case-info { position: static; inset: auto; padding: 20px; border-radius: 24px; gap: 24px; justify-content: flex-start; }
@@ -212,6 +216,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
   .case-description, .case-description--future { font-size: 18px; line-height: 1.45; font-weight: 500; letter-spacing: -.36px; text-wrap: pretty; }
   .case-description p + p { margin-top: 16px; }
   .tag-list { gap: 8px; }
+  .tag-list--spirit { flex-wrap: wrap; }
+  .tag-list--spirit .tag { flex: 0 0 auto; }
   .tag { height: 36px; padding: 0 12px; font-size: 14px; letter-spacing: -.28px; }
   .tag-list--balanced { display: flex; flex-direction: column; align-items: flex-start; width: fit-content; max-width: 100%; gap: 8px; }
   .tag-list--balanced .tag-row { display: flex; gap: 8px; min-width: 0; max-width: 100%; }

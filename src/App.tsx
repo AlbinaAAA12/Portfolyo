@@ -199,13 +199,14 @@ function CasePage({ id, locale, compact, titleRef, onMore, playbackEnabled = tru
       if (id === 'mozglab') onMore();
       else if (showSoon && compact) showHint(event.currentTarget);
     }} onMouseEnter={showSoon ? showTooltip : undefined} onMouseLeave={showSoon ? hideTooltip : undefined} onFocus={showSoon ? showTooltip : undefined} onBlur={showSoon ? hideTooltip : undefined} title={showSoon ? t.soon : t.more}>{labelSoon ? t.moreSoon : t.more}<img src={asset('figma/371d6.svg')} alt="" />{showSoon && (!compact || hintVisible) && <span className="tooltip" id={tooltipId} role="tooltip" style={{ '--tooltip-max-width': tooltipMaxWidth } as CSSProperties}>{t.soon}</span>}</button>;
-  const heading = <div className="case-heading-row"><div><p className="case-meta">{item.meta}</p><h1 ref={titleRef} tabIndex={compact ? -1 : undefined}>{item.name}</h1></div>
+  const heading = <div className={`case-heading-row${id === 'spirit' ? ' case-heading-row--spirit' : ''}`}><div><p className="case-meta">{item.meta}</p><h1 ref={titleRef} tabIndex={compact ? -1 : undefined}>{item.name}</h1></div>
     {hasRequestAccess ? accessStatus : moreControl}
   </div>;
   const description = <div className={`case-description case-description--${id}`}><p><NoOrphans>{item.description}</NoOrphans></p>{'secondParagraph' in item && <p><NoOrphans>{item.secondParagraph}</NoOrphans></p>}</div>;
-  const tagClass = !compact ? 'tag-list' : item.tags.length === 4 ? 'tag-list tag-list--balanced' : 'tag-list tag-list--scroll';
+  const balancedTags = compact && item.tags.length === 4 && id !== 'spirit';
+  const tagClass = !compact ? 'tag-list' : id === 'spirit' ? 'tag-list tag-list--spirit' : balancedTags ? 'tag-list tag-list--balanced' : 'tag-list tag-list--scroll';
   const tagItems = item.tags.map((tag) => <span className="tag" key={tag}><span>{tag}</span></span>);
-  const tagContent = compact && item.tags.length === 4
+  const tagContent = balancedTags
     ? <><div className="tag-row">{tagItems.slice(0, 2)}</div><div className="tag-row">{tagItems.slice(2, 4)}</div></>
     : tagItems;
   const tags = <div className={tagClass} {...(compact && item.tags.length === 3 ? { tabIndex: 0, role: 'region', 'aria-label': locale === 'ru' ? 'Теги проекта' : 'Project tags' } : {})}>{tagContent}</div>;
@@ -326,7 +327,7 @@ export default function App() {
     <div className="app-content">
       {compact ? <MobileNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} screen={screen} locale={locale} setLocale={setLocale} caseNames={{ mozglab: copy[locale].cases.mozglab.name, spirit: copy[locale].cases.spirit.name, future: copy[locale].cases.future.name, veritas: copy[locale].cases.veritas.name }} onProjects={showCases} onCase={(id) => navigate(id, 'case')} /> : <Header locale={locale} setLocale={setLocale} screen={swipeResume ? 'resume' : screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />}
       <SectionPager desktop={!compact} page={swipeResume ? 'resume' : compact ? screen : screen === 'about' ? 'about' : 'cases'} direction={swipeDirection} disabled={Boolean(overlay || onboarding || menuOpen)} scrollRef={mobileScrollRef} onSwipe={swipeSection}>
-        {swipeResume ? <Resume locale={locale} close={() => { setSwipeDirection(0); setSwipeResume(false); }} showStickyClose={false} /> : screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : compact ? <CasePage key={screen} id={screen} locale={locale} compact titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
+        {swipeResume ? <Resume locale={locale} animateDismiss={compact} close={() => { setSwipeDirection(0); setSwipeResume(false); }} showStickyClose={false} /> : screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : compact ? <CasePage key={screen} id={screen} locale={locale} compact titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
         if (screen === 'mozglab' && target === undefined) {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           setOverlay('case');

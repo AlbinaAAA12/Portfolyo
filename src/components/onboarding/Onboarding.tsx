@@ -14,6 +14,8 @@ const DURATION_MS = 4204;
 const TIMELINE_SECONDS = 4.204;
 const PREPARATION_DEADLINE_MS = 6000;
 const VIDEO_PREPARATION_TIMEOUT_MS = 3000;
+// The picture replaces the O: keep the same cap-height row and spacing at both ends.
+const REST_POSE = { w: -57.05, r: 53.61, k: 51.91, card: 42.09 };
 
 type CardSpec = {
   id: string;
@@ -40,12 +42,12 @@ const cards: CardSpec[] = [
 ];
 
 function MotionCard({ card, running, onReady }: { card: CardSpec; running: boolean; onReady: () => void }) {
-  const initial = { opacity: card.opacity[0], scaleX: 1, scaleY: 1, ...(card.id === '1:14035' ? { x: 30.5 } : {}) };
+  const initial = { opacity: card.opacity[0], scaleX: 1, scaleY: 1, x: REST_POSE.card };
   const animate = {
     opacity: card.opacity,
     scaleX: [1, 1, 4.8, 4.8, 1],
     scaleY: [1, 1, 4.8, 4.8, 1],
-    ...(card.id === '1:14035' ? { x: [30.5, 0, 0] } : {}),
+    x: [REST_POSE.card, 0, 0, REST_POSE.card],
   };
   return (
     <motion.div
@@ -62,9 +64,7 @@ function MotionCard({ card, running, onReady }: { card: CardSpec; running: boole
         },
         scaleX: { duration: TIMELINE_SECONDS, times: [0, 0.0476, 0.1189, 0.9529, 1], ease: ['linear', [0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1]] },
         scaleY: { duration: TIMELINE_SECONDS, times: [0, 0.0476, 0.1189, 0.9529, 1], ease: ['linear', [0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1]] },
-        ...(card.id === '1:14035' ? {
-          x: { duration: TIMELINE_SECONDS, times: [0, 0.0476, 1], ease: 'linear' },
-        } : {}),
+        x: { duration: TIMELINE_SECONDS, times: [0, 0.0476, 0.9529, 1], ease: ['linear', 'linear', [0.5, 0, 0.5, 1]] },
       } : { duration: 0 }}
     >
       <LensCardContent card={card} onReady={onReady} />
@@ -175,13 +175,13 @@ function SourceLayerAnimation({ onTimelineStart }: { onTimelineStart: () => void
   return (
     <div className="onboarding-source-stage" data-node-id="1:14024" data-timeline-running={running ? 'true' : 'false'} aria-hidden="true">
       <motion.div className="onboarding-letter onboarding-letter-w" data-node-id="1:14027"
-        initial={{ x: -22.182 }} animate={running ? { x: [-22.182, -59.613, -242.612, -242.612, -321.986, -242.612, -59.613] } : { x: -22.182 }}
+        initial={{ x: REST_POSE.w }} animate={running ? { x: [REST_POSE.w, -59.613, -242.612, -242.612, -321.986, -242.612, REST_POSE.w] } : { x: REST_POSE.w }}
         transition={running ? { x: { duration: TIMELINE_SECONDS, times: [0, 0.0476, 0.1189, 0.1629, 0.7441, 0.9529, 1], ease: ['linear', 'linear', [0.3, -0.05, 0.7, -0.5], 'linear', 'linear', 'linear'] } } : { duration: 0 }}>W</motion.div>
       <motion.div className="onboarding-letter onboarding-letter-r" data-node-id="1:14025"
-        initial={{ rotate: 0, x: 30.5 }} animate={running ? { rotate: [0, 0, 30, 30, 0], x: [30.5, 0, 180.226, 180.226, 217.658, 180.226, 30.5] } : { rotate: 0, x: 30.5 }}
+        initial={{ rotate: 0, x: REST_POSE.r }} animate={running ? { rotate: [0, 0, 30, 30, 0], x: [REST_POSE.r, 0, 180.226, 180.226, 217.658, 180.226, REST_POSE.r] } : { rotate: 0, x: REST_POSE.r }}
         transition={running ? { rotate: { duration: TIMELINE_SECONDS, times: [0, 0.1629, 0.7103, 0.9531, 1], ease: ['linear', [0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1]] }, x: { duration: TIMELINE_SECONDS, times: [0, 0.0476, 0.1189, 0.1629, 0.7103, 0.9529, 1], ease: 'linear' } } : { duration: 0 }}>R</motion.div>
       <motion.div className="onboarding-letter onboarding-letter-k" data-node-id="1:14026"
-        initial={{ x: 30.5 }} animate={running ? { x: [30.5, 0, 213.499, 213.499, 223.259, 248.233, 248.233, 30.5] } : { x: 30.5 }}
+        initial={{ x: REST_POSE.k }} animate={running ? { x: [REST_POSE.k, 0, 213.499, 213.499, 223.259, 248.233, 248.233, REST_POSE.k] } : { x: REST_POSE.k }}
         transition={running ? { x: { duration: TIMELINE_SECONDS, times: [0, 0.0476, 0.1189, 0.1629, 0.6682, 0.9098, 0.9531, 1], ease: 'linear' } } : { duration: 0 }}>k</motion.div>
       {cards.map((card) => <MotionCard key={card.id} card={card} running={running} onReady={() => markReady(card.id)} />)}
     </div>

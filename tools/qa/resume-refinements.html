@@ -1,0 +1,68 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Resume and onboarding checks</title><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"></head><body>
+<div id="root"></div><div style="position:fixed;bottom:0;right:0;z-index:9000;background:white"><button id="intro">Replay onboarding</button><button id="resume">Open resume</button><button id="check">Run resume checks</button><pre id="results" style="max-height:25vh;overflow:auto;font-size:10px"></pre></div>
+<script type="module">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Onboarding } from '/src/components/onboarding/Onboarding.tsx';
+import { PortfolioOverlays } from '/src/components/overlays/PortfolioOverlays.tsx';
+import '/src/main.css';
+const root=ReactDOM.createRoot(document.getElementById('root'));
+let intro=false,kind=null,revision=0;
+const output=document.querySelector('#results');
+const rows=[];
+const check=(label,pass,data)=>{rows.push({label,pass:!!pass,data});output.textContent=JSON.stringify(rows,null,2);if(!pass)throw Error(label);};
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const pose=()=>{
+ const w=document.querySelector('.onboarding-letter-w')?.getBoundingClientRect();
+ const r=document.querySelector('.onboarding-letter-r')?.getBoundingClientRect();
+ const card=[...document.querySelectorAll('.onboarding-card')].find(el=>+getComputedStyle(el).opacity>.99)?.getBoundingClientRect();
+ return w&&r&&card?{w:w.toJSON(),r:r.toJSON(),card:card.toJSON()}:null;
+};
+let observedStage;
+new MutationObserver(()=>{
+ const stage=document.querySelector('.onboarding-source-stage[data-timeline-running="true"]');
+ if(!stage||observedStage===stage)return;
+ observedStage=stage;const start=pose();
+ setTimeout(()=>{
+  if(!stage.isConnected)return;
+  const end=pose();rows.length=0;
+  try{
+   for(const [label,p] of [['Initial',start],['Final',end]]){
+    check(label+' gallery aligns with cap height',p&&Math.abs(p.w.top-p.card.top)<1.5&&Math.abs(p.w.bottom-p.card.bottom)<1.5,p);
+    check(label+' gallery clears adjacent letters',p&&p.w.right<p.card.left&&p.card.right<p.r.left);
+   }
+   check('Gallery returns to initial position',Math.abs(start.card.x-end.card.x)<2&&Math.abs(start.card.y-end.card.y)<1);
+  }catch(error){output.textContent+='\n'+error.message;}
+ },4300);
+}).observe(document.getElementById('root'),{subtree:true,attributes:true,attributeFilter:['data-timeline-running'],childList:true});
+const render=()=>root.render(React.createElement(React.Fragment,null,
+  intro?React.createElement(Onboarding,{key:revision,locale:'ru',onComplete:()=>{output.textContent='Onboarding final pose (held for inspection)';}}):null,
+  React.createElement(PortfolioOverlays,{kind,locale:'ru',onClose:()=>{kind=null;render();}})));
+document.querySelector('#intro').onclick=()=>{intro=true;kind=null;revision++;render();};
+document.querySelector('#resume').onclick=()=>{intro=false;kind='resume';render();};
+document.querySelector('#check').onclick=async()=>{
+ rows.length=0;intro=false;kind='resume';render();
+ try {
+ await wait(80);
+ let dialog=document.querySelector('dialog');
+ check('Resume opens as a modal',dialog?.open);
+ check('Opening curtain moves on mobile only',matchMedia('(max-width:1100px)').matches?getComputedStyle(dialog).transform!=='none':getComputedStyle(dialog).animationName==='none');
+ await wait(500);
+ check('Updated T-Bank period and duration',dialog.textContent.includes('Июнь 2026')&&dialog.textContent.includes('Октябрь 2026')&&dialog.textContent.includes('5 месяцев'));
+ check('Download has no icon',!dialog.querySelector('.overlay-download svg'));
+ check('Resume fits horizontally',dialog.scrollWidth<=dialog.clientWidth+1,{scroll:dialog.scrollWidth,client:dialog.clientWidth});
+ dialog.scrollTop=dialog.scrollHeight/2;
+ await wait(50);
+ (dialog.querySelector('.overlay-close-resume-sticky')||dialog.querySelector('[data-primary-resume-close]')).click();
+ await wait(70);
+ check('Closing keeps modal until curtain finishes',!matchMedia('(max-width:1100px)').matches||document.querySelector('dialog')?.classList.contains('is-closing'));
+ await wait(420);
+ check('Closing removes modal',!document.querySelector('dialog'));
+ kind='resume';render();await wait(500);
+ check('Reopening resets closing state and scroll',document.querySelector('dialog')?.open&&!document.querySelector('dialog').classList.contains('is-closing')&&document.querySelector('dialog').scrollTop===0);
+ document.querySelector('dialog').dispatchEvent(new Event('cancel',{cancelable:true}));
+ await wait(420);check('Escape dismissal finishes',!document.querySelector('dialog'));
+ }catch(error){output.textContent+='\n'+error.message;}
+};
+render();
+</script></body></html>

@@ -35,12 +35,15 @@ document.querySelector('#run').onclick=async()=>{
  await wait(450);check('Info to Cases',!!page().querySelector('.case-layout')&&document.querySelectorAll('.mobile-section-page').length===1);
  gesture(-170);await wait(450);check('Cases to Resume',!!page().querySelector('.overlay-resume'));
  gesture(-170);await wait(450);check('End of sections stays Resume',!!page().querySelector('.overlay-resume'));
+ page().querySelector('[data-primary-resume-close]').click();await wait(70);check('Inline Resume waits for curtain dismissal',!!page().querySelector('.overlay-resume--dismissing'));
+ await wait(420);check('Inline Resume returns to Cases',!!page().querySelector('.case-layout'));
+ gesture(-170);await wait(450);check('Inline Resume can reopen',!!page().querySelector('.overlay-resume'));
  gesture(170);await wait(450);check('Resume to Cases',!!page().querySelector('.case-layout'));
  gesture(170);await wait(450);check('Cases to Info',!!page().querySelector('.about-layout'));
  gesture(170);await wait(450);check('Start of sections stays Info',!!page().querySelector('.about-layout'));
  page().querySelector('.profile-resume').click();await wait(80);check('Resume button keeps modal behavior',!!document.querySelector('dialog.overlay-backdrop[open]'));
  check('Button does not slide page',page().getBoundingClientRect().x===0);
- document.querySelector('[data-primary-resume-close]').click();await wait(100);
+ document.querySelector('[data-primary-resume-close]').click();await wait(420);
  check('Modal closes',!document.querySelector('dialog.overlay-backdrop[open]'));
  check('No horizontal page overflow',document.documentElement.scrollWidth===innerWidth);
  document.querySelector('#run').textContent='PASS: '+rows.length+' checks';

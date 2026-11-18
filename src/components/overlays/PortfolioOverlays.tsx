@@ -3,6 +3,7 @@ import type { KeyboardEvent, ReactNode } from 'react';
 import type { Locale } from '../../types';
 import { asset } from '../../lib/assets';
 import { useSwipe } from '../../lib/useSwipe';
+import { useCompactLayout } from '../../lib/useCompactLayout';
 import { NoOrphans, prepareTypography } from '../../lib/typography';
 import { ResumeArtwork } from './ResumeArtwork';
 import './overlays.css';
@@ -16,9 +17,9 @@ const resumeText = {
     languages: 'Языки', about: 'Обо мне', degree: 'Бакалавр 2025–2029', university: 'Гуманитарный институт, Сибирский федеральный университет',
     specialty: 'Прикладная информатика в искусстве и интерактивных медиа', english: 'Английский — B2', russian: 'Русский — родной',
     aboutText: 'Я продуктовый дизайнер с опытом более двух лет. Работала с B2C- и B2B-продуктами в FinTech, EdTech и MedTech. Имею опыт полного цикла разработки веб-интерфейсов: от исследования аудитории и проектирования User Flow до подготовки макетов к вёрстке и создания UI Kit. Регулярно участвую в продуктовых хакатонах и кейс-чемпионатах всероссийского уровня',
-    months3: '3 месяца', months6: '6 месяцев', months17: '1 год 5 месяцев',
+    months5: '5 месяцев', months6: '6 месяцев', months17: '1 год 5 месяцев',
     jobs: [
-      { period: 'Июль 2026 — Сентябрь 2026', company: 'Т-Банк · Spirit', intro: 'Работала в Spirit — внутренней PaaS-платформе Т-Банка для разработчиков, над фичами и повышением DevEx по LBaaS', bullets: ['Спроектировала 5 фич для LBaaS, устранив ручные операции и разрывы контекста в workflow разработчиков', 'Разработала 3 новых гайда в дизайн-систему Beaver, обеспечив консистентность интерфейсов в инженерных продуктах', 'Сформулировала 2 сложных user flow в создании маршрутов, что повысило скорость работы инженеров с платформой'], role: 'Продуктовый дизайнер', tags: ['Figma', 'Jira', 'Confluence', 'Scrum', 'User Story', 'JTBD', 'CJM', 'IA', 'User Flow'] },
+      { period: 'Июнь 2026 — Октябрь 2026', company: 'Т-Банк · Spirit', intro: 'Работала в Spirit — внутренней PaaS-платформе Т-Банка для разработчиков, над фичами и повышением DevEx по LBaaS', bullets: ['Спроектировала 5 фич для LBaaS, устранив ручные операции и разрывы контекста в workflow разработчиков', 'Разработала 3 новых гайда в дизайн-систему Beaver, обеспечив консистентность интерфейсов в инженерных продуктах', 'Сформулировала 2 сложных user flow в создании маршрутов, что повысило скорость работы инженеров с платформой'], role: 'Продуктовый дизайнер', tags: ['Figma', 'Jira', 'Confluence', 'Scrum', 'User Story', 'JTBD', 'CJM', 'IA', 'User Flow'] },
       { period: 'Ноябрь 2025 — Апрель 2026', company: 'Мозг.лаб', intro: 'На роли ведущего дизайнера создала интерфейс EdTech-платформы для обучения школьников использованию нейросетей', bullets: ['Спроектировала конструктор курсов на платформе. Провела A/B-тестирование функционала, смогла снизить среднее время создания курса на 20%', 'Создала обучающий wizard для учеников, уменьшив bounce rate на 26%', 'Подготовила презентацию для инвесторов, финальный питч позволил привлечь 1,8 млн рублей инвестиций на платформу'], role: 'Ведущий продуктовый дизайнер', tags: ['Figma', 'Framer', 'Miro', 'GPT', 'JTBD', 'CJM', 'IA', 'User Flow', 'User Story', 'Kanban', 'GPT', 'Codex'] },
       { period: 'Июнь 2024 — Октябрь 2025', company: 'LadderEnjoyers', intro: 'На позиции продуктового дизайнера участвовала в разработке B2C-платформы по обучению школьников программированию. Работала над модулем конструктора контестов и существенно повысила продуктовые метрики модуля', bullets: ['Провела детальный разбор User Flow на платформах конкурентов. Подготовила детальный питчборд с обзором ключевых решений в сфере', 'Сформулировала пользовательский путь для конструктора контестов. Подготовила детальный UI-kit для frontend-разработчика. Эффективная деятельность позволила закончить работу над MVP на 2 недели раньше планируемого', 'Подготовила вариации интерфейса для A/B-тестирования. Проведённые тестирования позволили сократить среднее время создания контеста на 11,2%', 'Создала и подготовила к вёрстке макет лендинга компании, позволив выйти на рынок и привлечь 3 школы Красноярска к закрытому тестированию в первый месяц работы платформы'], role: 'UX/UI-дизайнер', tags: ['Figma', 'Jira', 'Confluence', 'User Story', 'JTBD', 'CJM', 'IA', 'User Flow'] },
     ],
@@ -29,9 +30,9 @@ const resumeText = {
     languages: 'Languages', about: 'About me', degree: 'Bachelor’s degree · 2025–2029', university: 'Institute of Humanities, Siberian Federal University',
     specialty: 'Applied Computer Science in Art and Interactive Media', english: 'English — B2', russian: 'Russian — native',
     aboutText: 'I am a product designer with over two years of experience. I have worked on B2C and B2B products in FinTech, EdTech, and MedTech. I have experience across the full web interface development cycle, from audience research and User Flow design to preparing layouts for implementation and creating UI Kits. I regularly take part in national product hackathons and case championships',
-    months3: '3 months', months6: '6 months', months17: '1 year 5 months',
+    months5: '5 months', months6: '6 months', months17: '1 year 5 months',
     jobs: [
-      { period: 'July 2026 — September 2026', company: 'T-Bank · Spirit', intro: 'Worked on features and DevEx improvements for LBaaS at Spirit, T-Bank’s internal PaaS platform for developers', bullets: ['Designed 5 LBaaS features, removing manual operations and context switches in developer workflows', 'Created 3 new guides for the Beaver design system, improving interface consistency across engineering products', 'Defined 2 complex user flows for route creation, improving engineers’ speed when working with the platform'], role: 'Product Designer', tags: ['Figma', 'Jira', 'Confluence', 'Scrum', 'User Story', 'JTBD', 'CJM', 'IA', 'User Flow'] },
+      { period: 'June 2026 — October 2026', company: 'T-Bank · Spirit', intro: 'Worked on features and DevEx improvements for LBaaS at Spirit, T-Bank’s internal PaaS platform for developers', bullets: ['Designed 5 LBaaS features, removing manual operations and context switches in developer workflows', 'Created 3 new guides for the Beaver design system, improving interface consistency across engineering products', 'Defined 2 complex user flows for route creation, improving engineers’ speed when working with the platform'], role: 'Product Designer', tags: ['Figma', 'Jira', 'Confluence', 'Scrum', 'User Story', 'JTBD', 'CJM', 'IA', 'User Flow'] },
       { period: 'November 2025 — April 2026', company: 'Mozg.lab', intro: 'As Lead Designer, created the interface for an EdTech platform that teaches school students to use neural networks', bullets: ['Designed the platform’s course builder. A/B-tested its functionality and reduced the average course creation time by 20%', 'Created a learning wizard for students, reducing bounce rate by 26%', 'Prepared an investor presentation; the final pitch secured RUB 1.8 million in investment for the platform'], role: 'Lead Product Designer', tags: ['Figma', 'Framer', 'Miro', 'GPT', 'JTBD', 'CJM', 'IA', 'User Flow', 'User Story', 'Kanban', 'GPT', 'Codex'] },
       { period: 'June 2024 — October 2025', company: 'LadderEnjoyers', intro: 'As a Product Designer, contributed to a B2C platform for teaching school students programming. Worked on the contest builder module and substantially improved its product metrics', bullets: ['Analyzed competitor User Flows in detail and prepared a pitchboard reviewing key solutions in the field', 'Defined the user journey for the contest builder and prepared a detailed UI Kit for frontend development. This work helped finish the MVP two weeks ahead of schedule', 'Prepared interface variants for A/B testing. The tests reduced average contest creation time by 11.2%', 'Created and prepared the company landing page for implementation, helping launch the product and bring 3 Krasnoyarsk schools into closed testing in its first month'], role: 'UX/UI Designer', tags: ['Figma', 'Jira', 'Confluence', 'User Story', 'JTBD', 'CJM', 'IA', 'User Flow'] },
     ],
@@ -71,23 +72,31 @@ function Tags({ items }: { items: readonly string[] }) {
   return <div className="overlay-tags">{items.map((item, i) => <span className="overlay-tag" key={`${item}-${i}`}>{item}</span>)}</div>;
 }
 
-export function Resume({ locale, close, showStickyClose }: { locale: Locale; close: () => void; showStickyClose: boolean }) {
+export function Resume({ locale, close, showStickyClose, animateDismiss = false }: { locale: Locale; close: () => void; showStickyClose: boolean; animateDismiss?: boolean }) {
   const copy = locale === 'ru' ? prepareTypography(resumeText.ru) : resumeText.en;
   const pdfAvailable = __RESUME_PDF_AVAILABLE__;
-  return <article className="overlay-sheet overlay-resume" aria-labelledby="overlay-resume-title">
-    {showStickyClose && <button className="overlay-close overlay-close-resume-sticky" type="button" onClick={close} aria-label={locale === 'ru' ? 'Закрыть резюме' : 'Close resume'}>×</button>}
+  const [dismissing, setDismissing] = useState(false);
+  const dismiss = () => {
+    if (dismissing) return;
+    if (animateDismiss && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) setDismissing(true);
+    else close();
+  };
+  return <article className={`overlay-sheet overlay-resume${dismissing ? ' overlay-resume--dismissing' : ''}`} aria-labelledby="overlay-resume-title" onAnimationEnd={(event) => {
+    if (event.target === event.currentTarget && event.animationName === 'resume-curtain-close') close();
+  }}>
+    {showStickyClose && <button className="overlay-close overlay-close-resume-sticky" type="button" onClick={dismiss} aria-label={locale === 'ru' ? 'Закрыть резюме' : 'Close resume'}>×</button>}
     <header className="overlay-resume-header">
       <img className="overlay-avatar" src={asset('figma/f29c3.png')} alt="" />
       <div className="overlay-profile">
         <h1 id="overlay-resume-title">{copy.name}</h1><p className="overlay-profile-title">{copy.title}</p>
         <div className="overlay-contact" aria-label={locale === 'ru' ? 'Контакты' : 'Contacts'}><a href="tel:+79509844129">+7 (950) 984 41-29</a><a href="mailto:albinatimofeeva11@gmail.com">albinatimofeeva11@gmail.com</a><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">telegram: @Timofeeva_Albina</a></div>
       </div>
-      {pdfAvailable ? <a className="overlay-download" href={asset('resume.pdf')} download><svg className="overlay-download-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M12 6v9m-3.5-3.5L12 15l3.5-3.5M8 18h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{copy.download}</span></a> : <a className="overlay-download" role="link" aria-disabled="true" title={copy.pdfTooltip}><svg className="overlay-download-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M12 6v9m-3.5-3.5L12 15l3.5-3.5M8 18h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{copy.download}</span></a>}
-      <button className="overlay-close overlay-close-resume" type="button" data-primary-resume-close onClick={close} aria-label={locale === 'ru' ? 'Закрыть резюме' : 'Close resume'}>×</button>
+      {pdfAvailable ? <a className="overlay-download" href={asset('resume.pdf')} download><span>{copy.download}</span></a> : <a className="overlay-download" role="link" aria-disabled="true" title={copy.pdfTooltip}><span>{copy.download}</span></a>}
+      <button className="overlay-close overlay-close-resume" type="button" data-primary-resume-close onClick={dismiss} aria-label={locale === 'ru' ? 'Закрыть резюме' : 'Close resume'}>×</button>
     </header>
     <section className="overlay-resume-body" aria-label={copy.experience}>
       {copy.jobs.map((job, index) => <section className="overlay-job" key={job.company}>
-        <div className="overlay-job-main"><div className="overlay-job-period"><span>{job.period}</span><span>{[copy.months3, copy.months6, copy.months17][index]}</span></div><div className="overlay-job-details"><h2>{job.company}</h2><div className="overlay-body-copy"><p>{job.intro}</p><ul>{job.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul></div></div></div>
+        <div className="overlay-job-main"><div className="overlay-job-period"><span>{job.period}</span><span>{[copy.months5, copy.months6, copy.months17][index]}</span></div><div className="overlay-job-details"><h2>{job.company}</h2><div className="overlay-body-copy"><p>{job.intro}</p><ul>{job.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul></div></div></div>
         <div className="overlay-job-meta"><strong>{copy.role}</strong><span>{job.role}</span></div><div className="overlay-job-meta"><strong>{copy.stack}</strong><Tags items={job.tags} /></div>
       </section>)}
       <section className="overlay-education"><div className="overlay-education-degree"><strong>{copy.degree}</strong><div className="overlay-job-details"><h2>{copy.university}</h2><p>{copy.specialty}</p></div></div><div className="overlay-job-meta"><strong>{copy.languages}</strong><span>{copy.english}<br />{copy.russian}</span></div><div className="overlay-job-meta"><strong>{copy.about}</strong><p>{copy.aboutText}</p></div></section>
@@ -142,6 +151,15 @@ function Case({ locale, close, showStickyClose }: { locale: Locale; close: () =>
 export function PortfolioOverlays({ kind, locale, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [showStickyClose, setShowStickyClose] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const compact = useCompactLayout();
+  const requestClose = () => {
+    if (closing) return;
+    if (kind === 'resume' && compact && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setClosing(true);
+    } else onClose();
+  };
+  useEffect(() => { setClosing(false); }, [kind]);
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog || !kind) return;
@@ -167,8 +185,10 @@ export function PortfolioOverlays({ kind, locale, onClose }: Props) {
     return () => observer.disconnect();
   }, [kind]);
   if (!kind) return null;
-  return <dialog ref={dialogRef} className="overlay-backdrop" aria-modal="true" aria-labelledby={kind === 'resume' ? 'overlay-resume-title' : 'overlay-case-title'} onCancel={(event) => { event.preventDefault(); onClose(); }} onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-    {kind === 'resume' ? <Resume locale={locale} close={onClose} showStickyClose={showStickyClose} /> : <Case locale={locale} close={onClose} showStickyClose={showStickyClose} />}
+  return <dialog ref={dialogRef} className={`overlay-backdrop${kind === 'resume' ? ' overlay-backdrop--resume' : ''}${closing ? ' is-closing' : ''}`} aria-modal="true" aria-labelledby={kind === 'resume' ? 'overlay-resume-title' : 'overlay-case-title'} onCancel={(event) => { event.preventDefault(); requestClose(); }} onClick={(event) => { if (event.target === event.currentTarget) requestClose(); }} onAnimationEnd={(event) => {
+    if (event.target === event.currentTarget && event.animationName === 'resume-curtain-close') onClose();
+  }}>
+    {kind === 'resume' ? <Resume locale={locale} close={requestClose} showStickyClose={showStickyClose} /> : <Case locale={locale} close={requestClose} showStickyClose={showStickyClose} />}
   </dialog>;
 }
 
