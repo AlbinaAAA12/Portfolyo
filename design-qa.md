@@ -1,3 +1,15 @@
+# Mobile Resume downward dismissal - 2026-11-18
+
+- Added a touch-only downward flick across the entire Resume article, including contacts and artwork. It works at every scroll position and uses the existing curtain dismissal for both modal and inline Resume.
+- Native touchmove remains passive. Slow drags, upward scrolling, horizontal/diagonal gestures, short movements, canceled touches and multi-touch do not dismiss. A deliberate downward flick needs 80 px, vertical dominance, at most 450 ms and average speed of at least 0.55 px/ms.
+- `/tools/qa/resume-swipe-down.html`: 20/20 integration checks passed at 390 x 844. Dismissal tested on the avatar, a contact link, job text, tags and artwork at top, middle (scrollTop 1908.5), and bottom (2973). Simulated pointercancel does not prevent the TouchEvent-based gesture.
+- Desktop 1280 x 900: 2/2 checks passed; no downward gesture listener, cross still closes.
+- Existing mobile pager regression fixture: 20/20 checks passed. Production TypeScript/Vite build passed with the existing chunk-size warning. No browser application errors during gesture checks.
+- Tests use browser TouchEvent sequences; physical phone gesture feel and native scrolling were not tested on hardware. Reduced-motion dismissal continues through the existing preference-aware close path.
+- Baseline: published 9ad128d; backup branch `backup/before-resume-swipe-down-2026-11-18`. GitHub publication still requires the user's authenticated terminal.
+
+---
+
 # Mobile resume, Spirit and onboarding refinements - 2026-11-18
 
 Scope: mobile resume curtain and compact header spacing; mobile Spirit tags and access badges. Shared changes are limited to the download icon, T-Bank dates, testimonial text color, resume dividers, and onboarding alignment.

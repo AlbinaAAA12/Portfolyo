@@ -4,6 +4,7 @@ import type { Locale } from '../../types';
 import { asset } from '../../lib/assets';
 import { useSwipe } from '../../lib/useSwipe';
 import { useCompactLayout } from '../../lib/useCompactLayout';
+import { useSwipeDownDismiss } from '../../lib/useSwipeDownDismiss';
 import { NoOrphans, prepareTypography } from '../../lib/typography';
 import { ResumeArtwork } from './ResumeArtwork';
 import './overlays.css';
@@ -73,6 +74,7 @@ function Tags({ items }: { items: readonly string[] }) {
 }
 
 export function Resume({ locale, close, showStickyClose, animateDismiss = false }: { locale: Locale; close: () => void; showStickyClose: boolean; animateDismiss?: boolean }) {
+  const compact = useCompactLayout();
   const copy = locale === 'ru' ? prepareTypography(resumeText.ru) : resumeText.en;
   const pdfAvailable = __RESUME_PDF_AVAILABLE__;
   const [dismissing, setDismissing] = useState(false);
@@ -81,7 +83,8 @@ export function Resume({ locale, close, showStickyClose, animateDismiss = false 
     if (animateDismiss && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) setDismissing(true);
     else close();
   };
-  return <article className={`overlay-sheet overlay-resume${dismissing ? ' overlay-resume--dismissing' : ''}`} aria-labelledby="overlay-resume-title" onAnimationEnd={(event) => {
+  const swipeDismissRef = useSwipeDownDismiss({ enabled: compact, onDismiss: dismiss });
+  return <article ref={swipeDismissRef} className={`overlay-sheet overlay-resume${dismissing ? ' overlay-resume--dismissing' : ''}`} aria-labelledby="overlay-resume-title" onAnimationEnd={(event) => {
     if (event.target === event.currentTarget && event.animationName === 'resume-curtain-close') close();
   }}>
     {showStickyClose && <button className="overlay-close overlay-close-resume-sticky" type="button" onClick={dismiss} aria-label={locale === 'ru' ? 'Закрыть резюме' : 'Close resume'}>×</button>}
