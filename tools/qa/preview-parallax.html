@@ -1,0 +1,70 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project preview parallax checks</title><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"></head><body>
+<div id="root"></div><button id="show" style="position:fixed;bottom:0;left:0;z-index:9000">Show preview hover</button><button id="run" style="position:fixed;bottom:0;right:0;z-index:9000">Run preview checks</button><pre id="results" style="position:fixed;bottom:28px;right:0;z-index:9000;background:white;max-height:25vh;overflow:auto;font-size:10px"></pre>
+<script type="module">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from '/src/App.tsx';
+import '/src/main.css';
+ReactDOM.createRoot(document.querySelector('#root')).render(React.createElement(App));
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const rows=[];
+const check=(label,pass,data)=>{rows.push({label,pass:!!pass,data});document.querySelector('#results').textContent=JSON.stringify(rows,null,2);if(!pass)throw Error(label);};
+async function hover(root,type='mouse'){
+ const target=root.classList.contains('project-collage-visual')?root.closest('button'):root;
+ const bounds=root.getBoundingClientRect();const props={bubbles:true,pointerType:type,isPrimary:true,buttons:0,clientX:bounds.left+bounds.width*.8,clientY:bounds.top+bounds.height*.25};
+ target.dispatchEvent(new PointerEvent('pointerover',props));target.dispatchEvent(new PointerEvent('pointerenter',props));await wait(80);
+ target.dispatchEvent(new PointerEvent('pointermove',props));await wait(420);
+ return target;
+}
+async function leave(target){target.dispatchEvent(new PointerEvent('pointerleave',{pointerType:'mouse'}));target.dispatchEvent(new PointerEvent('pointerout',{bubbles:true,pointerType:'mouse'}));await wait(800);}
+const transform=root=>getComputedStyle(root.querySelector('.preview-parallax__surface')).transform;
+const tilt=root=>transform(root).startsWith('matrix3d');
+const clickCase=name=>[...document.querySelectorAll('button')].find(b=>b.getAttribute('aria-label')==='Открыть кейс: '+name)?.click();
+document.querySelector('#show').onclick=async()=>{
+ for(let i=0;i<70&&document.querySelector('.onboarding-root');i++)await wait(200);
+ const rail=document.querySelectorAll('.project-rail__item');
+ if(rail.length)rail[3].click();else clickCase('Веритас');
+ await wait(900);await hover(document.querySelector('.poster-slot--veritas'));
+ document.querySelector('#results').style.display='none';
+};
+document.querySelector('#run').onclick=async()=>{
+ document.querySelector('#run').disabled=true;
+ try{
+ for(let i=0;i<70&&document.querySelector('.onboarding-root');i++)await wait(200);
+ const compact=matchMedia('(max-width:1100px)').matches;
+ if(!compact){
+  const root=[...document.querySelectorAll('.project-collage-visual')].find(e=>{const r=e.getBoundingClientRect();return r.left<innerWidth-100&&r.right>innerWidth*.6&&r.top<innerHeight-100&&r.bottom>200;});
+  const target=await hover(root);check('Collage preview tilts and lights',tilt(root)&&root.dataset.previewHovered==='true');
+  await leave(target);check('Collage preview resets',root.dataset.previewHovered==='false');
+ }else{
+  check('All four mobile cards use parallax',document.querySelectorAll('.mobile-project-media.preview-parallax').length===4);
+  const root=document.querySelector('.mobile-project-media');await hover(root,'touch');check('Touch leaves preview neutral',root.dataset.previewHovered==='false'&&!tilt(root));
+ }
+ clickCase('Веритас');await wait(850);
+ let previews=[...document.querySelectorAll('.poster-slot--veritas')];check('Both Veritas media previews are present',previews.length===2);
+ check('Both Veritas preview shadows are removed',previews.every(root=>getComputedStyle(root).boxShadow==='none'&&getComputedStyle(root.querySelector('.preview-parallax__surface')).boxShadow==='none'));
+ for(const [index,root] of previews.entries()){
+  const before=root.getBoundingClientRect().toJSON();const target=await hover(root);
+  check('Veritas '+(index+1)+' reacts to cursor',tilt(root)&&+getComputedStyle(root.querySelector('.preview-parallax__light')).opacity>.9);
+  check('Veritas '+(index+1)+' keeps stable layout',Math.abs(root.getBoundingClientRect().width-before.width)<1&&Math.abs(root.getBoundingClientRect().height-before.height)<1);
+  await leave(target);check('Veritas '+(index+1)+' returns to rest',root.dataset.previewHovered==='false');
+  await hover(root,'touch');check('Veritas '+(index+1)+' ignores touch hover',root.dataset.previewHovered==='false');
+ }
+ check('Media retains intrinsic sizing',previews.every(root=>{const el=root.querySelector('img,video');return el&&el.getBoundingClientRect().width>0&&el.getBoundingClientRect().height>0;}));
+ if(!compact){
+  for(const [railIndex,selector,label] of [[1,'.gallery-panel--spirit','Spirit'],[2,'.poster-slot--future','Future']]){
+   document.querySelectorAll('.project-rail__item')[railIndex].click();await wait(850);
+   const root=document.querySelector(selector);const target=await hover(root);check(label+' preview tilts',tilt(root));await leave(target);
+  }
+  document.querySelector('.project-rail__item').click();await wait(850);
+  const root=document.querySelector('.poster-slot--mozglab');const target=await hover(root);check('Mozg.lab preview tilts',tilt(root));await leave(target);
+  document.querySelector('.more-button--mozglab').click();await wait(100);
+  const gallery=document.querySelector('.overlay-gallery-image');check('Detailed gallery uses parallax',!!gallery.querySelector('.preview-parallax'));
+  const image=gallery.querySelector('img').getAttribute('src');gallery.querySelector('.overlay-gallery-next').click();await wait(80);check('Gallery arrows still change slides',gallery.querySelector('img').getAttribute('src')!==image);
+  document.querySelector('[data-primary-case-close]').click();await wait(80);
+ }
+ check('No horizontal page overflow',document.documentElement.scrollWidth===innerWidth);
+ document.querySelector('#run').textContent='PASS: '+rows.length+' checks';
+ }catch(error){document.querySelector('#run').textContent='FAIL: '+error.message;}
+};
+</script></body></html>

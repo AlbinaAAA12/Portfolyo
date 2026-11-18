@@ -4,6 +4,7 @@ import { useMotionValue } from 'motion/react';
 import type { CaseId, Locale } from './types';
 import { asset } from './lib/assets';
 import { ProjectMedia } from './components/media/ProjectMedia';
+import { PreviewParallax } from './components/media/PreviewParallax';
 import InteractivePortrait from './components/main/InteractivePortrait';
 import { NoOrphans, prepareTypography } from './lib/typography';
 import PortfolioOverlays, { Resume } from './components/overlays/PortfolioOverlays';
@@ -97,9 +98,9 @@ function About({ locale, playbackEnabled, compact, titleRef, onCase, onResume }:
       {compact ? <section id="mobile-projects" className="mobile-projects" aria-label={locale === 'ru' ? 'Кейсы' : 'Cases'} tabIndex={-1}>
         <div className="mobile-project-grid">{mobileProjects.map(({ id, file, media, ratio }) => <button className="mobile-project-card" type="button" key={id} aria-label={`${locale === 'ru' ? 'Открыть кейс' : 'Open case'}: ${t.cases[id].name}`} onClick={() => onCase(id)}>
           <span className="mobile-project-caption"><span>{t.cases[id].name}</span><img src={asset('figma/nav-primary-default.svg')} alt="" /></span>
-          <span className="mobile-project-media" style={{ '--mobile-project-ratio': ratio } as CSSProperties}>
+          <PreviewParallax className="mobile-project-media" enabled={playbackEnabled} style={{ '--mobile-project-ratio': ratio } as CSSProperties}>
             {id === 'spirit' ? <SpiritPreview /> : media ? <ProjectMedia media={media} poster={`figma/${file}`} playbackEnabled={playbackEnabled} alt="" /> : <img src={asset(`figma/${file}`)} alt="" />}
-          </span>
+          </PreviewParallax>
         </button>)}</div>
       </section> : <ProjectCollage projects={projects} locale={locale} caseName={(id) => t.cases[id].name} onCase={onCase} playbackEnabled={playbackEnabled} />}
       {compact && <TestimonialSlider locale={locale} name={t.testimonialName} />}
@@ -135,12 +136,12 @@ function ProjectGallery({ id, locale, range, playbackEnabled = true }: { id: Cas
   };
   const files = posters[id].map((item, index) => ({ ...item, index })).filter(({ index }) => range === undefined || (range === 'hero' ? index === 0 : index > 0));
   if (!files.length) return null;
-  if (id === 'spirit') return <section className={`gallery-panel gallery-panel--spirit${range ? ` gallery-panel--${range}` : ''}`} aria-label={locale === 'ru' ? `Макет: ${t.cases[id].name}` : `Mockup: ${t.cases[id].name}`}>
+  if (id === 'spirit') return <PreviewParallax as="section" enabled={playbackEnabled} className={`gallery-panel gallery-panel--spirit${range ? ` gallery-panel--${range}` : ''}`} aria-label={locale === 'ru' ? `Макет: ${t.cases[id].name}` : `Mockup: ${t.cases[id].name}`}>
     <div className="spirit-backdrop-wrap"><img className="spirit-backdrop" src={asset('figma/cdbc0.png')} alt="" /></div>
     <div className="spirit-empty-frame">
       <img src={asset('figma/spirit-empty-state.svg')} alt={locale === 'ru' ? 'Пустое состояние проекта Spirit LBaaS' : 'Spirit LBaaS project empty state'} />
     </div>
-  </section>;
+  </PreviewParallax>;
   return <section className={`gallery-panel gallery-panel--${id}${range ? ` gallery-panel--${range}` : ''}`} aria-label={locale === 'ru' ? `Макеты: ${t.cases[id].name}` : `Mockups: ${t.cases[id].name}`}>
     {files.map(({ file, height, fit, stroke, background, crop, index }) => {
       const slotStyle = {
@@ -151,7 +152,7 @@ function ProjectGallery({ id, locale, range, playbackEnabled = true }: { id: Cas
         '--video-height': crop ? `${100 / crop.sy}%` : '100%',
         '--video-top': crop ? `${-100 * crop.ty / crop.sy}%` : '0%',
       } as CSSProperties & Record<`--${string}`, string | number>;
-      return <div className={`poster-slot poster-slot--${id}`} data-fit={fit} key={file} style={slotStyle}><ProjectMedia media={posters[id][index].media!} poster={`figma/${file}`} playbackEnabled={playbackEnabled} alt={`${t.cases[id].name} — ${locale === 'ru' ? 'макет' : 'mockup'} ${index + 1}`} /></div>;
+      return <PreviewParallax as="div" className={`poster-slot poster-slot--${id}`} data-fit={fit} key={file} style={slotStyle} enabled={playbackEnabled}><ProjectMedia media={posters[id][index].media!} poster={`figma/${file}`} playbackEnabled={playbackEnabled} alt={`${t.cases[id].name} — ${locale === 'ru' ? 'макет' : 'mockup'} ${index + 1}`} /></PreviewParallax>;
     })}
   </section>;
 }

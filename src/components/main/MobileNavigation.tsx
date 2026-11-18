@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { CaseId, Locale } from '../../types';
 import { asset } from '../../lib/assets';
+import { PreviewParallax } from '../media/PreviewParallax';
 import './MobileNavigation.css';
 
 type Screen = 'about' | CaseId;
@@ -57,7 +58,7 @@ export default function MobileNavigation({ menuOpen, onMenuOpenChange, screen, l
       <div className="mobile-navigation-content">
         <div className="mobile-navigation-projects" aria-label={locale === 'ru' ? 'Проекты' : 'Projects'}>
           {projects.map(({ id, image }) => <button className="mobile-navigation-project" type="button" key={id} aria-current={screen === id ? 'page' : undefined} onClick={() => closeAndSelect(() => onCase(id))}>
-            <img src={asset(`figma/${image}`)} alt="" /><span>{caseNames[id]}</span>
+            <PreviewParallax className="mobile-navigation-preview"><img src={asset(`figma/${image}`)} alt="" /></PreviewParallax><span>{caseNames[id]}</span>
           </button>)}
         </div>
       </div>

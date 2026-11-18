@@ -117,7 +117,7 @@
 .overlay-case-copy p { margin: 0; }
 .overlay-case-list li { margin: 0; }
 .overlay-gallery { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; margin: 0 0 48px; }
-.overlay-gallery-image { position: relative; width: 100%; overflow: hidden; border: 1px solid rgba(0,16,36,.12); border-radius: 20px; background: #f6f7f8; box-shadow: 0 5px 20px rgba(32,33,36,.1); }
+.overlay-gallery-image { position: relative; width: 100%; overflow: visible; border: 0; border-radius: 20px; background: transparent; }
 .overlay-gallery-image > img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .overlay-gallery-image { touch-action: pan-y; }
 .overlay-gallery-image:focus-visible { outline: 2px solid #202124; outline-offset: 3px; }

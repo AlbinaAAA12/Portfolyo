@@ -1,0 +1,21 @@
+.preview-parallax { position: relative; display: block; perspective: 900px; }
+.preview-parallax__surface, .preview-parallax__content, .preview-parallax__light { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.preview-parallax__surface { overflow: hidden; border-radius: inherit; background: var(--preview-background, #fff); box-shadow: var(--preview-shadow, none); transform-origin: center; pointer-events: none; }
+.preview-parallax__surface::after { position: absolute; z-index: 2; inset: 0; border: var(--preview-border, 0); border-radius: inherit; content: ''; pointer-events: none; }
+.preview-parallax__content > img, .preview-parallax__content > video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.preview-parallax__light { z-index: 1; mix-blend-mode: screen; pointer-events: none; }
+
+.preview-parallax.poster-slot, .preview-parallax.mobile-project-media, .preview-parallax.project-collage-visual { overflow: visible; border: 0; background: transparent; box-shadow: none; }
+.preview-parallax.poster-slot { --preview-background: var(--media-background, #fff); --preview-shadow: 0 5px 20px rgba(32,33,36,.1); --preview-border: 1px solid var(--media-stroke, rgba(32,33,36,.12)); }
+.preview-parallax.poster-slot--veritas { --preview-shadow: none; }
+.preview-parallax.mobile-project-media { --preview-shadow: 0 5px 20px rgba(32,33,36,.1); --preview-border: 1px solid rgba(32,33,36,.12); }
+.preview-parallax.project-collage-visual { --preview-shadow: 0 2px 7px rgba(25,28,34,.045); --preview-border: 1px solid rgba(32,33,36,.1); }
+.preview-parallax.gallery-panel--spirit { padding: 0; overflow: visible; background: transparent; }
+.preview-parallax.overlay-gallery-preview { position: absolute; inset: 0; border-radius: inherit; --preview-background: #f6f7f8; --preview-shadow: 0 5px 20px rgba(32,33,36,.1); --preview-border: 1px solid rgba(0,16,36,.12); }
+.preview-parallax.mobile-navigation-preview { aspect-ratio: 16 / 10; border-radius: 12px; }
+.overlay-gallery-preview .preview-parallax__content > img { object-fit: contain; }
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .preview-parallax__surface, .preview-parallax__content { transform: none !important; }
+  .preview-parallax__light { display: none; }
+}

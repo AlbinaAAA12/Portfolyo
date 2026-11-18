@@ -1,3 +1,17 @@
+# Project preview parallax - 2026-11-18
+
+- Added a shared PreviewParallax layer to the Info collage, all case media (including the assembled Spirit preview), mobile project cards, mobile-menu thumbnails and detailed case galleries. Existing portrait gaze/parallax code is unchanged.
+- Reused portrait springs: rotation 220/18/1, light 300/26/1, lift 300/18/1. Larger previews use an 8-degree maximum tilt, independent media translation/overscan and the same soft white/pink cursor light. Layout/hit areas stay still; collage float/drag motion stays on its original outer layer.
+- Touch pointers, coarse/no-hover devices and reduced-motion preferences keep static previews. Blur, visibility changes, drag and pointer leave reset the effect. No new dependencies.
+- Removed CSS shadows from both case media previews in Veritas. Other project media shadows remain.
+- Production TypeScript/Vite build passed; existing chunk-size warning remains. Preview integration fixture: 19/19 desktop checks, 14/14 compact-layout checks. Covers collage hover/reset, every case, both Veritas shadows, stable geometry, touch ignoring hover, media sizing, gallery slide buttons and horizontal overflow.
+- Mobile pager regression: 20/20; desktop pager/collage regression: 22/22 at 1280 x 900. Mobile menu thumbnails visually inspected at 390 x 844. No browser application errors in the final gallery check.
+- OS reduced-motion preference was not toggled and no physical touch hardware was used. Gates are preserved in CSS and pointer handling.
+- Evidence: `tools/qa/screenshots/project-preview-parallax.png` (Veritas media frames without shadows).
+- Prepared against published main b302c74. Backup: `backup/before-preview-parallax-2026-11-18`. This session still has read-only GitHub access; publication requires the user's authenticated terminal.
+
+---
+
 # Mobile Resume downward dismissal - 2026-11-18
 
 - Added a touch-only downward flick across the entire Resume article, including contacts and artwork. It works at every scroll position and uses the existing curtain dismissal for both modal and inline Resume.

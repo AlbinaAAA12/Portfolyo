@@ -110,9 +110,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-
 .tag > span { padding-block: 12px; text-box-trim: trim-both; text-box-edge: cap alphabetic; }
 .gallery-panel { min-width: 0; min-height: 0; border-radius: 34px; padding: 24px; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; overflow: hidden; }
 .poster-slot { position: relative; flex: 0 0 auto; width: 100%; height: var(--slot-height); overflow: hidden; border: 0; border-radius: 20px; background: var(--media-background, #fff); box-shadow: 0 5px 20px rgba(32,33,36,.1); }
-.poster-slot::after { position: absolute; z-index: 1; inset: 0; border: 1px solid var(--media-stroke, rgba(32,33,36,.12)); border-radius: inherit; content: ''; pointer-events: none; }
 .poster-slot > img, .poster-slot > video { display: block; width: 100%; height: 100%; object-fit: cover; }
-.poster-slot[data-fit='crop'] > video { position: absolute; top: var(--video-top, 0%); left: 0; height: var(--video-height, 100%); object-fit: fill; }
+.poster-slot[data-fit='crop'] .preview-parallax__content > video { position: absolute; top: var(--video-top, 0%); left: 0; height: var(--video-height, 100%); object-fit: fill; }
 .gallery-panel--spirit { position: relative; overflow: hidden; }
 .spirit-backdrop-wrap { position: absolute; left: -.61328125px; top: 307.18780517578125px; width: 592.61328125px; height: 360.81219482421875px; overflow: hidden; border-radius: 0 0 32px 0; }
 .spirit-backdrop { position: absolute; left: -2.49%; top: 0; width: 108.18%; height: 100%; object-fit: fill; }

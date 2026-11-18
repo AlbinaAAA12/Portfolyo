@@ -3,6 +3,7 @@ import type { CaseId, Locale } from '../../types';
 import { asset } from '../../lib/assets';
 import type { VideoKey } from '../../lib/media';
 import { ProjectMedia } from '../media/ProjectMedia';
+import { PreviewParallax } from '../media/PreviewParallax';
 import './ProjectCollage.css';
 
 type ProjectCollageItem = { id: CaseId; file: string; media?: VideoKey };
@@ -345,13 +346,13 @@ export default function ProjectCollage({
               onCase(project.id);
             }}
           >
-            <span className="project-collage-visual" aria-hidden="true">
+            <PreviewParallax className="project-collage-visual" aria-hidden="true" interactionTarget="button" enabled={playbackEnabled && isActive && !isInteracting}>
               <ProjectCollageMedia
                 media={project.media}
                 poster={`figma/${project.file}`}
                 playbackEnabled={playbackEnabled}
               />
-            </span>
+            </PreviewParallax>
           </button>
         </div>;
       })}
