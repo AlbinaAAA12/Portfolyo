@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { asset } from '../../lib/assets';
 import './InteractivePortrait.css';
 
@@ -107,6 +108,66 @@ export default function InteractivePortrait({ alt, playbackEnabled = true, class
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageReady, setImageReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // DesignBookmark Parallax Ticket: RX/RY 220/18, glare 300/26, lift 300/18.
+  // Keep the portrait's existing gaze shader independent of the card movement.
+  const rotateX = useSpring(0, { stiffness: 220, damping: 18, mass: 1 });
+  const rotateY = useSpring(0, { stiffness: 220, damping: 18, mass: 1 });
+  const light = useSpring(0, { stiffness: 300, damping: 26, mass: 1 });
+  const lift = useSpring(1, { stiffness: 300, damping: 18, mass: 1 });
+  const lightX = useMotionValue(50);
+  const lightY = useMotionValue(50);
+  const imageX = useTransform(rotateY, (value) => value / 14 * 12 * .25);
+  const imageY = useTransform(rotateX, (value) => -value / 14 * 12 * .25);
+  // Cover the translated edges without changing the photo's crop at rest.
+  const imageScale = useTransform([rotateX, rotateY], ([x, y]: number[]) => 1 + Math.max(Math.abs(x), Math.abs(y)) / 14 * .065);
+  const lightOpacity = useTransform(light, (value) => Math.max(0, Math.min(1, value)));
+  const lightBackground = useMotionTemplate`radial-gradient(100px circle at ${lightX}% ${lightY}%, rgba(255,255,255,.22), rgba(245,56,160,.06) 40%, transparent 72%)`;
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    const pointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const reset = (immediate = false) => {
+      wrapper.dataset.portraitHovered = 'false';
+      if (immediate) {
+        rotateX.jump(0); rotateY.jump(0); light.jump(0); lift.jump(1);
+      } else {
+        rotateX.set(0); rotateY.set(0); light.set(0); lift.set(1);
+      }
+    };
+    const move = (event: PointerEvent) => {
+      if (!playbackEnabled || reducedMotion || !pointer.matches || event.pointerType === 'touch') return;
+      const bounds = wrapper.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return;
+      const nx = Math.max(-1, Math.min(1, (event.clientX - bounds.left) / bounds.width * 2 - 1));
+      const ny = Math.max(-1, Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1));
+      wrapper.dataset.portraitHovered = 'true';
+      rotateX.set(-ny * 14); rotateY.set(nx * 14);
+      lightX.set((nx + 1) * 50); lightY.set((ny + 1) * 50);
+      light.set(1); lift.set(1.025);
+    };
+    const leave = () => reset();
+    const suspend = () => reset(true);
+    const visibility = () => { if (document.hidden) suspend(); };
+    reset(true);
+    wrapper.addEventListener('pointerenter', move, { passive: true });
+    wrapper.addEventListener('pointermove', move, { passive: true });
+    wrapper.addEventListener('pointerleave', leave);
+    wrapper.addEventListener('pointercancel', leave);
+    pointer.addEventListener('change', suspend);
+    window.addEventListener('blur', suspend);
+    document.addEventListener('visibilitychange', visibility);
+    return () => {
+      wrapper.removeEventListener('pointerenter', move);
+      wrapper.removeEventListener('pointermove', move);
+      wrapper.removeEventListener('pointerleave', leave);
+      wrapper.removeEventListener('pointercancel', leave);
+      pointer.removeEventListener('change', suspend);
+      window.removeEventListener('blur', suspend);
+      document.removeEventListener('visibilitychange', visibility);
+      reset(true);
+    };
+  }, [playbackEnabled, reducedMotion, rotateX, rotateY, light, lift, lightX, lightY]);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -410,7 +471,12 @@ export default function InteractivePortrait({ alt, playbackEnabled = true, class
 
   const imagePath = asset('figma/f29c3.png');
   return <span ref={wrapperRef} className={`interactive-portrait ${className}`.trim()} role="img" aria-label={alt} data-portrait-renderer="static" data-gaze-x="0" data-gaze-y="0" data-blink="0">
-    <img ref={imageRef} src={imagePath} alt="" aria-hidden="true" draggable={false} onLoad={() => setImageReady(true)} />
-    <canvas ref={canvasRef} aria-hidden="true" />
+    <motion.span className="interactive-portrait__surface" style={{ rotateX, rotateY, scale: lift }} aria-hidden="true">
+      <motion.span className="interactive-portrait__image" style={{ x: imageX, y: imageY, scale: imageScale }}>
+        <img ref={imageRef} src={imagePath} alt="" draggable={false} onLoad={() => setImageReady(true)} />
+        <canvas ref={canvasRef} />
+      </motion.span>
+      <motion.span className="interactive-portrait__light" style={{ opacity: lightOpacity, background: lightBackground }} />
+    </motion.span>
   </span>;
 }

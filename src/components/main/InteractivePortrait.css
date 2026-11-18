@@ -1,13 +1,19 @@
 .interactive-portrait {
   position: relative;
   display: block;
-  overflow: hidden;
+  overflow: visible;
   border-radius: inherit;
   user-select: none;
+  perspective: 900px;
 }
 
-.interactive-portrait > img,
-.interactive-portrait > canvas {
+.interactive-portrait.portrait { background: transparent; }
+
+.interactive-portrait__surface,
+.interactive-portrait__image,
+.interactive-portrait__image > img,
+.interactive-portrait__image > canvas,
+.interactive-portrait__light {
   position: absolute;
   inset: 0;
   display: block;
@@ -15,19 +21,34 @@
   height: 100%;
 }
 
-.interactive-portrait > img {
+.interactive-portrait__surface {
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--surface, #fff);
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.interactive-portrait__image > img {
   object-fit: cover;
 }
 
-.interactive-portrait > canvas {
+.interactive-portrait__image > canvas {
   opacity: 0;
   pointer-events: none;
 }
 
-.interactive-portrait[data-portrait-renderer='webgl'] > img {
+.interactive-portrait[data-portrait-renderer='webgl'] .interactive-portrait__image > img {
   opacity: 0;
 }
 
-.interactive-portrait[data-portrait-renderer='webgl'] > canvas {
+.interactive-portrait[data-portrait-renderer='webgl'] .interactive-portrait__image > canvas {
   opacity: 1;
+}
+
+.interactive-portrait__light { pointer-events: none; mix-blend-mode: screen; }
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .interactive-portrait__surface, .interactive-portrait__image { transform: none !important; }
+  .interactive-portrait__light { display: none; }
 }
