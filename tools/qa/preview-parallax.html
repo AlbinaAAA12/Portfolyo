@@ -59,7 +59,7 @@ document.querySelector('#run').onclick=async()=>{
   document.querySelector('.project-rail__item').click();await wait(850);
   const root=document.querySelector('.poster-slot--mozglab');const target=await hover(root);check('Mozg.lab preview tilts',tilt(root));await leave(target);
   document.querySelector('.more-button--mozglab').click();await wait(100);
-  const gallery=document.querySelector('.overlay-gallery-image');check('Detailed gallery uses parallax',!!gallery.querySelector('.preview-parallax'));
+  const gallery=document.querySelector('.overlay-gallery-image');check('Detailed gallery media is static and shadow-free',[...document.querySelectorAll('.overlay-gallery-image')].every(root=>!root.querySelector('.preview-parallax')&&getComputedStyle(root).boxShadow==='none'&&getComputedStyle(root.querySelector('img')).transform==='none'));
   const image=gallery.querySelector('img').getAttribute('src');gallery.querySelector('.overlay-gallery-next').click();await wait(80);check('Gallery arrows still change slides',gallery.querySelector('img').getAttribute('src')!==image);
   document.querySelector('[data-primary-case-close]').click();await wait(80);
  }

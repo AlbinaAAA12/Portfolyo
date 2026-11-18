@@ -7,7 +7,6 @@ import { useCompactLayout } from '../../lib/useCompactLayout';
 import { useSwipeDownDismiss } from '../../lib/useSwipeDownDismiss';
 import { NoOrphans, prepareTypography } from '../../lib/typography';
 import { ResumeArtwork } from './ResumeArtwork';
-import { PreviewParallax } from '../media/PreviewParallax';
 import './overlays.css';
 
 type Props = { kind: 'resume' | 'case' | null; locale: Locale; onClose: () => void };
@@ -122,7 +121,7 @@ function Gallery({ set, locale }: { set: SlideSet; locale: Locale }) {
   };
   return <div className="overlay-gallery" aria-label={`${caseText[locale].gallery}: ${set.label}`}>
     <div className="overlay-gallery-image" style={{ aspectRatio: set.ratio }} role="region" aria-roledescription={locale === 'ru' ? 'карусель' : 'carousel'} aria-label={`${set.label}: ${index + 1} / ${set.files.length}`} tabIndex={0} onKeyDown={onKeyDown} {...swipeHandlers}>
-      <PreviewParallax className="overlay-gallery-preview"><img src={asset(`figma/${file}`)} alt={`${set.label} ${index + 1} / ${set.files.length}`} /></PreviewParallax>
+      <img src={asset(`figma/${file}`)} alt={`${set.label} ${index + 1} / ${set.files.length}`} />
       {set.files.length > 1 && <><button className="overlay-gallery-arrow overlay-gallery-prev" type="button" onClick={() => change(index - 1)} aria-label={locale === 'ru' ? 'Предыдущее изображение' : 'Previous image'} /><button className="overlay-gallery-arrow overlay-gallery-next" type="button" onClick={() => change(index + 1)} aria-label={locale === 'ru' ? 'Следующее изображение' : 'Next image'} /></>}
     </div>
     {set.files.length > 1 && <div className="overlay-gallery-dots" role="group" aria-label={locale === 'ru' ? 'Выбор изображения' : 'Choose image'}>{set.files.map((_, i) => <button key={i} type="button" className={i === index ? 'is-active' : ''} onClick={() => change(i)} aria-label={`${locale === 'ru' ? 'Изображение' : 'Image'} ${i + 1}`} aria-current={i === index ? 'true' : undefined} />)}</div>}

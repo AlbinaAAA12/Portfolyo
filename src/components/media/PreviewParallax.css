@@ -11,9 +11,7 @@
 .preview-parallax.mobile-project-media { --preview-shadow: 0 5px 20px rgba(32,33,36,.1); --preview-border: 1px solid rgba(32,33,36,.12); }
 .preview-parallax.project-collage-visual { --preview-shadow: 0 2px 7px rgba(25,28,34,.045); --preview-border: 1px solid rgba(32,33,36,.1); }
 .preview-parallax.gallery-panel--spirit { padding: 0; overflow: visible; background: transparent; }
-.preview-parallax.overlay-gallery-preview { position: absolute; inset: 0; border-radius: inherit; --preview-background: #f6f7f8; --preview-shadow: 0 5px 20px rgba(32,33,36,.1); --preview-border: 1px solid rgba(0,16,36,.12); }
 .preview-parallax.mobile-navigation-preview { aspect-ratio: 16 / 10; border-radius: 12px; }
-.overlay-gallery-preview .preview-parallax__content > img { object-fit: contain; }
 
 @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
   .preview-parallax__surface, .preview-parallax__content { transform: none !important; }

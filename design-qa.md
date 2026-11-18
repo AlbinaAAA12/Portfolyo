@@ -1,3 +1,14 @@
+# Detailed gallery cleanup and Info preview corners - 2026-11-18
+
+- Removed PreviewParallax from every image in the Mozg.lab More dialog and removed its unused gallery-specific styles. Restored plain, clipped gallery images with a thin border and no media shadow. Gallery arrows and swipe handling are preserved.
+- Rounded all desktop Info collage preview frames to 20 px; their existing parallax surface inherits the radius and clips both images and videos. Mobile Info cards already use 20 px corners.
+- TypeScript/Vite production build passed with the existing chunk-size warning. Updated existing preview integration fixture passed 19/19 checks, including all detailed-gallery frames being static/shadow-free and slide arrows changing images.
+- Browser inspection confirmed all 16 Info collage surfaces have 20 px corners and hidden overflow. No application console errors in the final check.
+- Evidence: `tools/qa/screenshots/info-rounded-previews.png`.
+- Baseline: published d8c11aa. Backup: `backup/before-modal-media-cleanup-2026-11-18`. Publication remains through the user's authenticated terminal.
+
+---
+
 # Project preview parallax - 2026-11-18
 
 - Added a shared PreviewParallax layer to the Info collage, all case media (including the assembled Spirit preview), mobile project cards, mobile-menu thumbnails and detailed case galleries. Existing portrait gaze/parallax code is unchanged.
