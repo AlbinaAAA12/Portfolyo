@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import type { CSSProperties, FocusEvent, MouseEvent } from 'react';
+import type { CSSProperties, FocusEvent, MouseEvent, ReactNode } from 'react';
 import { useMotionValue } from 'motion/react';
 import type { CaseId, Locale } from './types';
 import { asset } from './lib/assets';
@@ -22,6 +22,9 @@ import SectionPager from './components/main/SectionPager';
 
 type Screen = 'about' | CaseId;
 type OverlayKind = 'resume' | 'case' | null;
+
+// Temporarily pause all public resume entry points; restore by setting this to true.
+const resumeEnabled: boolean = false;
 
 const caseOrder: CaseId[] = ['mozglab', 'spirit', 'future', 'veritas'];
 
@@ -54,6 +57,38 @@ const copy = prepareTypography({
   },
 } as const);
 
+function ResumeButton({ locale, className, onOpen, children }: {
+  locale: Locale; className: string; onOpen: () => void; children: ReactNode;
+}) {
+  const [hintVisible, setHintVisible] = useState(false);
+  const tooltipId = useId();
+  const hideHint = () => setHintVisible(false);
+  useEffect(() => {
+    if (!hintVisible) return;
+    window.addEventListener('resize', hideHint);
+    window.addEventListener('scroll', hideHint, true);
+    const dismiss = (event: PointerEvent) => {
+      if (!(event.target instanceof Element) || !event.target.closest('[data-resume-control]')) hideHint();
+    };
+    document.addEventListener('pointerdown', dismiss);
+    return () => {
+      window.removeEventListener('resize', hideHint);
+      window.removeEventListener('scroll', hideHint, true);
+      document.removeEventListener('pointerdown', dismiss);
+    };
+  }, [hintVisible]);
+  return <button type="button" className={`${className} resume-control`} data-resume-control
+    aria-label={locale === 'ru' ? 'Резюме' : 'Resume'} aria-disabled={!resumeEnabled || undefined}
+    aria-describedby={hintVisible ? tooltipId : undefined} data-hint={hintVisible ? 'true' : 'false'}
+    onClick={() => { if (resumeEnabled) onOpen(); else setHintVisible(true); }}
+    onMouseEnter={() => { if (!resumeEnabled) setHintVisible(true); }} onMouseLeave={hideHint}
+    onFocus={() => { if (!resumeEnabled) setHintVisible(true); }} onBlur={hideHint}
+    onKeyDown={(event) => { if (event.key === 'Escape') { hideHint(); event.stopPropagation(); } }}>
+    {children}
+    {hintVisible && <span className="tooltip" id={tooltipId} role="tooltip">{locale === 'ru' ? 'Резюме временно недоступно' : 'Resume temporarily unavailable'}</span>}
+  </button>;
+}
+
 function Header({ locale, setLocale, screen, onAbout, onCases, onResume }: {
   locale: Locale; setLocale: (locale: Locale) => void; screen: Screen | 'resume';
   onAbout: () => void; onCases: () => void; onResume: () => void;
@@ -66,7 +101,7 @@ function Header({ locale, setLocale, screen, onAbout, onCases, onResume }: {
     <nav className="primary-nav">
       <button className={`nav-pill ${screen === 'about' ? 'is-active' : ''}`} type="button" onClick={onAbout} aria-label={t.aboutAria} aria-current={screen === 'about' ? 'page' : undefined}><span>{t.navAbout}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'about' ? 'figma/b6393.svg' : 'figma/nav-primary-default.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
       <button className={`nav-pill ${(screen !== 'about' && screen !== 'resume') ? 'is-active' : ''}`} type="button" onClick={onCases} aria-label={t.casesAria} aria-current={(screen !== 'about' && screen !== 'resume') ? 'page' : undefined}><span>{t.navCases}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'about' || screen === 'resume' ? 'figma/nav-primary-default.svg' : 'figma/b6393.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
-      <button className={`nav-pill ${screen === 'resume' ? 'is-active' : ''}`} type="button" onClick={onResume} aria-current={screen === 'resume' ? 'page' : undefined} aria-label={t.resumeAria}><span>{t.navResume}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'resume' ? 'figma/b6393.svg' : 'figma/nav-primary-default.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></button>
+      <ResumeButton className={`nav-pill ${screen === 'resume' ? 'is-active' : ''}`} locale={locale} onOpen={onResume}><span>{t.navResume}</span><span className="nav-pill-icon" aria-hidden="true"><img className="nav-pill-icon-default" src={asset(screen === 'resume' ? 'figma/b6393.svg' : 'figma/nav-primary-default.svg')} alt="" /><img className="nav-pill-icon-hover" src={asset('figma/nav-primary-hover.svg')} alt="" /></span></ResumeButton>
     </nav>
   </header>;
 }
@@ -92,7 +127,7 @@ function About({ locale, playbackEnabled, compact, titleRef, onCase, onResume }:
           <div className="profile-heading"><InteractivePortrait className="portrait" alt={t.profileName} playbackEnabled={playbackEnabled} /><div className="profile-identity"><h1 ref={titleRef} tabIndex={compact ? -1 : undefined}>{t.profileName}</h1>{!compact && <div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div>}</div></div>
           <p className="intro"><NoOrphans>{t.greeting}</NoOrphans></p>
         </div>
-        {compact && <div className="profile-actions"><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div><button className="profile-resume" type="button" onClick={onResume}>{locale === 'ru' ? 'Резюме' : 'Resume'}</button></div>}
+        {compact && <div className="profile-actions"><div className="contact-links"><a href="https://t.me/Timofeeva_Albina" target="_blank" rel="noreferrer">{t.contactTelegram}</a><a href="mailto:albinatimofeeva11@gmail.com">{t.contactEmail}</a></div><ResumeButton className="profile-resume" locale={locale} onOpen={onResume}>{t.navResume}</ResumeButton></div>}
         {!compact && <TestimonialSlider locale={locale} name={t.testimonialName} />}
       </section>
       {compact ? <section id="mobile-projects" className="mobile-projects" aria-label={locale === 'ru' ? 'Кейсы' : 'Cases'} tabIndex={-1}>
@@ -282,6 +317,7 @@ export default function App() {
     else navigate(screen === 'about' ? caseOrder[0] : caseOrder[(caseOrder.indexOf(screen) + 1) % caseOrder.length], null);
   };
   const openResume = () => {
+    if (!resumeEnabled) return;
     setSwipeDirection(0);
     setSwipeResume(false);
     overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -295,7 +331,7 @@ export default function App() {
     if (overlay || onboarding || menuOpen) return;
     const current = swipeResume ? 2 : screen === 'about' ? 0 : 1;
     const next = current + direction;
-    if (next < 0 || next > 2) return;
+    if (next < 0 || next > (resumeEnabled ? 2 : 1)) return;
     setSwipeDirection(direction);
     pendingFocus.current = null;
     if (next === 2) setSwipeResume(true);
@@ -328,7 +364,7 @@ export default function App() {
     <div className="app-content">
       {compact ? <MobileNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} screen={screen} locale={locale} setLocale={setLocale} caseNames={{ mozglab: copy[locale].cases.mozglab.name, spirit: copy[locale].cases.spirit.name, future: copy[locale].cases.future.name, veritas: copy[locale].cases.veritas.name }} onProjects={showCases} onCase={(id) => navigate(id, 'case')} /> : <Header locale={locale} setLocale={setLocale} screen={swipeResume ? 'resume' : screen} onAbout={showAbout} onCases={showCases} onResume={openResume} />}
       <SectionPager desktop={!compact} page={swipeResume ? 'resume' : compact ? screen : screen === 'about' ? 'about' : 'cases'} direction={swipeDirection} disabled={Boolean(overlay || onboarding || menuOpen)} scrollRef={mobileScrollRef} onSwipe={swipeSection}>
-        {swipeResume ? <Resume locale={locale} animateDismiss={compact} close={() => { setSwipeDirection(0); setSwipeResume(false); }} showStickyClose={false} /> : screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : compact ? <CasePage key={screen} id={screen} locale={locale} compact titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
+        {resumeEnabled && swipeResume ? <Resume locale={locale} animateDismiss={compact} close={() => { setSwipeDirection(0); setSwipeResume(false); }} showStickyClose={false} /> : screen === 'about' ? <About locale={locale} playbackEnabled={!onboarding} compact={compact} titleRef={(node) => { aboutTitleRef.current = node; }} onCase={(id) => navigate(id, 'case')} onResume={openResume} /> : compact ? <CasePage key={screen} id={screen} locale={locale} compact titleRef={(node) => { caseTitleRef.current = node; }} onMore={(target) => {
         if (screen === 'mozglab' && target === undefined) {
           overlayReturnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           setOverlay('case');
@@ -342,7 +378,7 @@ export default function App() {
       </SectionPager>
     </div>
     {screen !== 'about' && !compact && !swipeResume && <CaseRail locale={locale} active={screen} progress={desktopProgress} onSelect={(id) => navigate(id)} />}
-    <PortfolioOverlays kind={overlay} locale={locale} onClose={closeOverlay} />
+    <PortfolioOverlays kind={!resumeEnabled && overlay === 'resume' ? null : overlay} locale={locale} onClose={closeOverlay} />
     {onboarding && <Onboarding locale={locale} onComplete={() => setOnboarding(false)} />}
     </div>
   </div>;
